@@ -1,0 +1,29 @@
+<nav class="side-menu side-menu-vertical side-menu-left" id="slide-side-menu">
+  <a href="<?=$home?>"><i class="fa fa-home"></i> Home</a>
+  <a href="./controlpanel"><i class="fa fa-gear"></i> Control panel</a>
+  <?php if ($items !== null):?>
+  <ul>
+    <?php foreach($items as $item):?>
+    <li>
+      <?=$item?>
+    </li>
+    <?php endforeach;?>
+    <?php endif;?>
+    <ul>
+      <?php if ($options !== null):?>
+      <div class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-gear"></i>&nbsp;<?=$title?><span class="caret"></span>
+            </a>
+        <ul class="dropdown-menu">
+          <li>
+            <?=$options?>
+          </li>
+        </ul>
+      </div>
+      <?php endif;?>
+</nav>
+
+<div id="show-left-push"><i id="menu-icon" class="fa fa-bars"></i> Menu</div>
+
+<script src="{SOURCE_HTTP}mod/slideshow/javascript/dev/navbar.js"></script>

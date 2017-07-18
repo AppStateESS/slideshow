@@ -24,7 +24,12 @@ use slideshow\Controller\RoleController;
 
 class Base extends RoleController
 {
-
+    /**
+     *
+     * @var object Factory
+     */
+    protected $factory;
+    
     protected function loadFactory()
     {
         $this->factory = new Factory;
@@ -32,7 +37,7 @@ class Base extends RoleController
     
     protected function listHtmlCommand(Request $request)
     {
-        return 'hi';
+        return $this->factory->reactView('showlist');
     }
 
 }

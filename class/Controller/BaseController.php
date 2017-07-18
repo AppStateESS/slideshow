@@ -115,7 +115,6 @@ class BaseController extends \phpws2\Http\Controller
         if ($request->isAjax()) {
             $result = $this->controller->getJson($request);
         } else {
-            \Layout::addStyle('slideshow');
             $result = $this->controller->getHtml($request);
         }
         return $result;

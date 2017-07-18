@@ -3,5 +3,5 @@ exports.APP_DIR = exports.path.resolve(__dirname, 'javascript')
 
 exports.entry = {
   vendor: ['react', 'react-dom'],
-  example: exports.APP_DIR + '/Example/index.jsx',
+  showlist: exports.APP_DIR + '/ShowList/index.jsx',
 }

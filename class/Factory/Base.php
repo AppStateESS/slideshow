@@ -43,7 +43,7 @@ abstract class Base extends \phpws2\ResourceFactory
     private function getScript($filename)
     {
         $root_directory = PHPWS_SOURCE_HTTP . 'mod/slideshow/javascript/';
-        if (PROPERTIES_REACT_DEV) {
+        if (SLIDESHOW_REACT_DEV) {
             $path = "dev/$filename.js";
         } else {
             $path = "build/$filename.js";

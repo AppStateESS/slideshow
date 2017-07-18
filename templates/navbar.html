@@ -1,8 +1,10 @@
 <nav class="side-menu side-menu-vertical side-menu-left" id="slide-side-menu">
   <a href="<?=$home?>"><i class="fa fa-home"></i> Home</a>
   <a href="./controlpanel"><i class="fa fa-gear"></i> Control panel</a>
+  <a href="<?=$logout_uri?>"><i class="fa fa-sign-out"></i> Sign out</a>
   <?php if ($items !== null):?>
-  <ul>
+  <hr />
+  <ul class="navbar-items">
     <?php foreach($items as $item):?>
     <li>
       <?=$item?>
@@ -24,6 +26,6 @@
       <?php endif;?>
 </nav>
 
-<div id="show-left-push"><i id="menu-icon" class="fa fa-bars"></i> Menu</div>
+<div id="show-left-push"><i id="menu-icon" class="fa fa-bars"></i></div>
 
 <script src="{SOURCE_HTTP}mod/slideshow/javascript/dev/navbar.js"></script>

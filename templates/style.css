@@ -1,0 +1,116 @@
+ul.navbar-items {
+    padding : 0px;
+}
+
+ul.navbar-items li {
+    list-style-type : none;
+}
+
+/* General styles for all menus */
+.side-menu {
+    padding-left : 10px;
+    padding-top : 40px;
+    background: #222;
+    position: fixed;
+    color : #fff;
+}
+
+.side-menu a {
+    display: block;
+    color: #fff;
+    font-size: 1.1em;
+}
+
+.side-menu a:hover {
+    background: #e3e3e3;
+    color: black;
+    text-decoration : none;
+}
+
+.side-menu a:active {
+    background: #afdefa;
+    color: #47a3da;
+}
+
+/* Orientation-dependent styles for the content of the menu */
+
+.side-menu-vertical {
+    width: 200px;
+    height: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.side-menu-vertical a {
+    padding: 8px;
+}
+
+/* Vertical menu that slides from the left or right */
+
+.side-menu-left {
+    left: -200px;
+}
+
+.side-menu-left.side-menu-open {
+    left: 0px;
+}
+
+/* Push classes applied to the body */
+
+.application {
+    overflow-x: hidden;
+    position: relative;
+    left: 0;
+}
+
+.application-toright {
+    left: 200px;
+}
+
+.application-toleft {
+    left: -200px;
+}
+
+/* Transitions */
+
+.side-menu,
+.application {
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+#show-left-push:hover,#hide-left-push:hover {
+    cursor: pointer;
+}
+
+#show-left-push {
+    padding: 8px;
+    background-color: #222;
+    color: white;
+    display: inline-block;
+}
+
+#hide-left-push {
+    padding: 8px;
+    background-color: #000;
+    color: white;
+    display: inline-block;
+}
+
+@media screen and (max-height: 26.375em){
+
+    .side-menu-vertical {
+        font-size: 90%;
+        width: 190px;
+    }
+
+    .side-menu-left,
+    .application-toleft {
+        left: -190px;
+    }
+
+    .application-toright {
+        left: 190px;
+    }
+}

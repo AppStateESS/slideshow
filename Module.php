@@ -7,6 +7,9 @@
 namespace slideshow;
 
 use slideshow\Factory\NavBar;
+use Canopy\Request;
+use Canopy\Response;
+use Canopy\Server;
 
 require_once PHPWS_SOURCE_DIR . 'src/Module.php';
 
@@ -16,6 +19,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
     public function __construct()
     {
         parent::__construct();
+        $this->loadDefines();
         $this->setTitle('slideshow');
         $this->setProperName('SlideShow');
         spl_autoload_register('\slideshow\Module::autoloader', true, true);
@@ -27,7 +31,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         return $settings;
     }
 
-    public function getController(\Canopy\Request $request)
+    public function getController(Request $request)
     {
         try {
             $controller = new Controller\BaseController($this, $request);
@@ -44,23 +48,42 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         return $error_controller;
     }
 
-    public function afterRun(\Canopy\Request $request,
-            \Canopy\Response $response)
+    public function afterRun(Request $request, Response $response)
     {
-        if ($request->isGet() && !$request->isAjax() && \Current_User::allow('slideshow')) {
-            \slideshow\Factory\NavBar::view($request);
+        \Layout::addStyle('slideshow');
+        $this->showNavBar($request);
+    }
+
+    private function loadDefines()
+    {
+        $dist = PHPWS_SOURCE_DIR . 'mod/slideshow/config/defines.dist.php';
+        $custom = PHPWS_SOURCE_DIR . 'mod/slideshow/config/defines.php';
+        if (is_file($custom)) {
+            require_once $custom;
+        } else {
+            require_once $dist;
         }
     }
 
-    public function runTime(\Canopy\Request $request)
+    public function runTime(Request $request)
     {
-        $cssDir = './mod/slideshow/css/';
-        \Layout::addJSHeader("<link rel='stylesheet' href='{$cssDir}component.css'>");
-        if ($request->isGet() && !$request->isAjax() && \Current_User::allow('slideshow')) {
-            if (!preg_match('/^slideshow/', \Canopy\Server::getCurrentUrl())) {
-                \slideshow\Factory\NavBar::view($request);
+        \Layout::addStyle('slideshow');
+        $this->showNavBar($request);
+    }
+
+    private function showNavBar(Request $request)
+    {
+        if ($request->isGet() && !$request->isAjax() &&
+                (\Current_User::allow('slideshow') || \Current_User::allow('users'))) {
+            if (\Current_User::allow('slideshow')) {
+                NavBar::addItem($this->showList());
             }
+            NavBar::view($request);
         }
+    }
+    
+    private function showList() {
+        return '<a href="./slideshow/Show/list"><i class="fa fa-list"></i> Show list</a>';
     }
 
     public static function autoloader($class_name)

@@ -21,13 +21,32 @@ namespace slideshow\Resource;
 class SectionResource extends BaseResource
 {
 
+    /**
+     * Show with which this section is associated
+     * @var \phpws2\Variable\IntegerVar
+     */
     protected $showId;
+
+    /**
+     * Title of section
+     * @var \phpws2\Variable\StringVar
+     */
+    protected $title;
+
+    /**
+     * Display order of slide
+     * @var \phpws2\Variable\SmallInteger 
+     */
+    protected $sorting;
     protected $table = 'ssSection';
 
     public function __construct()
     {
         parent::__construct();
         $this->showId = new \phpws2\Variable\IntegerVar(null, 'showId');
+        $this->sorting = new \phpws2\Variable\SmallInteger(1, 'sorting');
+        $this->title = new \phpws2\Variable\StringVar(null, 'title');
+        $this->title->setLimit('255');
     }
 
 }

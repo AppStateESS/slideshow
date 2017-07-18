@@ -21,11 +21,18 @@ namespace slideshow\Resource;
 class ShowResource extends BaseResource
 {
 
+    /**
+     * Title of show
+     * @var \phpws2\Variable\StringVar
+     */
+    protected $title;
     protected $table = 'ssShow';
 
     public function __construct()
     {
         parent::__construct();
+        $this->title = new \phpws2\Variable\StringVar(null, 'title');
+        $this->title->setLimit('255');
     }
 
 }

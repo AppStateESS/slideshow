@@ -20,16 +20,41 @@ namespace slideshow\Resource;
 
 class SlideResource extends BaseResource
 {
-
+    /**
+     * Number of seconds until user may click continue
+     * @var \phpws2\Variable\IntegerVar
+     */
+    protected $delay;
+    
+    /**
+     * Id of section to which this slide is associated
+     * @var \phpws2\Variable\IntegerVar
+     */
     protected $sectionId;
-    protected $sort;
+    
+    /**
+     * Display order of slide
+     * @var \phpws2\Variable\SmallInteger 
+     */
+    protected $sorting;
+    
+    /**
+     * Title or label of slide. Does not display
+     * @var \phpws2\Variable\StringVar
+     */
+    protected $title;
+    
     protected $table = 'ssSlide';
 
     public function __construct()
     {
         parent::__construct();
+        $this->delay = new \phpws2\Variable\IntegerVar(0, 'delay');
         $this->sectionId = new \phpws2\Variable\IntegerVar(null, 'sectionId');
-        $this->sort = new \phpws2\Variable\IntegerVar(1, 'sort');
+        $this->sorting = new \phpws2\Variable\SmallInteger(1, 'sorting');
+        $this->title = new \phpws2\Variable\StringVar(null, 'title');
+        $this->title->setLimit('255');
+        
     }
 
 }

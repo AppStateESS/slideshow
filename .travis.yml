@@ -11,3 +11,14 @@ after_success:
 - npm run prod
 - rm -rf node_modules
 - tar -czf slideshow.tar.gz *
+
+deploy:
+  provider: releases
+  api_key:
+    secure: MkVY8I0eXY55kewlYEkI5EROjIWaJMp9B1EaB0qNJjtqcFaiBjDGzjsRLc4TNsiZ037Y9JYL05w1oBTrVz9/D7V3LtD0bIkEnNG880zWxgwpipmvZlRljgOco8d/Js5oFK3s5oBnH30qO3WdGJs8vc+M1dwV7JCzkQnS+zdHT7jOIIzQt6gGEmoo0l9OPZ69mVSDmGzO3mOFZzkcTpT9i8WYNwyjOILr28QuVh2ddiHMnJxln4J13qAks2br9QdfyvjxfPoJkRiSD+ClOHN6l5mW46vFnO/i9MGPPk2BtjejhiTTVVeOSf2WzQTcffHtas/ScrdAFyy5yif+s8M5LtgmRBwY5PDGjXDnGnpdPtY8DZ5YYZCI2eGD9tgBvGWh6Hcy0svaEjsepXy51WMP/vuBTjqYO09wKODs9ShCFahWV5PGxX14abzRmgFT++vlhaWuOoYeQWx/dWsB+rkdxaPTnzV5WjmoPMrkkK8O6qpB1HPveqfouv5TxyAoZ0RAU3ZAaJGoZGiguVXLU+Z9+w4fbO2zFCR52/3Ok7aP+Ubq7U8Gbq1f1wnU2rkbqmIxyKEJXcFfaY2mwiwss3FTbMDlgfSTcBn4gJAhX5dLDe8fjRM7m2F81mqbOOgd9teUE4zPOsrKF4KYjh0Hnv9s70w6YMOj+81Ed5f8y9Wgt8o=
+  file: slideshow.tar.gz
+  overwrite: true
+  on:
+    repo: AppStateESS/slideshow
+    branch: master
+    tags: true

@@ -7,6 +7,9 @@ install:
 - nvm install 6
 - npm install
 
+script:
+- ".travis-build/phplint ."
+
 after_success:
 - npm run prod
 - rm -rf node_modules

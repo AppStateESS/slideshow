@@ -98,6 +98,10 @@ ul.navbar-items li {
     display: inline-block;
 }
 
+.pointer:hover {
+    cursor : pointer;
+}
+
 @media screen and (max-height: 26.375em){
 
     .side-menu-vertical {

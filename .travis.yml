@@ -15,3 +15,10 @@ after_success:
 - npm run prod
 - rm -rf node_modules
 - tar -czf slideshow.tar.gz *
+
+deploy:
+  provider: releases
+  file: "slideshow.tar.gz"
+  skip_cleanup: true
+  on:
+    tags: true

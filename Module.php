@@ -65,24 +65,32 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         }
     }
 
+    public function beforeRun(Request $request, \Canopy\Controller $controller)
+    {
+        if (\Current_User::allow('slideshow')) {
+            NavBar::addItem($this->showList());
+        }
+    }
+
     public function runTime(Request $request)
     {
-        \Layout::addStyle('slideshow');
-        $this->showNavBar($request);
+        if ($request->getModule() !== 'slideshow') {
+            \Layout::addStyle('slideshow');
+            $this->showNavBar($request);
+        }
     }
 
     private function showNavBar(Request $request)
     {
         if ($request->isGet() && !$request->isAjax() &&
                 (\Current_User::allow('slideshow') || \Current_User::allow('users'))) {
-            if (\Current_User::allow('slideshow')) {
-                NavBar::addItem($this->showList());
-            }
+
             NavBar::view($request);
         }
     }
-    
-    private function showList() {
+
+    private function showList()
+    {
         return '<a href="./slideshow/Show/list"><i class="fa fa-list"></i> Show list</a>';
     }
 

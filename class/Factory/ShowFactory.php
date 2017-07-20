@@ -19,6 +19,8 @@
 namespace slideshow\Factory;
 
 use slideshow\Resource\ShowResource as Resource;
+use Canopy\Request;
+use phpws2\Database;
 
 class ShowFactory extends Base
 {
@@ -27,5 +29,35 @@ class ShowFactory extends Base
     {
         return new Resource;
     }
-
+    
+    public function post(Request $request)
+    {
+        $resource = $this->build();
+        $resource->title = $request->pullPostString('title');
+        $this->saveResource($resource);
+        return true;
+    }
+    
+    public function listing()
+    {
+        $db = Database::getDB();
+        $db->addTable('ssShow');
+        $result = $db->select();
+        return $result;
+    }
+    
+    public function view($id)
+    {
+        /* @var $resource \slideshow\Resource\ShowResource */
+        $resource = $this->load($id);
+        /*
+        $sectionFactory = new SectionFactory();
+        $sectionFactory->listing();
+        */
+        $vars = $resource->getStringVars();
+        $template = new \phpws2\Template($vars);
+        $template->setModuleTemplate('slideshow', 'Show/view.html');
+        return $template->get();
+    }
+    
 }

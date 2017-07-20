@@ -1,1 +1,8 @@
 <h2><?=$title?></h2>
+<?php if (!empty($sections)): ?>
+<?php foreach ($sections as $section):?>
+<div><?=$section['title']?></div>
+<?php endforeach;?>
+<?php else:?>
+<div><em>No sections found</em></div>
+<?php endif;?>

@@ -28,17 +28,35 @@ class Admin extends Base
     {
         return $this->factory->post($request);
     }
+    
+    protected function listHtmlCommand(Request $request)
+    {
+        $this->addShowOption();
+        $showForm = $this->factory->reactView('showform');
+        return parent::listHtmlCommand($request) . $showForm;
+    }
 
     protected function viewHtmlCommand(Request $request)
     {
         $this->addSectionOption($this->id);
-        return parent::viewHtmlCommand($request);
+        $showId = <<<EOF
+<script>const showId = {$this->id}</script>
+EOF;
+        $sectionForm = $this->factory->reactView('sectionform');
+        return parent::viewHtmlCommand($request) . $showId . $sectionForm;
     }
     
     private function addSectionOption($id)
     {
-        $item = '<a href=""><i class="fa fa-plus"></i> Add a new section</a>';
+        $item = '<a id="add-section" class="pointer"><i class="fa fa-plus"></i> Add a new section</a>';
         NavBar::addItem($item);
     }
+    
+    private function addShowOption()
+    {
+        $item = '<a id="add-show" class="pointer"><i class="fa fa-plus"></i> Add new show</a>';
+        NavBar::addItem($item);
+    }
+            
 
 }

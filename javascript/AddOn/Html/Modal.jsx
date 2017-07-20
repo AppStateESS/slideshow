@@ -18,7 +18,7 @@ export default class Modal extends Component {
         height: `${this.props.height}px`,
         width: `${this.props.width}px`,
         margin: '0 auto',
-        padding: '2px',
+        padding: '0px 3px 3px 3px',
         borderRadius: '8px',
       },
     }
@@ -53,5 +53,5 @@ Modal.propTypes = {
 
 Modal.defaultProps = {
   width: 400,
-  height: 250,
+  height: 230,
 }

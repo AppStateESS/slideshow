@@ -15,6 +15,7 @@ export default class InputField extends Component {
       empty: false
     }
 
+    this.focus = this.focus.bind(this)
     this.handleBlur = this.handleBlur.bind(this)
     this.handleChange = this.handleChange.bind(this)
   }
@@ -32,6 +33,16 @@ export default class InputField extends Component {
     if (this.props.blur) {
       this.props.blur()
     }
+  }
+
+  componentDidMount() {
+    if (this.props.focus === true) {
+      this.focus()
+    }
+  }
+
+  focus() {
+    this.textInput.focus()
   }
 
   emptyMessage() {
@@ -65,11 +76,17 @@ export default class InputField extends Component {
       ? <RequiredIcon/>
       : null
 
+    const focus = (input) => {
+      this.textInput = input
+    }
+
     let input = (<input
       id={this.props.iid}
       type={this.props.type}
       name={this.props.name}
-      value={this.props.value === null ? '' : this.props.value}
+      value={this.props.value === null
+      ? ''
+      : this.props.value}
       className={inputClass}
       onChange={this.handleChange}
       onBlur={this.handleBlur}
@@ -80,6 +97,7 @@ export default class InputField extends Component {
       size={this.props.size}
       maxLength={this.props.maxLength}
       placeholder={this.props.placeholder}
+      ref={focus}
       autoComplete={this.props.autocomplete}/>)
 
     if (this.props.wrap) {
@@ -126,14 +144,15 @@ InputField.defaultProps = {
   wrap: null,
   onEmpty: null,
   flagEmpty: true,
-  disableRequireCheck: false
+  disableRequireCheck: false,
+  focus : false,
 }
 
 InputField.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
   type: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number,]),
   change: PropTypes.func,
   blur: PropTypes.func,
   placeholder: PropTypes.string,
@@ -148,7 +167,8 @@ InputField.propTypes = {
   selectOnClick: PropTypes.bool,
   onEmpty: PropTypes.func,
   flagEmpty: PropTypes.bool,
-  disableRequireCheck: PropTypes.bool
+  disableRequireCheck: PropTypes.bool,
+  focus: PropTypes.bool,
 }
 
 export const RequiredIcon = () => {

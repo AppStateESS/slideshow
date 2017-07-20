@@ -1,4 +1,4 @@
-const Show = {
+let Show = {
   id: 0,
   title: ''
 }

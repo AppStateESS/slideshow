@@ -16,32 +16,21 @@
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace slideshow\Controller\Show;
+namespace slideshow\Controller\Section;
 
 use Canopy\Request;
-use slideshow\Factory\ShowFactory as Factory;
-use slideshow\Controller\RoleController;
+use slideshow\Factory\NavBar;
 
-class Base extends RoleController
+class Admin extends Base
 {
     /**
-     * @var object Factory
+     * @var \slideshow\Factory\SectionFactory
      */
     protected $factory;
-    
-    protected function loadFactory()
+
+    public function createPostCommand(Request $request)
     {
-        $this->factory = new Factory;
-    }
-    
-    protected function listHtmlCommand(Request $request)
-    {
-        return $this->factory->listing();
-    }
-    
-    protected function viewHtmlCommand(Request $request)
-    {
-        return $this->factory->view($this->id);
+        return $this->factory->post($request);
     }
 
 }

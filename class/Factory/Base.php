@@ -5,6 +5,7 @@ namespace slideshow\Factory;
 use slideshow\Exception\ResourceNotFound;
 use phpws2\Settings;
 use phpws2\Database;
+use Canopy\Request;
 /**
  *
  * @author Matthew McNaney <mcnaneym@appstate.edu>

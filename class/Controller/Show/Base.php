@@ -39,5 +39,15 @@ class Base extends RoleController
     {
         return $this->factory->reactView('showlist');
     }
+    
+    protected function listJsonCommand(Request $request)
+    {
+        return $this->factory->listing();
+    }
+    
+    protected function viewHtmlCommand(Request $request)
+    {
+        return $this->factory->view($this->id);
+    }
 
 }

@@ -9,7 +9,7 @@ namespace slideshow\Resource;
 
 use \phpws2\Database;
 
-class Base extends \phpws2\Resource
+class BaseResource extends \phpws2\Resource
 {
 
     public function __set($name, $value)

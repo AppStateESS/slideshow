@@ -18,7 +18,27 @@
 
 namespace slideshow\Controller\Show;
 
+use Canopy\Request;
+use slideshow\Factory\NavBar;
+
 class Admin extends Base
 {
+
+    public function createPostCommand(Request $request)
+    {
+        return $this->factory->post($request);
+    }
+
+    protected function viewHtmlCommand(Request $request)
+    {
+        $this->addSectionOption($this->id);
+        return parent::viewHtmlCommand($request);
+    }
+    
+    private function addSectionOption($id)
+    {
+        $item = '<a href=""><i class="fa fa-plus"></i> Add a new section</a>';
+        NavBar::addItem($item);
+    }
 
 }

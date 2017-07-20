@@ -44,6 +44,8 @@ class DecisionResource extends BaseResource
      * @var \phpws2\Variable\IntegerVar
      */
     protected $slideId;
+    
+    protected $table = 'ssDecision';
 
     public function __construct()
     {

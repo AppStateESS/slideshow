@@ -17,6 +17,18 @@ function slideshow_install(&$content)
         $ssUserToSection->addDataType('complete', 'int')->setIsNull(true)->setDefault(0);
         $ssUserToSection->create();
         
+        $decision = new \slideshow\Resource\DecisionResource;
+        $decision->createTable($db);
+
+        $section = new \slideshow\Resource\SectionResource;
+        $section->createTable($db);
+
+        $show = new \slideshow\Resource\ShowResource;
+        $show->createTable($db);
+
+        $slide = new \slideshow\Resource\SlideResource;
+        $slide->createTable($db);
+        
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
         $db->rollback();

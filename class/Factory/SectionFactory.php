@@ -20,6 +20,7 @@ namespace slideshow\Factory;
 
 use slideshow\Resource\SectionResource as Resource;
 use phpws2\Database;
+use phpws2\Template;
 use Canopy\Request;
 
 class SectionFactory extends Base
@@ -29,19 +30,20 @@ class SectionFactory extends Base
     {
         return new Resource;
     }
-    
-    public function post(Request $request) {
+
+    public function post(Request $request)
+    {
         $showFactory = new ShowFactory;
         $showId = $request->pullPostInteger('showId');
         $showFactory->load($showId);
         $resource = $this->build();
         $resource->showId = $showId;
         $resource->title = $request->pullPostString('title');
-        $resource->sorting = (int)$this->getCurrentSort($showId) + 1;
+        $resource->sorting = (int) $this->getCurrentSort($showId) + 1;
         $this->saveResource($resource);
         return true;
     }
-    
+
     public function getCurrentSort($showId)
     {
         $db = Database::getDB();
@@ -52,7 +54,7 @@ class SectionFactory extends Base
         $db->setLimit(1);
         return $db->selectColumn();
     }
-    
+
     public function listing($showId)
     {
         $db = Database::getDB();
@@ -60,6 +62,38 @@ class SectionFactory extends Base
         $tbl->addFieldConditional('showId', $showId);
         $tbl->addOrderBy('sorting');
         return $db->select();
+    }
+
+    public function view($sectionId)
+    {
+        \Layout::addStyle('slideshow', 'reveal.css');
+        \Layout::addStyle('slideshow', 'white.css');
+        
+        $slide['content'] = <<<EOF
+        <div class="header">
+            <h2>Page 1</h2>
+        </div>
+EOF;
+        $slide['backgroundImage'] = null;
+        
+        $slides[] = $slide;
+        $slide['content'] = <<<EOF
+        <div class="header">
+            <h2>Page 2</h2>
+        </div>
+EOF;
+        $slide['backgroundImage'] = null;
+        
+        $slides[] = $slide;
+        $vars['slides'] = $slides;
+        
+        $vars['decisions'][] = <<<EOF
+            <div class="next"><a href="./slideshow/Section/7#/1" class="">Continue <i class="fa fa-arrow-right"></i></a></div>
+EOF;
+        
+        $template = new Template($vars);
+        $template->setModuleTemplate('slideshow', 'Section/view.html');
+        return $template->get();
     }
 
 }

@@ -33,5 +33,9 @@ class Base extends RoleController
     {
         $this->factory = new Factory;
     }
+    
+    protected function viewHtmlCommand(Request $request) {
+        return $this->factory->view($this->id);
+    }
 
 }

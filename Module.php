@@ -48,12 +48,6 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         return $error_controller;
     }
 
-    public function afterRun(Request $request, Response $response)
-    {
-        \Layout::addStyle('slideshow');
-        $this->showNavBar($request);
-    }
-
     private function loadDefines()
     {
         $dist = PHPWS_SOURCE_DIR . 'mod/slideshow/config/defines.dist.php';
@@ -65,15 +59,11 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         }
     }
 
-    public function beforeRun(Request $request, \Canopy\Controller $controller)
+    public function runTime(Request $request)
     {
         if (\Current_User::allow('slideshow')) {
             NavBar::addItem($this->showList());
         }
-    }
-
-    public function runTime(Request $request)
-    {
         if ($request->getModule() !== 'slideshow') {
             \Layout::addStyle('slideshow');
             $this->showNavBar($request);

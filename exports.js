@@ -5,4 +5,5 @@ exports.entry = {
   vendor: ['react', 'react-dom'],
   showform: exports.APP_DIR + '/ShowForm/index.jsx',
   sectionform: exports.APP_DIR + '/SectionForm/index.jsx',
+  slideform: exports.APP_DIR + '/SlideForm/index.jsx',
 }

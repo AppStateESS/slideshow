@@ -23,6 +23,7 @@ use slideshow\Factory\NavBar;
 
 class Admin extends Base
 {
+
     /**
      * @var \slideshow\Factory\SectionFactory
      */
@@ -31,6 +32,22 @@ class Admin extends Base
     public function createPostCommand(Request $request)
     {
         return $this->factory->post($request);
+    }
+
+    protected function viewHtmlCommand(Request $request)
+    {
+        $sectionId = <<<EOF
+<script>const sectionId = {$this->id}</script>
+EOF;
+        $slideForm = $this->factory->reactView('slideform');
+        $this->addSlideOption($this->id);
+        return parent::viewHtmlCommand($request) . $sectionId . $slideForm;
+    }
+
+    protected function addSlideOption($id)
+    {
+        $item = '<a id="add-slide" class="pointer"><i class="fa fa-plus"></i> Add a new slide</a>';
+        NavBar::addItem($item);
     }
 
 }

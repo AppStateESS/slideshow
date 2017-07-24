@@ -16,7 +16,9 @@
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-class User
+namespace slideshow\Controller\Section;
+
+class User extends Base
 {
     
 }

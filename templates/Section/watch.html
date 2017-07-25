@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="http://localhost/reveal/javascript/reveal/css/theme/black.css">
+<div class="slides">
+    <?php foreach ($slides as $slide):?>
+    <section data-background-image="<?=$slide['backgroundImage']?>">
+        <?=$slide['content']?>
+        <div>
+            <?php foreach ($decisions as $decision):?>
+            <?=$decision?>
+            <?php endforeach;?>
+        </div>
+    </section>
+    <?php endforeach;?>
+</div>
+<script src="http://localhost/reveal/javascript/reveal/js/reveal.js"></script>
+<script>
+    Reveal.initialize({
+        transition: 'convex',
+        controls: false,
+        keyboard: false,
+        touch: false,
+        center: true,
+        margin: 0
+    });
+</script>

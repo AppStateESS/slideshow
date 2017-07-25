@@ -23,18 +23,71 @@ use phpws2\Database;
 
 class SlideFactory extends Base
 {
-
+    private $saveDirectory = './images/slideshow/';
+    
+    
     protected function build()
     {
         return new Resource;
     }
 
-    public function listing($sectionId) {
+    public function listing($sectionId)
+    {
         $db = Database::getDB();
         $tbl = $db->addTable('ssSlide');
         $tbl->addFieldConditional('sectionId', $sectionId);
         $db->select();
-        
     }
-    
+
+    public function handlePicturePost($sectionId)
+    {
+        if (!isset($_FILES) || empty($_FILES)) {
+            return array('error' => 'No files uploaded');
+        }
+        $picture = $_FILES['picture'];
+
+        try {
+            $size = getimagesize($picture['tmp_name']);
+            $result['width'] = $size[0];
+            $result['height'] = $size[1];
+            $result['path'] =$this->moveImage($picture, $sectionId);
+            $result['success'] = true;
+        } catch (properties\Exception\FileSaveFailure $e) {
+            $result['success'] = false;
+            $result['error'] = $e->getMessage();
+        } catch (properties\Exception\WrongImageType $e) {
+            $result['success'] = false;
+            $result['error'] = $e->getMessage();
+        } catch (\Exception $e) {
+            $result['success'] = false;
+            $result['error'] = $e->getMessage();
+        }
+        return $result;
+    }
+
+    public function moveImage($pic, $sectionId)
+    {
+        if ($pic['error'] !== 0) {
+            throw new \Exception('Upload error');
+        }
+
+        if (!in_array($pic['type'],
+                        array('image/jpeg', 'image/gif', 'image/png'))) {
+            throw new \properties\Exception\WrongImageType;
+        }
+        $dest = $this->saveDirectory . $sectionId . '/';
+        if (!is_dir($dest)) {
+            if (!mkdir($dest, 0755)) {
+                throw new \Exception('Could not create directory');
+            }
+        }
+
+        $file_name = rand() . time() . '.' . \phpws\PHPWS_File::getFileExtension($pic['name']);
+        $path = $dest . $file_name;
+        if (!move_uploaded_file($pic['tmp_name'], $path)) {
+            throw new properties\Exception\FileSaveFailure($path);
+        }
+        return $path;
+    }
+
 }

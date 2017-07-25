@@ -35,7 +35,7 @@ export default class Section extends Component {
 
   render() {
     return (
-      <div><Modal isOpen={this.state.showForm} close={this.hideForm}><Form success={this.sectionSaved}/></Modal></div>
+      <div><Modal isOpen={this.state.showForm} close={this.hideForm} width="90%" height="90%"><Form success={this.sectionSaved}/></Modal></div>
     )
   }
 }

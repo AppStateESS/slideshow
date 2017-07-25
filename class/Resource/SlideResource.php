@@ -44,6 +44,14 @@ class SlideResource extends BaseResource
      */
     protected $title;
     
+    /**
+     * Content of the slide.
+     * @var \phpws2\Variable\StringVar
+     */
+    protected $content;
+    
+    protected $backgroundImage;
+    
     protected $table = 'ssSlide';
 
     public function __construct()
@@ -52,8 +60,11 @@ class SlideResource extends BaseResource
         $this->delay = new \phpws2\Variable\IntegerVar(0, 'delay');
         $this->sectionId = new \phpws2\Variable\IntegerVar(null, 'sectionId');
         $this->sorting = new \phpws2\Variable\SmallInteger(1, 'sorting');
-        $this->title = new \phpws2\Variable\StringVar(null, 'title');
+        $this->title = new \phpws2\Variable\TextOnly(null, 'title');
         $this->title->setLimit('255');
+        $this->content = new \phpws2\Variable\StringVar(null, 'content');
+        $this->backgroundImage = new \phpws2\Variable\FileVar(null, 'backgroundImage');
+        $this->backgroundImage->allowNull(true);
         
     }
 

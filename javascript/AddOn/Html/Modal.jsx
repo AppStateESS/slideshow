@@ -15,8 +15,8 @@ export default class Modal extends Component {
         backgroundColor: 'rgba(0,0,0,.7)'
       },
       content: {
-        height: `${this.props.height}px`,
-        width: `${this.props.width}px`,
+        height: this.props.height,
+        width: this.props.width,
         margin: '0 auto',
         padding: '0px 3px 3px 3px',
         borderRadius: '8px',
@@ -46,12 +46,12 @@ export default class Modal extends Component {
 Modal.propTypes = {
   children: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
   close: PropTypes.func.isRequired,
-  width: PropTypes.number,
-  height: PropTypes.number,
+  width: PropTypes.string,
+  height: PropTypes.string,
   isOpen: PropTypes.bool.isRequired,
 }
 
 Modal.defaultProps = {
-  width: 400,
-  height: 230,
+  width: '400px',
+  height: '230px',
 }

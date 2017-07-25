@@ -66,8 +66,29 @@ class SectionFactory extends Base
 
     public function view($sectionId)
     {
+        $showFactory = new ShowFactory;
+        $section = $this->load($sectionId);
+        $show = $showFactory->load($section->showId);
+        
+        $vars['showTitle'] = $show->title;
+        $vars['sectionTitle'] = $section->title;
+        
+        $slideFactory = new SlideFactory;
+        $slides = $slideFactory->listing($sectionId);
+        if (empty($slides)) {
+            $slides = array();
+        }
+        $vars['slides'] = $slides;
+        $template = new Template($vars);
+        $template->setModuleTemplate('slideshow', 'Section/view.html');
+        return $template->get();
+    }
+    
+    public function watch($sectionId)
+    {
         \Layout::addStyle('slideshow', 'reveal.css');
         \Layout::addStyle('slideshow', 'white.css');
+        NavBar::halt();
         
         $slide['content'] = <<<EOF
         <div class="header">
@@ -92,7 +113,7 @@ EOF;
 EOF;
         
         $template = new Template($vars);
-        $template->setModuleTemplate('slideshow', 'Section/view.html');
+        $template->setModuleTemplate('slideshow', 'Section/watch.html');
         return $template->get();
     }
 

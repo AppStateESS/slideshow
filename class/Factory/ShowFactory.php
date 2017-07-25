@@ -56,6 +56,10 @@ class ShowFactory extends Base
 
         $vars = $resource->getStringVars();
         $sections = $sectionFactory->listing($resource->id);
+        foreach ($sections as $sec) {
+            $slideFactory = new SlideFactory();
+            $slides = $slideFactory->listing($sec['id']);
+        }
         $vars['sections'] = $sections;
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('slideshow', 'Show/view.html');

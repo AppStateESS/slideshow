@@ -6,6 +6,11 @@ ul.navbar-items li {
     list-style-type : none;
 }
 
+h2 {
+    margin:0;
+    padding: 0;
+}
+
 /* General styles for all menus */
 .side-menu {
     padding-left : 10px;
@@ -85,7 +90,6 @@ ul.navbar-items li {
 }
 
 #show-left-push {
-    
     padding: 8px;
     background-color: #222;
     color: white;
@@ -110,9 +114,10 @@ ul.navbar-items li {
     cursor : pointer;
 }
 
-.show-list, .section-list, .show-view, .section-view {
-    padding : 0 1.1em;
+.slideshow {
+    padding : 0 2.5em;
 }
+
 
 @media screen and (max-height: 26.375em){
 

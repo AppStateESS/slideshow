@@ -8,7 +8,10 @@ module.exports = {
     path: setup.path.join(setup.APP_DIR, "dev"),
     filename: "[name].js"
   },
-  plugins: [new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.js'})],
+  plugins: [
+    new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery",}),
+    new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.js'}),
+  ],
   module: {
     rules: [
       {
@@ -17,19 +20,21 @@ module.exports = {
         loader: 'jshint-loader',
         exclude: '/node_modules/',
         include: setup.APP_DIR + "/dev"
-      },
-      {
+      }, {
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        loader: 'url-loader?limit=100000'
+      }, {
         test: /\.jsx?/,
         include: setup.APP_DIR,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react']
+          presets: ['es2015', 'react',]
         }
       }, {
         test: /\.css$/,
         loader: "style-loader!css-loader"
-      }
-    ],
+      },
+    ]
   },
   devtool: 'source-map'
 }

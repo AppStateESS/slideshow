@@ -61,7 +61,7 @@ class BaseController extends \phpws2\Http\Controller
         $role_name = substr(strrchr(get_class($this->role), '\\'), 1);
         $controller_name = '\\slideshow\\Controller\\' . $major_controller . '\\' . $role_name;
         if (!class_exists($controller_name)) {
-            throw new \slideshow\Exception\BadCommand;
+            throw new \slideshow\Exception\BadCommand($controller_name);
         }
         $this->controller = new $controller_name($this->role);
     }

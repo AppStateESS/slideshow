@@ -25,10 +25,11 @@ class NavBar
     public static $options;
     public static $title = 'Administrate';
     public static $has_run = false;
+    public static $halt = false;
 
     public static function view(\Canopy\Request $request)
     {
-        if (self::$has_run) {
+        if (self::$has_run || self::$halt) {
             return;
         }
         self::$has_run = true;
@@ -95,6 +96,11 @@ class NavBar
     public static function setTitle($title)
     {
         self::$title = $title;
+    }
+    
+    public static function halt()
+    {
+        self::$halt = true;
     }
 
 }

@@ -16,47 +16,16 @@
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace slideshow\Controller\Show;
+namespace slideshow\Controller\Slide;
 
 use Canopy\Request;
-use slideshow\Factory\NavBar;
 
 class Admin extends Base
 {
 
-    public function createPostCommand(Request $request)
+    protected function picturePostCommand(Request $request)
     {
-        return $this->factory->post($request);
+        return $this->factory->handlePicturePost($request->pullPostInteger('sectionId'));
     }
-    
-    protected function listHtmlCommand(Request $request)
-    {
-        $this->addShowOption();
-        $showForm = $this->factory->reactView('showform');
-        return parent::listHtmlCommand($request) . $showForm;
-    }
-
-    protected function viewHtmlCommand(Request $request)
-    {
-        $this->addSectionOption($this->id);
-        $showId = <<<EOF
-<script>const showId = {$this->id}</script>
-EOF;
-        $sectionForm = $this->factory->reactView('sectionform');
-        return parent::viewHtmlCommand($request) . $showId . $sectionForm;
-    }
-    
-    private function addSectionOption($id)
-    {
-        $item = '<a id="add-section" class="pointer"><i class="fa fa-plus"></i> Add a new section</a>';
-        NavBar::addItem($item);
-    }
-    
-    private function addShowOption()
-    {
-        $item = '<a id="add-show" class="pointer"><i class="fa fa-plus"></i> Add new show</a>';
-        NavBar::addItem($item);
-    }
-            
 
 }

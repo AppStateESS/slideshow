@@ -19,6 +19,7 @@
 namespace slideshow\Factory;
 
 use slideshow\Resource\SlideResource as Resource;
+use phpws2\Database;
 
 class SlideFactory extends Base
 {
@@ -28,4 +29,12 @@ class SlideFactory extends Base
         return new Resource;
     }
 
+    public function listing($sectionId) {
+        $db = Database::getDB();
+        $tbl = $db->addTable('ssSlide');
+        $tbl->addFieldConditional('sectionId', $sectionId);
+        $db->select();
+        
+    }
+    
 }

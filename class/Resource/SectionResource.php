@@ -49,4 +49,9 @@ class SectionResource extends BaseResource
         $this->title->setLimit('255');
     }
 
+    public function getImagePath()
+    {
+        return PHPWS_HOME_DIR . 'images/slideshow/' . $this->id;
+    }
+
 }

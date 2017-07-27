@@ -118,6 +118,14 @@ h2 {
     padding : 0 2.5em;
 }
 
+.dropzone {
+    padding-top : 50px;
+    border-style: dashed;
+    border-radius: 6px;
+    width : 320px;
+    height: 230px;
+    overflow: auto;
+}
 
 @media screen and (max-height: 26.375em){
 

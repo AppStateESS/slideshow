@@ -92,15 +92,15 @@ abstract class RoleController
     private function loadRequestId(Request $request)
     {
         $id = $request->shiftCommand();
-        if (is_numeric($id)) {
-            throw new BadCommand($method_name);
+        if (!is_numeric($id)) {
+            throw new BadCommand($id);
         }
         $this->id = $id;
     }
 
     public function put(Request $request)
     {
-        $this->loadRequiredId();
+        $this->loadRequestId();
 
         $command = $request->shiftCommand();
         if (empty($command)) {
@@ -173,7 +173,7 @@ abstract class RoleController
 
     public function patch(Request $request)
     {
-        $this->loadRequiredId();
+        $this->loadRequestId($request);
 
         $patch_command = $request->shiftCommand();
         if (empty($patch_command)) {
@@ -192,7 +192,7 @@ abstract class RoleController
 
     public function delete(Request $request)
     {
-        $this->loadRequiredId();
+        $this->loadRequestId($request);
 
         if (!method_exists($this, 'deleteCommand')) {
             throw new BadCommand('deleteCommand');

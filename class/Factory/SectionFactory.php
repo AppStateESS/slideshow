@@ -35,12 +35,12 @@ class SectionFactory extends Base
     {
         $showFactory = new ShowFactory;
         $showId = $request->pullPostInteger('showId');
-        $showFactory->load($showId);
-        $resource = $this->build();
-        $resource->showId = $showId;
-        $resource->title = $request->pullPostString('title');
-        $resource->sorting = (int) $this->getCurrentSort($showId) + 1;
-        $this->saveResource($resource);
+        $section = $this->build();
+        $section->showId = $showId;
+        $section->title = $request->pullPostString('title');
+        $section->sorting = (int) $this->getCurrentSort($showId) + 1;
+        return $section;
+
         return true;
     }
 
@@ -69,10 +69,10 @@ class SectionFactory extends Base
         $showFactory = new ShowFactory;
         $section = $this->load($sectionId);
         $show = $showFactory->load($section->showId);
-        
+
         $vars['showTitle'] = $show->title;
         $vars['sectionTitle'] = $section->title;
-        
+
         $slideFactory = new SlideFactory;
         $slides = $slideFactory->listing($sectionId);
         if (empty($slides)) {
@@ -83,20 +83,20 @@ class SectionFactory extends Base
         $template->setModuleTemplate('slideshow', 'Section/view.html');
         return $template->get();
     }
-    
+
     public function watch($sectionId)
     {
         \Layout::addStyle('slideshow', 'reveal.css');
         \Layout::addStyle('slideshow', 'white.css');
         NavBar::halt();
-        
+
         $slide['content'] = <<<EOF
         <div class="header">
             <h2>Page 1</h2>
         </div>
 EOF;
         $slide['backgroundImage'] = null;
-        
+
         $slides[] = $slide;
         $slide['content'] = <<<EOF
         <div class="header">
@@ -104,17 +104,25 @@ EOF;
         </div>
 EOF;
         $slide['backgroundImage'] = null;
-        
+
         $slides[] = $slide;
         $vars['slides'] = $slides;
-        
+
         $vars['decisions'][] = <<<EOF
             <div class="next"><a href="./slideshow/Section/7#/1" class="">Continue <i class="fa fa-arrow-right"></i></a></div>
 EOF;
-        
+
         $template = new Template($vars);
         $template->setModuleTemplate('slideshow', 'Section/watch.html');
         return $template->get();
+    }
+
+    public function createImageDirectory($section)
+    {
+        $path = $section->getImagePath();
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
     }
 
 }

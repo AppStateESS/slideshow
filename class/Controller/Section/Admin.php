@@ -31,7 +31,10 @@ class Admin extends Base
 
     public function createPostCommand(Request $request)
     {
-        return $this->factory->post($request);
+        $section = $this->factory->post($request);
+        $this->factory->saveResource($section);
+        $this->factory->createImageDirectory($section);
+        return true;
     }
 
     protected function viewHtmlCommand(Request $request)

@@ -27,5 +27,25 @@ class Admin extends Base
     {
         return $this->factory->handlePicturePost($request->pullPostInteger('sectionId'));
     }
+    
+    /**
+     * Creates a new slide. Note, this slide is created without any data and
+     * passed up to the form. This allows an id to be created. If the form is 
+     * abandoned, the slide should be deleted.
+     * @param Request $request
+     * @returns array Array with slide id
+     */
+    protected function createPostCommand(Request $request)
+    {
+        $slide = $this->factory->post($request);
+        $slideId = $this->factory->save($slide);
+        $this->factory->createImageDirectory($slide);
+        return array('slideId'=>$slideId);
+    }
+    
+    protected function deleteCommand(Request $request)
+    {
+        $this->factory->delete($this->id);
+    }
 
 }

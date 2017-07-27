@@ -20,12 +20,13 @@ namespace slideshow\Factory;
 
 use slideshow\Resource\SlideResource as Resource;
 use phpws2\Database;
+use Canopy\Request;
 
 class SlideFactory extends Base
 {
+
     private $saveDirectory = './images/slideshow/';
-    
-    
+
     protected function build()
     {
         return new Resource;
@@ -50,7 +51,7 @@ class SlideFactory extends Base
             $size = getimagesize($picture['tmp_name']);
             $result['width'] = $size[0];
             $result['height'] = $size[1];
-            $result['path'] =$this->moveImage($picture, $sectionId);
+            $result['path'] = $this->moveImage($picture, $sectionId);
             $result['success'] = true;
         } catch (properties\Exception\FileSaveFailure $e) {
             $result['success'] = false;
@@ -90,4 +91,43 @@ class SlideFactory extends Base
         return $path;
     }
 
+    /**
+     * Creates an EMPTY slide. Information is added in the PUT.
+     * @param \slideshow\Factory\Request $request
+     */
+    public function post(Request $request)
+    {
+        $slide = $this->build();
+        $slide->sectionId = $request->pullPostInteger('sectionId');
+        $slide->title = ' ';
+        $slide->content = ' ';
+        return $slide;
+    }
+
+    public function save(Resource $slide)
+    {
+        self::saveResource($slide);
+        return $slide->id;
+    }
+
+    public function delete($slideId)
+    {
+        $slide = $this->load($slideId);
+        self::deleteResource($slide);
+        $this->deleteImageDirectory($slide);
+    }
+
+    public function deleteImageDirectory($slide)
+    {
+        $path = $slide->getImagePath();
+        \phpws\PHPWS_File::rmdir($path);
+    }
+
+    public function createImageDirectory($slide)
+    {
+        $path = $slide->getImagePath();
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
+    }
 }

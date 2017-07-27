@@ -20,38 +20,48 @@ namespace slideshow\Resource;
 
 class SlideResource extends BaseResource
 {
+
     /**
      * Number of seconds until user may click continue
      * @var \phpws2\Variable\IntegerVar
      */
     protected $delay;
-    
+
     /**
      * Id of section to which this slide is associated
      * @var \phpws2\Variable\IntegerVar
      */
     protected $sectionId;
-    
+
     /**
      * Display order of slide
      * @var \phpws2\Variable\SmallInteger 
      */
     protected $sorting;
-    
+
     /**
      * Title or label of slide. Does not display
      * @var \phpws2\Variable\StringVar
      */
     protected $title;
-    
+
     /**
      * Content of the slide.
      * @var \phpws2\Variable\StringVar
      */
     protected $content;
-    
+
+    /**
+     *
+     * @var \phpws2\Variable\FileVar
+     */
     protected $backgroundImage;
-    
+
+    /**
+     *
+     * @var \phpws2\Variable\BooleanVar
+     */
+    protected $active;
     protected $table = 'ssSlide';
 
     public function __construct()
@@ -63,9 +73,15 @@ class SlideResource extends BaseResource
         $this->title = new \phpws2\Variable\TextOnly(null, 'title');
         $this->title->setLimit('255');
         $this->content = new \phpws2\Variable\StringVar(null, 'content');
-        $this->backgroundImage = new \phpws2\Variable\FileVar(null, 'backgroundImage');
+        $this->backgroundImage = new \phpws2\Variable\FileVar(null,
+                'backgroundImage');
         $this->backgroundImage->allowNull(true);
-        
+        $this->active = new \phpws2\Variable\BooleanVar(false, 'active');
+    }
+
+    public function getImagePath()
+    {
+        return PHPWS_HOME_DIR . 'images/slideshow/' . $this->sectionId . '/' . $this->id;
     }
 
 }

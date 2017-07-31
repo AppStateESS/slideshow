@@ -25,9 +25,15 @@ class Admin extends Base
 
     protected function picturePostCommand(Request $request)
     {
-        return $this->factory->handlePicturePost($request->pullPostInteger('sectionId'));
+        return $this->factory->handlePicturePost($request->pullPostInteger('slideId'));
     }
-    
+
+    protected function clearPicturePatchCommand(Request $request)
+    {
+        return $this->factory->deletePicture($this->id,
+                        $request->pullPatchString('backgroundImage'));
+    }
+
     /**
      * Creates a new slide. Note, this slide is created without any data and
      * passed up to the form. This allows an id to be created. If the form is 
@@ -40,12 +46,25 @@ class Admin extends Base
         $slide = $this->factory->post($request);
         $slideId = $this->factory->save($slide);
         $this->factory->createImageDirectory($slide);
-        return array('slideId'=>$slideId);
+        return array('slideId' => $slideId);
     }
-    
+
     protected function deleteCommand(Request $request)
     {
         $this->factory->delete($this->id);
+    }
+
+    protected function jsonPatchCommand(Request $request)
+    {
+        $this->factory->patch($this->id, $request->pullPatchString('varname'),
+                $request->pullPatchVar('value'));
+        $json['success'] = true;
+        return $json;
+    }
+    
+    protected function listJsonCommand(Request $request)
+    {
+        return $this->factory->listing($request->pullGetInteger('sectionId'));
     }
 
 }

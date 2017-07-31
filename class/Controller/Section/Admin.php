@@ -39,12 +39,8 @@ class Admin extends Base
 
     protected function viewHtmlCommand(Request $request)
     {
-        $sectionId = <<<EOF
-<script>const sectionId = {$this->id}</script>
-EOF;
-        $slideForm = $this->factory->reactView('slideform');
         $this->addSlideOption($this->id);
-        return parent::viewHtmlCommand($request) . $sectionId . $slideForm;
+        return $this->factory->view($this->id);
     }
 
     protected function addSlideOption($id)

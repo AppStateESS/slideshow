@@ -24,21 +24,22 @@ use slideshow\Controller\RoleController;
 
 class Base extends RoleController
 {
+
     /**
      * @var object Factory
      */
     protected $factory;
-    
+
     protected function loadFactory()
     {
         $this->factory = new Factory;
     }
-    
+
     protected function listHtmlCommand(Request $request)
     {
         return $this->factory->listing();
     }
-    
+
     protected function viewHtmlCommand(Request $request)
     {
         return $this->factory->view($this->id);

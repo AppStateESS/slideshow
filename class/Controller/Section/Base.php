@@ -24,6 +24,7 @@ use slideshow\Controller\RoleController;
 
 class Base extends RoleController
 {
+
     /**
      * @var object Factory
      */
@@ -33,9 +34,11 @@ class Base extends RoleController
     {
         $this->factory = new Factory;
     }
-    
-    protected function viewHtmlCommand(Request $request) {
-        return $this->factory->view($this->id);
+
+    protected function watchHtmlCommand(Request $request)
+    {
+        $this->loadRequestId($request);
+        return $this->factory->watch($this->id);
     }
 
 }

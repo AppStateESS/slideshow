@@ -89,11 +89,11 @@ abstract class RoleController
      * Loads the EXPECTED id from the url into the object.
      * If the id is not there, the command fails
      */
-    private function loadRequestId(Request $request)
+    protected function loadRequestId(Request $request)
     {
         $id = $request->shiftCommand();
         if (!is_numeric($id)) {
-            throw new BadCommand($id);
+            throw new \slideshow\Exception\MissingRequestId($id);
         }
         $this->id = $id;
     }

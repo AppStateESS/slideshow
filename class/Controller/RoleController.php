@@ -100,7 +100,7 @@ abstract class RoleController
 
     public function put(Request $request)
     {
-        $this->loadRequestId();
+        $this->loadRequestId($request);
 
         $command = $request->shiftCommand();
         if (empty($command)) {

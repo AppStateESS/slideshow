@@ -3,8 +3,8 @@ let Slide = {
   delay : 0,
   sectionId: 0,
   sorting: 1,
-  title: '',
-  content: '',
+  title: 'Untitled slide',
+  content: '<p>Content here...</p>',
   backgroundImage : ''
 }
 

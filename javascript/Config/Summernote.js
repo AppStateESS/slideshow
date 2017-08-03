@@ -35,7 +35,7 @@ const toolbar = [
 ]
 
 export const options = {
-  height: 330,
+  height: 300,
   dialogsInBody: true,
   toolbar: toolbar
 }

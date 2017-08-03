@@ -56,12 +56,6 @@ class SlideResource extends BaseResource
      * @var \phpws2\Variable\FileVar
      */
     protected $backgroundImage;
-
-    /**
-     *
-     * @var \phpws2\Variable\BooleanVar
-     */
-    protected $active;
     protected $table = 'ssSlide';
 
     public function __construct()
@@ -69,19 +63,18 @@ class SlideResource extends BaseResource
         parent::__construct();
         $this->delay = new \phpws2\Variable\IntegerVar(0, 'delay');
         $this->sectionId = new \phpws2\Variable\IntegerVar(null, 'sectionId');
-        $this->sorting = new \phpws2\Variable\SmallInteger(1, 'sorting');
-        $this->title = new \phpws2\Variable\TextOnly(null, 'title');
+        $this->sorting = new \phpws2\Variable\SmallInteger(0, 'sorting');
+        $this->title = new \phpws2\Variable\TextOnly('Untitled slide', 'title');
         $this->title->setLimit('255');
         $this->content = new \phpws2\Variable\StringVar(null, 'content');
         $this->backgroundImage = new \phpws2\Variable\FileVar(null,
                 'backgroundImage');
         $this->backgroundImage->allowNull(true);
-        $this->active = new \phpws2\Variable\BooleanVar(false, 'active');
     }
 
     public function getImagePath()
     {
-        return PHPWS_HOME_DIR . 'images/slideshow/' . $this->sectionId . '/' . $this->id;
+        return './images/slideshow/' . $this->sectionId . '/' . $this->id . '/';
     }
 
 }

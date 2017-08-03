@@ -30,8 +30,7 @@ class Admin extends Base
 
     protected function clearPicturePatchCommand(Request $request)
     {
-        return $this->factory->deletePicture($this->id,
-                        $request->pullPatchString('backgroundImage'));
+        return $this->factory->clearBackgroundImage($this->id);
     }
 
     /**
@@ -61,10 +60,16 @@ class Admin extends Base
         $json['success'] = true;
         return $json;
     }
-    
+
     protected function listJsonCommand(Request $request)
     {
         return $this->factory->listing($request->pullGetInteger('sectionId'));
+    }
+
+    protected function movePatchCommand(Request $request)
+    {
+        $slide = $this->factory->load($this->id);
+        $this->factory->sort($slide, $request->pullPatchInteger('newPosition'));
     }
 
 }

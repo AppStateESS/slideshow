@@ -70,15 +70,13 @@ class SectionFactory extends Base
         $section = $this->load($sectionId);
         $show = $showFactory->load($section->showId);
 
+        $vars['sectionId'] = <<<EOF
+<script>const sectionId = {$sectionId}</script>
+EOF;
         $vars['showTitle'] = $show->title;
         $vars['sectionTitle'] = $section->title;
 
-        $slideFactory = new SlideFactory;
-        $slides = $slideFactory->listing($sectionId);
-        if (empty($slides)) {
-            $slides = array();
-        }
-        $vars['slides'] = $slides;
+        $vars['react'] = $this->reactView('slideform');
         $template = new Template($vars);
         $template->setModuleTemplate('slideshow', 'Section/view.html');
         return $template->get();
@@ -90,26 +88,13 @@ class SectionFactory extends Base
         \Layout::addStyle('slideshow', 'white.css');
         NavBar::halt();
 
-        $slide['content'] = <<<EOF
-        <div class="header">
-            <h2>Page 1</h2>
-        </div>
-EOF;
-        $slide['backgroundImage'] = null;
+        $slideFactory = new SlideFactory;
+        $slides = $slideFactory->listing($sectionId);
 
-        $slides[] = $slide;
-        $slide['content'] = <<<EOF
-        <div class="header">
-            <h2>Page 2</h2>
-        </div>
-EOF;
-        $slide['backgroundImage'] = null;
-
-        $slides[] = $slide;
         $vars['slides'] = $slides;
 
         $vars['decisions'][] = <<<EOF
-            <div class="next"><a href="./slideshow/Section/7#/1" class="">Continue <i class="fa fa-arrow-right"></i></a></div>
+            <div class="next"><a href="./slideshow/Section/watch/13#/1" class="">Continue <i class="fa fa-arrow-right"></i></a></div>
 EOF;
 
         $template = new Template($vars);

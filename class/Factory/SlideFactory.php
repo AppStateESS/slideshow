@@ -37,21 +37,22 @@ class SlideFactory extends Base
         $db = Database::getDB();
         $tbl = $db->addTable('ssSlide');
         $tbl->addFieldConditional('sectionId', $sectionId);
-        $db->select();
+        $tbl->addOrderBy('sorting');
+        return $db->select();
     }
 
-    public function handlePicturePost($sectionId)
+    public function handlePicturePost($slideId)
     {
         if (!isset($_FILES) || empty($_FILES)) {
             return array('error' => 'No files uploaded');
         }
         $picture = $_FILES['picture'];
-
+        $slide = $this->load($slideId);
         try {
             $size = getimagesize($picture['tmp_name']);
             $result['width'] = $size[0];
             $result['height'] = $size[1];
-            $result['path'] = $this->moveImage($picture, $sectionId);
+            $result['path'] = $this->moveImage($picture, $slide);
             $result['success'] = true;
         } catch (properties\Exception\FileSaveFailure $e) {
             $result['success'] = false;
@@ -66,7 +67,7 @@ class SlideFactory extends Base
         return $result;
     }
 
-    public function moveImage($pic, $sectionId)
+    public function moveImage($pic, Resource $slide)
     {
         if ($pic['error'] !== 0) {
             throw new \Exception('Upload error');
@@ -76,7 +77,7 @@ class SlideFactory extends Base
                         array('image/jpeg', 'image/gif', 'image/png'))) {
             throw new \properties\Exception\WrongImageType;
         }
-        $dest = $this->saveDirectory . $sectionId . '/';
+        $dest = $slide->getImagePath();
         if (!is_dir($dest)) {
             if (!mkdir($dest, 0755)) {
                 throw new \Exception('Could not create directory');
@@ -91,6 +92,17 @@ class SlideFactory extends Base
         return $path;
     }
 
+    public function getCurrentSort($sectionId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('ssSlide');
+        $tbl->addFieldConditional('sectionId', $sectionId);
+        $sorting = $tbl->addField('sorting');
+        $tbl->addOrderBy('sorting', 'desc');
+        $db->setLimit(1);
+        return $db->selectColumn();
+    }
+
     /**
      * Creates an EMPTY slide. Information is added in the PUT.
      * @param \slideshow\Factory\Request $request
@@ -99,8 +111,14 @@ class SlideFactory extends Base
     {
         $slide = $this->build();
         $slide->sectionId = $request->pullPostInteger('sectionId');
-        $slide->title = ' ';
-        $slide->content = ' ';
+        $slide->content = '<p>Content...</p>';
+        $currentSort = $this->getCurrentSort($slide->sectionId);
+        if ($currentSort === false) {
+            $nextSort = 0;
+        } else {
+            $nextSort = $currentSort + 1;
+        }
+        $slide->sorting = $nextSort;
         return $slide;
     }
 
@@ -130,4 +148,37 @@ class SlideFactory extends Base
             mkdir($path);
         }
     }
+
+    public function clearBackgroundImage($slideId)
+    {
+        /* @var $slide \slideshow\Resource\SlideResource */
+        $slide = $this->load($slideId);
+        if (is_file($slide->backgroundImage)) {
+            unlink($slide->backgroundImage);
+        }
+        $slide->backgroundImage = null;
+        $this->save($slide);
+    }
+
+    public function patch($id, $param, $value)
+    {
+        static $allowed_params = array('delay', 'sorting', 'title', 'content', 'backgroundImage');
+
+        if (!in_array($param, $allowed_params)) {
+            throw new \Exception('Parameter may not be patched');
+        }
+        $slide = $this->load($id);
+        $slide->$param = $value;
+        $this->save($slide);
+        return true;
+    }
+
+    public function sort($slide, $new_position)
+    {
+        $sortable = new \phpws2\Sortable('ssSlide', 'sorting');
+        $sortable->startAtZero();
+        $sortable->setAnchor('sectionId', $slide->sectionId);
+        $sortable->moveTo($slide->getId(), $new_position);
+    }
+
 }

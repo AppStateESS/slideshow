@@ -16,7 +16,7 @@
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace slideshow\Controller\Section;
+namespace slideshow\Controller\Decision;
 
 use Canopy\Request;
 use slideshow\Factory\NavBar;
@@ -28,5 +28,30 @@ class Admin extends Base
      * @var \slideshow\Factory\DecisionFactory
      */
     protected $factory;
+
+    protected function createPostCommand(Request $request)
+    {
+        $slideId = $request->pullPostInteger('slideId');
+        $decision = $this->factory->build();
+        $decision->title = '(Untitled)';
+        $decision->slideId = $slideId;
+        $decision->sorting = $this->factory->getCurrentSort($slideId) + 1;
+        return $this->factory->save($decision);
+    }
+
+    protected function jsonPatchCommand(Request $request)
+    {
+        $this->factory->patch($this->id, $request->pullPatchString('varname'),
+                $request->pullPatchVar('value'));
+        $json['success'] = true;
+        return $json;
+    }
+    
+    protected function deleteCommand(Request $request)
+    {
+        $this->factory->delete($this->id);
+        $json['success'] = true;
+        return $json;
+    }
 
 }

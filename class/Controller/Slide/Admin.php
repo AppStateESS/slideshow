@@ -63,7 +63,7 @@ class Admin extends Base
 
     protected function listJsonCommand(Request $request)
     {
-        return $this->factory->listing($request->pullGetInteger('sectionId'));
+        return $this->factory->listingWithDecisions($request->pullGetInteger('sectionId'));
     }
 
     protected function movePatchCommand(Request $request)

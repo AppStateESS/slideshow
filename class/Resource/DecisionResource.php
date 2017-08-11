@@ -20,12 +20,19 @@ namespace slideshow\Resource;
 
 class DecisionResource extends BaseResource
 {
+    static $allowedTags = array(
+        'strong', 's', 'b', 'a', 'i', 'u', 'ul', 'ol', 'li', 'table', 'tr',
+        'td', 'tbody', 'dd', 'dt', 'dl', 'p', 'br', 'div', 'span', 'blockquote',
+        'th', 'tt', 'img', 'pre', 'hr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'fieldset', 'legend', 'code', 'em', 'iframe', 'embed', 'audio', 'video',
+        'source', 'object', 'sup', 'sub', 'param', 'strike', 'del', 'abbr',
+        'small');
 
     /**
      * Option listed on the button
      * @var \phpws2\Variable\StringVar
      */
-    protected $label;
+    protected $title;
 
     /**
      * Message shown when decision made
@@ -37,24 +44,39 @@ class DecisionResource extends BaseResource
      * User can continue after picking this decision
      * @var \phpws2\Variable\BooleanVar
      */
-    protected $continue;
+    protected $next;
 
     /**
      * Slide this decision is associated with
      * @var \phpws2\Variable\IntegerVar
      */
     protected $slideId;
-    
+
+    /**
+     * Locks after use, can't be chosen again
+     * @var \phpws2\Variable\BooleanVar
+     */
+    protected $lockout;
+
+    /**
+     * Display order of slide
+     * @var \phpws2\Variable\SmallInteger 
+     */
+    protected $sorting;
     protected $table = 'ssDecision';
 
     public function __construct()
     {
         parent::__construct();
-        $this->label = new \phpws2\Variable\StringVar(null, 'label');
-        $this->label->setLimit(50);
+        $this->title = new \phpws2\Variable\StringVar(null, 'title');
+        $this->title->setLimit(50);
         $this->message = new \phpws2\Variable\StringVar(null, 'message');
-        $this->continue = new \phpws2\Variable\BooleanVar(false, 'continue');
+        $this->message->allowEmpty();
+        $this->message->addAllowedTags(self::$allowedTags);
+        $this->next = new \phpws2\Variable\BooleanVar(true, 'next');
+        $this->lockout = new \phpws2\Variable\BooleanVar(false, 'lockout');
         $this->slideId = new \phpws2\Variable\IntegerVar(null, 'slideId');
+        $this->sorting = new \phpws2\Variable\SmallInteger(0, 'sorting');
     }
 
 }

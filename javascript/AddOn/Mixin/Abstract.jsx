@@ -1,5 +1,6 @@
 'use strict'
 import React, {Component} from 'react'
+import empty from '../Empty.js'
 
 /* global $ */
 
@@ -9,7 +10,7 @@ export default class Abstract extends Component {
     this.resourceName = null
     this.state = {
       resource: {},
-      errors: {},
+      errors: {}
     }
     this.setValue = this.setValue.bind(this)
     this.setError = this.setError.bind(this)
@@ -26,20 +27,30 @@ export default class Abstract extends Component {
     this.setState({resource})
   }
 
-  patchValue(varname) {
+  patchValue(varname, updateOnEmpty = true) {
     if (this.resourceName === null) {
       throw 'No resourceName set'
     }
+    if (this.state.resource.id === undefined) {
+      throw('Resource is missing id')
+    }
+
+    const resourceValue = this.state.resource[varname]
+
+    if (!updateOnEmpty && empty(resourceValue)) {
+      return
+    }
+
     $.ajax({
       url: `./slideshow/${this.resourceName}/${this.state.resource.id}`,
       data: {
         varname: varname,
-        value: this.state.resource[varname],
+        value: resourceValue
       },
       dataType: 'json',
       type: 'patch',
       success: function () {}.bind(this),
-      error: function () {}.bind(this),
+      error: function () {}.bind(this)
     })
   }
 

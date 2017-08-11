@@ -41,6 +41,24 @@ class SlideFactory extends Base
         return $db->select();
     }
 
+    public function listingWithDecisions($sectionId)
+    {
+        $slides = $this->listing($sectionId);
+        if (empty($slides)) {
+            return null;
+        }
+        $dFactory = new DecisionFactory;
+        foreach ($slides as &$slide) {
+            $decisions = $dFactory->listing($slide['id']);
+            if (empty($decisions)) {
+                $slide['decisions'] = null;
+            } else {
+                $slide['decisions'] = $decisions;
+            }
+        }
+        return $slides;
+    }
+
     public function handlePicturePost($slideId)
     {
         if (!isset($_FILES) || empty($_FILES)) {
@@ -132,6 +150,11 @@ class SlideFactory extends Base
     {
         $slide = $this->load($slideId);
         self::deleteResource($slide);
+        $sortable = new \phpws2\Sortable('ssSlide', 'sorting');
+        $sortable->startAtZero();
+        $sortable->setAnchor('sectionId', $slide->sectionId);
+        $sortable->reorder();
+
         $this->deleteImageDirectory($slide);
     }
 

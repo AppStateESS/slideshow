@@ -90,12 +90,21 @@ EOF;
 
         $slideFactory = new SlideFactory;
         $slides = $slideFactory->listing($sectionId);
+        $decisionFactory = new DecisionFactory;
+
+        foreach ($slides as &$slide) {
+            $decisions = $decisionFactory->listing($slide['id']);
+            if (empty($decisions)) {
+                $slide['decisions'][] = $decisionFactory->continueLink($sectionId,
+                        $slide['sorting']);
+            } else {
+                foreach ($decisions as $decision) {
+                    $slide['decisions'] = 'decision here';
+                }
+            }
+        }
 
         $vars['slides'] = $slides;
-
-        $vars['decisions'][] = <<<EOF
-            <div class="next"><a href="./slideshow/Section/watch/13#/1" class="">Continue <i class="fa fa-arrow-right"></i></a></div>
-EOF;
 
         $template = new Template($vars);
         $template->setModuleTemplate('slideshow', 'Section/watch.html');

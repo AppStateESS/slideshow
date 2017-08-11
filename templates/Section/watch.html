@@ -4,7 +4,7 @@
     <section data-background-image="<?=$slide['backgroundImage']?>">
         <?=$slide['content']?>
         <div>
-            <?php foreach ($decisions as $decision):?>
+            <?php foreach ($slide['decisions'] as $decision):?>
             <?=$decision?>
             <?php endforeach;?>
         </div>

@@ -33,5 +33,10 @@ class Base extends RoleController
     {
         $this->factory = new Factory;
     }
+    
+    protected function editHtmlCommand(Request $request)
+    {
+        \Current_User::requireLogin();
+    }
 
 }

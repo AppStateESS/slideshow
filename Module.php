@@ -37,8 +37,13 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
             $controller = new Controller\BaseController($this, $request);
             return $controller;
         } catch (\Exception $e) {
-            // friendly message here?
-            throw $e;
+            if (SS_FRIENDLY_ERROR) {
+                \phpws2\Error::log($e);
+                echo \Layout::wrap('<div class="jumbotron"><h1>Uh oh...</h1><p>An error occurred with SlideShow.</p></div>', 'SlideShow Error', true);
+                exit();
+            } else {
+                throw $e;
+            }
         }
     }
 
@@ -84,7 +89,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
             NavBar::view($request);
         }
     }
-    
+
     private function showList()
     {
         return '<a href="./slideshow/Show/list"><i class="fa fa-list"></i> Show list</a>';

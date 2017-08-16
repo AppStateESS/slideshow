@@ -12,16 +12,14 @@
   list-style-type: none;
   border : 1px dashed black;
   padding: 5px;
+  cursor : grabbing;
+  cursor : -webkit-grabbing;
 }
+
 
 .sortableHelper .drag:hover {
   cursor: grabbing;
   cursor: -webkit-grabbing;
-}
-
-.drag {
-    display : inline-block;
-    float: right;
 }
 
 .drag:hover {

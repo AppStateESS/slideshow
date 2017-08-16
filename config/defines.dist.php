@@ -7,3 +7,5 @@
  */
 
 define('SLIDESHOW_REACT_DEV', false);
+
+define('SS_FRIENDLY_ERROR', true);

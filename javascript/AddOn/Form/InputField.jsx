@@ -94,6 +94,7 @@ export default class InputField extends Component {
       ? this.select
       : null}
       disabled={this.props.disabled}
+      style={this.props.styles}
       size={this.props.size}
       maxLength={this.props.maxLength}
       placeholder={this.props.placeholder}
@@ -146,6 +147,7 @@ InputField.defaultProps = {
   flagEmpty: true,
   disableRequireCheck: false,
   focus : false,
+  styles: null,
 }
 
 InputField.propTypes = {
@@ -169,6 +171,7 @@ InputField.propTypes = {
   flagEmpty: PropTypes.bool,
   disableRequireCheck: PropTypes.bool,
   focus: PropTypes.bool,
+  styles: PropTypes.object,
 }
 
 export const RequiredIcon = () => {

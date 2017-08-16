@@ -20,6 +20,7 @@ namespace slideshow\Controller\Section;
 
 use Canopy\Request;
 use slideshow\Factory\NavBar;
+use slideshow\Factory\SlideFactory;
 
 class Admin extends Base
 {
@@ -47,6 +48,12 @@ class Admin extends Base
     {
         $item = '<a id="add-slide" class="pointer"><i class="fa fa-plus"></i> Add a new slide</a>';
         NavBar::addItem($item);
+    }
+    
+    protected function viewJsonCommand(Request $request)
+    {
+        $slideFactory = new SlideFactory();
+        return $slideFactory->listing($this->id);
     }
 
 }

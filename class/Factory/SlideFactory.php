@@ -32,6 +32,16 @@ class SlideFactory extends Base
         return new Resource;
     }
 
+    /**
+     * 
+     * @param integer $id
+     * @return \slideshow\Resource\SlideResource
+     */
+    public function load($id)
+    {
+        return parent::load($id);
+    }
+    
     public function listing($sectionId)
     {
         $db = Database::getDB();

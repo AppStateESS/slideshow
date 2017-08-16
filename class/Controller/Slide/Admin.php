@@ -71,5 +71,21 @@ class Admin extends Base
         $slide = $this->factory->load($this->id);
         $this->factory->sort($slide, $request->pullPatchInteger('newPosition'));
     }
+    
+    protected function viewJsonCommand(Request $request)
+    {
+        $slide = $this->factory->load($this->id);
+        return $slide->getStringVars();
+    }
+    
+    protected function editHtmlCommand(Request $request)
+    {
+        $this->loadRequestId($request);
+        $slideId = $this->id;
+        $slideJs = <<<EOF
+<script>const slideId = $slideId;</script>
+EOF;
+        return $slideJs . $this->factory->reactView('Slide');
+    }
 
 }

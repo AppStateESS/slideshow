@@ -76,7 +76,7 @@ EOF;
         $vars['showTitle'] = $show->title;
         $vars['sectionTitle'] = $section->title;
 
-        $vars['react'] = $this->reactView('slideform');
+        $vars['react'] = $this->reactView('Section');
         $template = new Template($vars);
         $template->setModuleTemplate('slideshow', 'Section/view.html');
         return $template->get();
@@ -84,8 +84,8 @@ EOF;
 
     public function watch($sectionId)
     {
-        \Layout::addStyle('slideshow', 'reveal.css');
-        \Layout::addStyle('slideshow', 'white.css');
+        \Layout::addStyle('slideshow', 'reveal/reveal.css');
+        \Layout::addStyle('slideshow', 'reveal/black.css');
         NavBar::halt();
 
         $slideFactory = new SlideFactory;
@@ -95,17 +95,17 @@ EOF;
         foreach ($slides as &$slide) {
             $decisions = $decisionFactory->listing($slide['id']);
             if (empty($decisions)) {
-                $slide['decisions'][] = $decisionFactory->continueLink($sectionId,
-                        $slide['sorting']);
+                $slide['decisions'][] = $decisionFactory->previousLink($sectionId,
+                                $slide['sorting']) . $decisionFactory->continueLink($sectionId,
+                                $slide['sorting']);
             } else {
                 foreach ($decisions as $decision) {
-                    $slide['decisions'] = 'decision here';
+                    $slide['decisions'][] = 'decision here';
                 }
             }
         }
 
         $vars['slides'] = $slides;
-
         $template = new Template($vars);
         $template->setModuleTemplate('slideshow', 'Section/watch.html');
         return $template->get();

@@ -10,10 +10,8 @@ export default class Abstract extends Component {
     this.resourceName = null
     this.state = {
       resource: {},
-      errors: {}
     }
     this.setValue = this.setValue.bind(this)
-    this.setError = this.setError.bind(this)
     this.patchValue = this.patchValue.bind(this)
   }
 
@@ -21,7 +19,6 @@ export default class Abstract extends Component {
     if (typeof value === 'object' && value.target !== undefined) {
       value = value.target.value
     }
-    this.setError(varname, null)
     let resource = this.state.resource
     resource[varname] = value
     this.setState({resource})
@@ -52,12 +49,6 @@ export default class Abstract extends Component {
       success: function () {}.bind(this),
       error: function () {}.bind(this)
     })
-  }
-
-  setError(varname, value) {
-    let errors = this.state.errors
-    errors[varname] = value
-    this.setState({errors})
   }
 
   render() {

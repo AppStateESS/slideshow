@@ -48,6 +48,17 @@ class DecisionFactory extends Base
 EOF;
     }
 
+    public function previousLink($sectionId, $slideSorting)
+    {
+        if ($slideSorting == 0) {
+            return null;
+        }
+        $prev = $slideSorting - 1;
+        return <<<EOF
+<a href="./slideshow/Section/watch/$sectionId/#/$prev">Previous</a>
+EOF;
+    }
+
     public function save(Resource $decision)
     {
         self::saveResource($decision);
@@ -77,7 +88,7 @@ EOF;
         $db->setLimit(1);
         return (int) $db->selectColumn();
     }
-    
+
     public function delete($decisionId)
     {
         $decision = $this->load($decisionId);

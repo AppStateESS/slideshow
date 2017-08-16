@@ -6,13 +6,11 @@ const menuIcon = $('#menu-icon')
 let openStatus = false
 
 showLeftPush.click(function () {
-  openStatus = !openStatus
-  slide()
+  slide(!openStatus)
 })
 
-
-const slide = function () {
-  if (openStatus) {
+const slide = function (status) {
+  if (status) {
     body.addClass('application-toright')
     menuLeft.addClass('side-menu-open')
     menuIcon.removeClass('fa-bars')
@@ -23,4 +21,5 @@ const slide = function () {
     menuIcon.addClass('fa-bars')
     menuIcon.removeClass('fa-times')
   }
+  openStatus = status
 }

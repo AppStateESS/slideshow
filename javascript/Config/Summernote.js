@@ -9,7 +9,10 @@ const toolbar = [
     ],
   ],
   [
-    'fontname', ['fontname'],
+    'color', ['color'],
+  ],
+  [
+    'fontname', ['fontname', 'fontsize'],
   ],
   [
     'para',
@@ -35,7 +38,7 @@ const toolbar = [
 ]
 
 export const options = {
-  height: 300,
+  minHeight: 400,
   dialogsInBody: true,
-  toolbar: toolbar
+  toolbar: toolbar,
 }

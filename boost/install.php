@@ -9,7 +9,7 @@ function slideshow_install(&$content)
     $db->begin();
 
     try {
-        $ssUserToSection = $db->buildTable('ssUserToSection');
+        $ssUserToSection = $db->buildTable('ss_usertosection');
         $ssUserToSection->addDataType('userId', 'int')->setIsNull(true);
         $ssUserToSection->addDataType('showId', 'int')->setIsNull(true);
         $ssUserToSection->addDataType('sectionId', 'int')->setIsNull(true);

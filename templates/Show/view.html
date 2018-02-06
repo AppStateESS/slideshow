@@ -1,8 +1,8 @@
 <div class="slideshow">
-    <h2><?=$title?></h2>
+  <h2>Show: <?=$title?></h2>
     <?php if (!empty($sections)): ?>
     <?php foreach ($sections as $section):?>
-    <div><a href="./slideshow/Section/<?=$section['id']?>"><?=$section['title']?></a></div>
+    <h3 style="margin-left:1em"><a href="./slideshow/Section/<?=$section['id']?>"><?=$section['title']?></a></h3>
     <?php endforeach;?>
     <?php else:?>
     <div><em>No sections found</em></div>

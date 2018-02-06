@@ -12,7 +12,7 @@ const toolbar = [
     'color', ['color'],
   ],
   [
-    'fontname', ['fontname', 'fontsize'],
+    'fontname', ['fontsize'],
   ],
   [
     'para',

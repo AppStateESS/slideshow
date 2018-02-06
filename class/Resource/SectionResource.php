@@ -38,7 +38,7 @@ class SectionResource extends BaseResource
      * @var \phpws2\Variable\SmallInteger 
      */
     protected $sorting;
-    protected $table = 'ssSection';
+    protected $table = 'ss_section';
 
     public function __construct()
     {

@@ -41,7 +41,7 @@ class ShowFactory extends Base
     public function listing()
     {
         $db = Database::getDB();
-        $db->addTable('ssShow');
+        $db->addTable('ss_show');
         $tpl['rows'] = $db->select();
         $template = new \phpws2\Template($tpl);
         $template->setModuleTemplate('slideshow', 'Show/list.html');

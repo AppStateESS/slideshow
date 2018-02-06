@@ -17,7 +17,7 @@ class BaseResource extends \phpws2\Resource
         if ((!$this->$name->allowNull() &&
                 (method_exists($this->$name, 'allowEmpty') && !$this->$name->allowEmpty())) &&
                 ( (is_string($value) && $value === '') || is_null($value))) {
-            throw new \properties\Exception\MissingInput("$name may not be empty");
+            throw new \slideshow\Exception\MissingInput("$name may not be empty");
         }
 
         $this->$name->set($value);

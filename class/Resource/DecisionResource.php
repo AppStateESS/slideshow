@@ -53,17 +53,11 @@ class DecisionResource extends BaseResource
     protected $slideId;
 
     /**
-     * Locks after use, can't be chosen again
-     * @var \phpws2\Variable\BooleanVar
-     */
-    protected $lockout;
-
-    /**
      * Display order of slide
      * @var \phpws2\Variable\SmallInteger 
      */
     protected $sorting;
-    protected $table = 'ssDecision';
+    protected $table = 'ss_decision';
 
     public function __construct()
     {
@@ -74,7 +68,6 @@ class DecisionResource extends BaseResource
         $this->message->allowEmpty();
         $this->message->addAllowedTags(self::$allowedTags);
         $this->next = new \phpws2\Variable\BooleanVar(true, 'next');
-        $this->lockout = new \phpws2\Variable\BooleanVar(false, 'lockout');
         $this->slideId = new \phpws2\Variable\IntegerVar(null, 'slideId');
         $this->sorting = new \phpws2\Variable\SmallInteger(0, 'sorting');
     }

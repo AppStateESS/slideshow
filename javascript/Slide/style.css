@@ -1,0 +1,27 @@
+#delay {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#delay>input.form-control {
+  width: 80px;
+  display: inline-block;
+}
+
+#slide-holder {
+  height: 600px;
+  max-width : 1224px;
+  border: 1px solid black;
+}
+
+.dropzone {
+  height: 500px;
+}
+
+.default-image {
+  margin-top: 15%;
+}
+
+.reveal-edit {
+  position : relative;
+}

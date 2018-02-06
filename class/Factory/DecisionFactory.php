@@ -30,11 +30,21 @@ class DecisionFactory extends Base
     {
         return new Resource;
     }
+    
+    /**
+     * 
+     * @param integer $id
+     * @return Resource
+     */
+    public function load($id)
+    {
+        return parent::load($id);
+    }
 
     public function listing($slideId)
     {
         $db = Database::getDB();
-        $tbl = $db->addTable('ssDecision');
+        $tbl = $db->addTable('ss_decision');
         $tbl->addFieldConditional('slideId', $slideId);
         $tbl->addOrderBy('sorting');
         return $db->select();
@@ -44,7 +54,7 @@ class DecisionFactory extends Base
     {
         $next = $slideSorting + 1;
         return <<<EOF
-<a href="./slideshow/Section/watch/$sectionId/#/$next">Continue</a>
+<a class="navigate-right" href="./slideshow/Section/watch/$sectionId/#/$next"></a>
 EOF;
     }
 
@@ -55,7 +65,7 @@ EOF;
         }
         $prev = $slideSorting - 1;
         return <<<EOF
-<a href="./slideshow/Section/watch/$sectionId/#/$prev">Previous</a>
+<a class="navigate-left" href="./slideshow/Section/watch/$sectionId/#/$prev"></a>
 EOF;
     }
 
@@ -81,7 +91,7 @@ EOF;
     public function getCurrentSort($slideId)
     {
         $db = Database::getDB();
-        $tbl = $db->addTable('ssDecision');
+        $tbl = $db->addTable('ss_decision');
         $tbl->addFieldConditional('slideId', $slideId);
         $sorting = $tbl->addField('sorting');
         $tbl->addOrderBy('sorting', 'desc');
@@ -93,9 +103,23 @@ EOF;
     {
         $decision = $this->load($decisionId);
         self::deleteResource($decision);
-        $sortable = new \phpws2\Sortable('ssDecision', 'sorting');
+        $sortable = new \phpws2\Sortable('ss_decision', 'sorting');
         $sortable->setAnchor('slideId', $decision->slideId);
         $sortable->reorder();
+    }
+    
+    public function put($decisionId, Request $request)
+    {
+        $decision = $this->load($decisionId);
+        $decision->loadPutByType($request);
+        self::saveResource($decision);
+    }
+    
+    public function link($decision) {
+        var_dump($decision);
+        return <<<EOF
+<li class="decision">{$decision['title']}</li>
+EOF;
     }
 
 }

@@ -7,5 +7,6 @@ export default class SlideObj {
     this.title = 'Untitled slide'
     this.content = '<p>Content here...</p>'
     this.backgroundImage = ''
+    this.decisions = []
   }
 }

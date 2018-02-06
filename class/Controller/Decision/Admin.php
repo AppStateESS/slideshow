@@ -33,10 +33,11 @@ class Admin extends Base
     {
         $slideId = $request->pullPostInteger('slideId');
         $decision = $this->factory->build();
-        $decision->title = '(Untitled)';
+        $decision->title = '';
         $decision->slideId = $slideId;
         $decision->sorting = $this->factory->getCurrentSort($slideId) + 1;
-        return $this->factory->save($decision);
+        $this->factory->save($decision);
+        return $decision->getStringVars(true);
     }
 
     protected function jsonPatchCommand(Request $request)
@@ -52,6 +53,11 @@ class Admin extends Base
         $this->factory->delete($this->id);
         $json['success'] = true;
         return $json;
+    }
+    
+    protected function updatePutCommand(Request $request)
+    {
+        $this->factory->put($this->id, $request);
     }
 
 }

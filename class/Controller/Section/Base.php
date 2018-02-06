@@ -38,7 +38,8 @@ class Base extends RoleController
     protected function watchHtmlCommand(Request $request)
     {
         $this->loadRequestId($request);
-        return $this->factory->watch($this->id);
+        $content = $this->factory->watch($this->id);
+        echo $content;exit;
     }
 
 }

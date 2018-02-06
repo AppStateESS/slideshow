@@ -6,6 +6,7 @@ use slideshow\Exception\ResourceNotFound;
 use phpws2\Settings;
 use phpws2\Database;
 use Canopy\Request;
+
 /**
  *
  * @author Matthew McNaney <mcnaneym@appstate.edu>
@@ -68,4 +69,30 @@ $react
 EOF;
         return $content;
     }
+    
+    protected function getRootDirectory()
+    {
+        return PHPWS_SOURCE_DIR . 'mod/slideshow/';
+    }
+
+    protected function getRootUrl()
+    {
+        return PHPWS_SOURCE_HTTP . 'mod/slideshow/';
+    }
+
+
+    private function getAssetPath($scriptName)
+    {
+        $rootDirectory = $this->getRootDirectory();
+        if (!is_file($rootDirectory . 'assets.json')) {
+            exit('Missing assets.json file. Run npm run prod in stories directory.');
+        }
+        $jsonRaw = file_get_contents($rootDirectory . 'assets.json');
+        $json = json_decode($jsonRaw, true);
+        if (!isset($json[$scriptName]['js'])) {
+            throw new \Exception('Script file not found among assets.');
+        }
+        return $json[$scriptName]['js'];
+    }
+
 }

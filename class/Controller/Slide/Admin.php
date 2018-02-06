@@ -71,13 +71,16 @@ class Admin extends Base
         $slide = $this->factory->load($this->id);
         $this->factory->sort($slide, $request->pullPatchInteger('newPosition'));
     }
-    
+
     protected function viewJsonCommand(Request $request)
     {
         $slide = $this->factory->load($this->id);
-        return $slide->getStringVars();
+        $view =  $slide->getStringVars();
+        $view['decisions'] = $this->factory->getDecisions($slide);
+        $view['content'] = '<div class="slide-content">' . $view['content'] . '</div>';
+        return $view;
     }
-    
+
     protected function editHtmlCommand(Request $request)
     {
         $this->loadRequestId($request);

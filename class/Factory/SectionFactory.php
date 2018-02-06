@@ -47,7 +47,7 @@ class SectionFactory extends Base
     public function getCurrentSort($showId)
     {
         $db = Database::getDB();
-        $tbl = $db->addTable('ssSection');
+        $tbl = $db->addTable('ss_section');
         $tbl->addFieldConditional('showId', $showId);
         $sorting = $tbl->addField('sorting');
         $tbl->addOrderBy('sorting', 'desc');
@@ -58,7 +58,7 @@ class SectionFactory extends Base
     public function listing($showId)
     {
         $db = Database::getDB();
-        $tbl = $db->addTable('ssSection');
+        $tbl = $db->addTable('ss_section');
         $tbl->addFieldConditional('showId', $showId);
         $tbl->addOrderBy('sorting');
         return $db->select();
@@ -84,27 +84,26 @@ EOF;
 
     public function watch($sectionId)
     {
-        \Layout::addStyle('slideshow', 'reveal/reveal.css');
-        \Layout::addStyle('slideshow', 'reveal/black.css');
-        NavBar::halt();
-
         $slideFactory = new SlideFactory;
         $slides = $slideFactory->listing($sectionId);
         $decisionFactory = new DecisionFactory;
-
+        //var_dump($slides);exit;
         foreach ($slides as &$slide) {
             $decisions = $decisionFactory->listing($slide['id']);
+//            var_dump($decisions);
             if (empty($decisions)) {
-                $slide['decisions'][] = $decisionFactory->previousLink($sectionId,
-                                $slide['sorting']) . $decisionFactory->continueLink($sectionId,
+                $slide['prev'] = $decisionFactory->previousLink($sectionId,
+                                $slide['sorting']);
+                $slide['next'] = $decisionFactory->continueLink($sectionId,
                                 $slide['sorting']);
             } else {
                 foreach ($decisions as $decision) {
-                    $slide['decisions'][] = 'decision here';
+                    $vars['decisions'][$slide['id']][] = $decisionFactory->link($decision);
                 }
             }
         }
-
+        $vars['hub'] = PHPWS_SOURCE_HTTP;
+        $vars['base'] = \Layout::getBase();
         $vars['slides'] = $slides;
         $template = new Template($vars);
         $template->setModuleTemplate('slideshow', 'Section/watch.html');

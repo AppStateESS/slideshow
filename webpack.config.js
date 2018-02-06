@@ -1,6 +1,7 @@
 var setup = require('./exports.js')
 var webpack = require('webpack')
 var Promise = require('es6-promise').polyfill()
+var BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
 module.exports = {
   entry: setup.entry,
@@ -11,6 +12,12 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery",}),
     new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.js'}),
+    new BrowserSyncPlugin({
+      host: 'localhost',
+      port: 3000,
+      files: ['./javascript/dev/*.js'],
+      proxy: 'localhost/phpwebsite'
+    }),
   ],
   module: {
     rules: [

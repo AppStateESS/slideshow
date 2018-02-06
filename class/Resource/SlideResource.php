@@ -52,11 +52,17 @@ class SlideResource extends BaseResource
     protected $content;
 
     /**
+     * Prevents navigation. Must use Decisions.
+     * @var \phpws2\Variable\BooleanVar
+     */
+    protected $locked;
+
+    /**
      *
      * @var \phpws2\Variable\FileVar
      */
     protected $backgroundImage;
-    protected $table = 'ssSlide';
+    protected $table = 'ss_slide';
 
     public function __construct()
     {
@@ -67,6 +73,7 @@ class SlideResource extends BaseResource
         $this->title = new \phpws2\Variable\TextOnly('Untitled slide', 'title');
         $this->title->setLimit('255');
         $this->content = new \phpws2\Variable\StringVar(null, 'content');
+        $this->locked = new \phpws2\Variable\BooleanVar(false, 'lockout');
         $this->backgroundImage = new \phpws2\Variable\FileVar(null,
                 'backgroundImage');
         $this->backgroundImage->allowNull(true);

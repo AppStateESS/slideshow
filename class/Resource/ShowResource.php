@@ -26,7 +26,7 @@ class ShowResource extends BaseResource
      * @var \phpws2\Variable\StringVar
      */
     protected $title;
-    protected $table = 'ssShow';
+    protected $table = 'ss_show';
 
     public function __construct()
     {

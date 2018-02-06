@@ -1,24 +1,56 @@
-<link rel="stylesheet" href="http://localhost/reveal/javascript/reveal/css/theme/black.css">
-<div class="slides">
-    <?php foreach ($slides as $slide):?>
-    <section data-background-image="<?=$slide['backgroundImage']?>">
-        <?=$slide['content']?>
-        <div>
-            <?php foreach ($slide['decisions'] as $decision):?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <?=$base?>
+    <title>Use a template page title from section</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+    crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://use.fontawesome.com/f3fe0ac1bd.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?=$hub?>mod/slideshow/templates/Section/watch.css">
+  </head>
+  <body id="slideshow-watch">
+    <div class="reveal">
+      <div class="slides">
+        <?php foreach ($slides as $slide):?>
+        <section data-background-image="<?=$slide['backgroundImage']?>">
+          <?=$slide['content']?>
+          <?php if (empty($decisions[$slide['id']])):?>
+          <div class="controls">
+            <?=$slide['prev']?>
+            <?=$slide['next']?>
+          </div>
+          <?php else:?>
+          <div class="navigate">
+            <div>
+              <ul class="decision-list">
+            <?php foreach ($decisions[$slide['id']] as $decision):?>
             <?=$decision?>
             <?php endforeach;?>
-        </div>
-    </section>
-    <?php endforeach;?>
-</div>
-<script src="http://localhost/reveal/javascript/reveal/js/reveal.js"></script>
-<script>
-    Reveal.initialize({
-        transition: 'convex',
-        controls: false,
-        keyboard: false,
-        touch: false,
-        center: true,
-        margin: 0
-    });
-</script>
+              </ul>
+            </div>
+          </div>
+          <?php endif;?>
+        </section>
+        <?php endforeach;?>
+      </div>
+      <script src="<?=$hub?>mod/slideshow/javascript/reveal/js/reveal.js"></script>
+      <script>
+        Reveal.initialize({
+          width: '100%',
+          height: '100%',
+          transition: 'slide',
+          controls: false,
+          keyboard: false,
+          touch: false,
+          center: false,
+          margin: 0
+        });
+      </script>
+      <script src="<?=$hub?>mod/slideshow/javascript/DecisionButtons.js"></script>
+    </div>
+  </body>
+</html>

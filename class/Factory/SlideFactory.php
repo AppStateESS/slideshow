@@ -45,7 +45,7 @@ class SlideFactory extends Base
     public function listing($sectionId)
     {
         $db = Database::getDB();
-        $tbl = $db->addTable('ssSlide');
+        $tbl = $db->addTable('ss_slide');
         $tbl->addFieldConditional('sectionId', $sectionId);
         $tbl->addOrderBy('sorting');
         return $db->select();
@@ -59,12 +59,16 @@ class SlideFactory extends Base
         }
         $dFactory = new DecisionFactory;
         foreach ($slides as &$slide) {
+            $slide['decisions'] = $dFactory->listing($slide['id']);
+            /*
             $decisions = $dFactory->listing($slide['id']);
             if (empty($decisions)) {
                 $slide['decisions'] = null;
             } else {
                 $slide['decisions'] = $decisions;
             }
+             * 
+             */
         }
         return $slides;
     }
@@ -123,7 +127,7 @@ class SlideFactory extends Base
     public function getCurrentSort($sectionId)
     {
         $db = Database::getDB();
-        $tbl = $db->addTable('ssSlide');
+        $tbl = $db->addTable('ss_slide');
         $tbl->addFieldConditional('sectionId', $sectionId);
         $sorting = $tbl->addField('sorting');
         $tbl->addOrderBy('sorting', 'desc');
@@ -160,7 +164,7 @@ class SlideFactory extends Base
     {
         $slide = $this->load($slideId);
         self::deleteResource($slide);
-        $sortable = new \phpws2\Sortable('ssSlide', 'sorting');
+        $sortable = new \phpws2\Sortable('ss_slide', 'sorting');
         $sortable->startAtZero();
         $sortable->setAnchor('sectionId', $slide->sectionId);
         $sortable->reorder();
@@ -206,9 +210,15 @@ class SlideFactory extends Base
         return true;
     }
 
+    public function getDecisions(Resource $slide)
+    {
+         $dFactory = new DecisionFactory;
+         return $dFactory->listing($slide->id);
+    }
+    
     public function sort($slide, $new_position)
     {
-        $sortable = new \phpws2\Sortable('ssSlide', 'sorting');
+        $sortable = new \phpws2\Sortable('ss_slide', 'sorting');
         $sortable->startAtZero();
         $sortable->setAnchor('sectionId', $slide->sectionId);
         $sortable->moveTo($slide->getId(), $new_position);

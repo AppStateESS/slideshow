@@ -1,10 +1,10 @@
-export default class Decision {
+export default class DecisionResource {
   constructor() {
     this.id = 0
-    this.title = '(Untitled)'
+    this.title = ''
     this.message = ''
-    this.lockout = false
     this.next = true
     this.slideId = 0
+    this.sorting = 0
   }
 }

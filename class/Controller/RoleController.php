@@ -68,10 +68,10 @@ abstract class RoleController
         $command = $request->shiftCommand();
 
         if (empty($command)) {
-            $command = 'create';
+            $method_name = 'postCommand';
+        } else {
+            $method_name = $command . 'PostCommand';
         }
-
-        $method_name = $command . 'PostCommand';
         if (!method_exists($this, $method_name)) {
             throw new BadCommand($method_name);
         }
@@ -104,10 +104,11 @@ abstract class RoleController
 
         $command = $request->shiftCommand();
         if (empty($command)) {
-            $command = 'update';
+            $method_name = 'putCommand';
+        } else {
+            $method_name = $command . 'PutCommand';
         }
-
-        $method_name = $command . 'PutCommand';
+        
         if (!method_exists($this, $method_name)) {
             throw new BadCommand($method_name);
         }

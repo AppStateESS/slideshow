@@ -27,7 +27,7 @@ export default class Modal extends Component {
       padding: '6px'
     }
     return (
-      <ReactModal isOpen={this.props.isOpen} contentLabel="Modal" style={styles}>
+      <ReactModal isOpen={this.props.isOpen} contentLabel="Modal" style={styles} ariaHideApp={false}>
         <div>
           <span className="fa-stack fa-lg pull-right pointer" onClick={this.props.close}>
             <i className="fa fa-circle fa-stack-2x"></i>

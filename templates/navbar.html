@@ -1,31 +1,65 @@
-<nav class="side-menu side-menu-vertical side-menu-left" id="slide-side-menu">
-  <a href="<?=$home?>"><i class="fa fa-home"></i> Home</a>
-  <a href="./controlpanel"><i class="fa fa-gear"></i> Control panel</a>
-  <a href="<?=$logout_uri?>"><i class="fa fa-sign-out"></i> Sign out</a>
-  <?php if ($items !== null):?>
-  <hr />
-  <ul class="navbar-items">
-    <?php foreach($items as $item):?>
-    <li>
-      <?=$item?>
-    </li>
-    <?php endforeach;?>
-    <?php endif;?>
-    <ul>
-      <?php if ($options !== null):?>
-      <div class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                <i class="fa fa-gear"></i>&nbsp;<?=$title?><span class="caret"></span>
-            </a>
-        <ul class="dropdown-menu">
-          <li>
-            <?=$options?>
-          </li>
+<!-- Brand and toggle get grouped for better mobile display -->
+<div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-sec">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="navbar-collapse-sec">
+        <ul class="nav navbar-nav navbar-left">
+            <li>
+                <a href="<?=$home?>"><i class="fa fa-home"></i> Home</a>
+            </li>
+
+            <?php if ($items !== null):?>
+            <li class="navbar-text">|
+            </li>
+            <?php foreach($items as $item):
+            if ($item == '|'):?>
+            <li class="navbar-text">|
+            </li>
+            <?php else: ?>
+            <li>
+                <?=$item?>
+            </li>
+            <?php endif;?>
+            <?php endforeach;?>
+            <?php endif;?>
+            <?php if ($options !== null):?>
+            <li class="navbar-text">|
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-gear"></i>&nbsp;<?=$title?><span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <?=$options?>
+                    </li>
+                </ul>
+            </li>
+            <?php endif;?>
         </ul>
-      </div>
-      <?php endif;?>
-</nav>
-
-<div id="show-left-push"><i id="menu-icon" class="fa fa-bars"></i></div>
-
-<script src="{SOURCE_HTTP}mod/slideshow/javascript/navbar.js"></script>
+        <ul class="nav navbar-nav navbar-right">
+            <?php if ($logged):?>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?=$username ?><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <?php if ($admin): ?>
+                    <li>
+                        <a href="index.php?module=controlpanel"><i class="fa fa-gear"></i> Control panel</a>
+                    </li>
+                    <?php endif;?>
+                    <li>
+                        <a href="<?=$logout_uri?>"><i class="fa fa-sign-out"></i> Sign out</a>
+                    </li>
+                </ul>
+            </li>
+            <?php endif; ?>
+        </ul>
+    </div><!-- /.navbar-collapse -->
+</div>

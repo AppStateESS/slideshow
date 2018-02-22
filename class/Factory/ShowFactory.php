@@ -30,22 +30,45 @@ class ShowFactory extends Base
         return new Resource;
     }
 
-    public function post(Request $request)
+    /**
+     * 
+     * @param slideshow\Resource\ShowResource $show
+     */
+    public function createImageDirectory($show)
     {
-        $resource = $this->build();
-        $resource->title = $request->pullPostString('title');
-        $this->saveResource($resource);
-        return true;
+        $path = $show->getImagePath();
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
     }
 
-    public function listing()
+    public function post(Request $request)
+    {
+        $show = $this->build();
+        $show->title = $request->pullPostString('title');
+        $show->active = 0;
+        $this->saveResource($show);
+        $this->createImageDirectory($show);
+        return $show;
+    }
+
+    public function put($showId, Request $request)
+    {
+        $resource = $this->load($showId);
+        $resource->title = $request->pullPutString('title');
+        $this->saveResource($resource);
+        return $resource;
+    }
+
+    public function listing($showAll = false)
     {
         $db = Database::getDB();
-        $db->addTable('ss_show');
-        $tpl['rows'] = $db->select();
-        $template = new \phpws2\Template($tpl);
-        $template->setModuleTemplate('slideshow', 'Show/list.html');
-        return $template->get();
+        $tbl = $db->addTable('ss_show');
+        $tbl->addOrderBy('title');
+        if (!$showAll) {
+            $tbl->addFieldConditional('active', 1);
+        }
+        return $db->select();
     }
 
     public function view($id)
@@ -64,6 +87,18 @@ class ShowFactory extends Base
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('slideshow', 'Show/view.html');
         return $template->get();
+    }
+
+    public function deleteSlides($showId)
+    {
+        $db = Database::getDB();
+    }
+
+    public function delete($showId)
+    {
+        $this->deleteSlides($showId);
+        self::deleteResource($this->load($showId));
+        return true;
     }
 
 }

@@ -62,7 +62,7 @@ export default class InputField extends Component {
     if (value.length > 0) {
       this.setState({empty: false})
     }
-    this.props.change(e)
+    this.props.change(value)
   }
 
   render() {
@@ -135,7 +135,7 @@ InputField.defaultProps = {
   blur: null,
   required: false,
   id: null,
-  autocomplete: false,
+  autocomplete: 'false',
   placeholder: null,
   errorMessage: '',
   disabled: false,
@@ -160,7 +160,7 @@ InputField.propTypes = {
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string,
   iid: PropTypes.string,
-  autocomplete: PropTypes.bool,
+  autocomplete: PropTypes.string,
   required: PropTypes.bool,
   disabled: PropTypes.bool,
   size: PropTypes.number,

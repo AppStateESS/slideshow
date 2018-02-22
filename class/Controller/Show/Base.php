@@ -26,7 +26,7 @@ class Base extends RoleController
 {
 
     /**
-     * @var object Factory
+     * @var slideshow\Factory\ShowFactory
      */
     protected $factory;
 
@@ -35,14 +35,9 @@ class Base extends RoleController
         $this->factory = new Factory;
     }
 
-    protected function listHtmlCommand(Request $request)
-    {
-        return $this->factory->listing();
-    }
-
     protected function viewHtmlCommand(Request $request)
     {
-        return $this->factory->view($this->id);
+        return 'Show.Base::viewHtmlCommand';
     }
 
 }

@@ -23,14 +23,31 @@ use Canopy\Request;
 class Admin extends Base
 {
 
-    protected function picturePostCommand(Request $request)
+    protected function editHtmlCommand(Request $request)
     {
-        return $this->factory->handlePicturePost($request->pullPostInteger('slideId'));
+        return $this->factory->scriptView('SlideEdit', true, array('slideId'=>$this->id));
     }
 
-    protected function clearPicturePatchCommand(Request $request)
+    protected function listHtmlCommand(Request $request)
     {
-        return $this->factory->clearBackgroundImage($this->id);
+        $showId = (int) $request->shiftCommand();
+        if ($showId == 0) {
+            throw new \Exception('Missing show id');
+        }
+
+        return $this->factory->scriptView('SlideList', true,
+                        array('showId' => $showId));
+    }
+
+    protected function listJsonCommand(Request $request)
+    {
+        $showId = (int) $request->shiftCommand();
+        if ($showId == 0) {
+            throw new \Exception('Missing show id');
+        }
+        $showFactory = new \slideshow\Factory\ShowFactory();
+        $show = $showFactory->load($showId);
+        return array('listing' => $this->factory->listing($showId), 'show' => $show->getStringVars());
     }
 
     /**
@@ -40,55 +57,61 @@ class Admin extends Base
      * @param Request $request
      * @returns array Array with slide id
      */
-    protected function createPostCommand(Request $request)
+    protected function postCommand(Request $request)
     {
         $slide = $this->factory->post($request);
         $slideId = $this->factory->save($slide);
-        $this->factory->createImageDirectory($slide);
         return array('slideId' => $slideId);
+    }
+
+    protected function picturePostCommand(Request $request)
+    {
+        //return $this->factory->handlePicturePost($request->pullPostInteger('slideId'));
+    }
+
+    protected function clearPicturePatchCommand(Request $request)
+    {
+        //return $this->factory->clearBackgroundImage($this->id);
     }
 
     protected function deleteCommand(Request $request)
     {
-        $this->factory->delete($this->id);
+        /*
+          $this->factory->delete($this->id);
+         * 
+         */
     }
 
     protected function jsonPatchCommand(Request $request)
     {
-        $this->factory->patch($this->id, $request->pullPatchString('varname'),
-                $request->pullPatchVar('value'));
-        $json['success'] = true;
-        return $json;
-    }
-
-    protected function listJsonCommand(Request $request)
-    {
-        return $this->factory->listingWithDecisions($request->pullGetInteger('sectionId'));
+        /*
+          $this->factory->patch($this->id, $request->pullPatchString('varname'),
+          $request->pullPatchVar('value'));
+          $json['success'] = true;
+          return $json;
+         * 
+         */
     }
 
     protected function movePatchCommand(Request $request)
     {
-        $slide = $this->factory->load($this->id);
-        $this->factory->sort($slide, $request->pullPatchInteger('newPosition'));
+        /*
+          $slide = $this->factory->load($this->id);
+          $this->factory->sort($slide, $request->pullPatchInteger('newPosition'));
+         * 
+         */
     }
 
     protected function viewJsonCommand(Request $request)
     {
-        $slide = $this->factory->load($this->id);
-        $view =  $slide->getStringVars();
-        $view['decisions'] = $this->factory->getDecisions($slide);
-        $view['content'] = '<div class="slide-content">' . $view['content'] . '</div>';
-        return $view;
-    }
-
-    protected function editHtmlCommand(Request $request)
-    {
-        $this->loadRequestId($request);
-        $slideId = $this->id;
-        $slideJs = <<<EOF
-<script>const slideId = $slideId;</script>
-EOF;
-        return $slideJs . $this->factory->reactView('Slide');
+        /*
+          $slide = $this->factory->load($this->id);
+          $view =  $slide->getStringVars();
+          $view['decisions'] = $this->factory->getDecisions($slide);
+          $view['content'] = '<div class="slide-content">' . $view['content'] . '</div>';
+          return $view;
+         * 
+         */
     }
 
 }

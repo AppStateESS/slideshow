@@ -54,22 +54,40 @@ abstract class Base extends \phpws2\ResourceFactory
         return $script;
     }
 
-    public function reactView($view_name)
+    public function scriptView($view_name, $add_anchor = true, $vars = null)
     {
         static $vendor_included = false;
         if (!$vendor_included) {
             $script[] = $this->getScript('vendor');
             $vendor_included = true;
         }
+        if (!empty($vars)) {
+            $script[] = $this->addScriptVars($vars);
+        }
         $script[] = $this->getScript($view_name);
         $react = implode("\n", $script);
-        $content = <<<EOF
+        if ($add_anchor) {
+            $content = <<<EOF
 <div id="$view_name"></div>
 $react
 EOF;
-        return $content;
+            return $content;
+        } else {
+            return $react;
+        }
     }
-    
+
+    private function addScriptVars($vars)
+    {
+        if (empty($vars)) {
+            return null;
+        }
+        foreach ($vars as $key => $value) {
+            $varList[] = "const $key = '$value';";
+        }
+        return '<script type="text/javascript">' . implode('', $varList) . '</script>';
+    }
+
     protected function getRootDirectory()
     {
         return PHPWS_SOURCE_DIR . 'mod/slideshow/';
@@ -79,7 +97,6 @@ EOF;
     {
         return PHPWS_SOURCE_HTTP . 'mod/slideshow/';
     }
-
 
     private function getAssetPath($scriptName)
     {

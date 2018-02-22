@@ -18,7 +18,7 @@
 
 namespace slideshow\Resource;
 
-class SlideResource extends BaseResource
+class SlideResource extends BaseAbstract
 {
 
     /**
@@ -28,10 +28,10 @@ class SlideResource extends BaseResource
     protected $delay;
 
     /**
-     * Id of section to which this slide is associated
+     * Id of section to which this show is associated
      * @var \phpws2\Variable\IntegerVar
      */
-    protected $sectionId;
+    protected $showId;
 
     /**
      * Display order of slide
@@ -46,13 +46,7 @@ class SlideResource extends BaseResource
     protected $title;
 
     /**
-     * Content of the slide.
-     * @var \phpws2\Variable\StringVar
-     */
-    protected $content;
-
-    /**
-     * Prevents navigation. Must use Decisions.
+     * Prevents navigation. Must use Questions.
      * @var \phpws2\Variable\BooleanVar
      */
     protected $locked;
@@ -68,12 +62,11 @@ class SlideResource extends BaseResource
     {
         parent::__construct();
         $this->delay = new \phpws2\Variable\IntegerVar(0, 'delay');
-        $this->sectionId = new \phpws2\Variable\IntegerVar(null, 'sectionId');
+        $this->showId = new \phpws2\Variable\IntegerVar(null, 'showId');
         $this->sorting = new \phpws2\Variable\SmallInteger(0, 'sorting');
         $this->title = new \phpws2\Variable\TextOnly('Untitled slide', 'title');
         $this->title->setLimit('255');
-        $this->content = new \phpws2\Variable\StringVar(null, 'content');
-        $this->locked = new \phpws2\Variable\BooleanVar(false, 'lockout');
+        $this->locked = new \phpws2\Variable\BooleanVar(false, 'locked');
         $this->backgroundImage = new \phpws2\Variable\FileVar(null,
                 'backgroundImage');
         $this->backgroundImage->allowNull(true);
@@ -81,7 +74,7 @@ class SlideResource extends BaseResource
 
     public function getImagePath()
     {
-        return './images/slideshow/' . $this->sectionId . '/' . $this->id . '/';
+        return './images/slideshow/' . $this->showId . '/' . $this->id . '/';
     }
 
 }

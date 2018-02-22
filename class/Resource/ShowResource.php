@@ -18,7 +18,7 @@
 
 namespace slideshow\Resource;
 
-class ShowResource extends BaseResource
+class ShowResource extends BaseAbstract
 {
 
     /**
@@ -26,6 +26,12 @@ class ShowResource extends BaseResource
      * @var \phpws2\Variable\StringVar
      */
     protected $title;
+
+    /**
+     *
+     * @var \phpws2\Variable\Boolean
+     */
+    protected $active;
     protected $table = 'ss_show';
 
     public function __construct()
@@ -33,6 +39,12 @@ class ShowResource extends BaseResource
         parent::__construct();
         $this->title = new \phpws2\Variable\StringVar(null, 'title');
         $this->title->setLimit('255');
+        $this->active = new \phpws2\Variable\BooleanVar(0, 'active');
+    }
+
+    public function getImagePath()
+    {
+        return './images/slideshow/' . $this->id . '/';
     }
 
 }

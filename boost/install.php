@@ -9,28 +9,27 @@ function slideshow_install(&$content)
     $db->begin();
 
     try {
-        $ssUserToSection = $db->buildTable('ss_usertosection');
-        $ssUserToSection->addDataType('userId', 'int')->setIsNull(true);
-        $ssUserToSection->addDataType('showId', 'int')->setIsNull(true);
-        $ssUserToSection->addDataType('sectionId', 'int')->setIsNull(true);
-        $ssUserToSection->addDataType('currentSlide', 'int')->setIsNull(true)->setDefault(1);
-        $ssUserToSection->addDataType('complete', 'int')->setIsNull(true)->setDefault(0);
-        $ssUserToSection->create();
-        
-        $decision = new \slideshow\Resource\DecisionResource;
-        $decision->createTable($db);
-
-        $section = new \slideshow\Resource\SectionResource;
-        $section->createTable($db);
-
         $show = new \slideshow\Resource\ShowResource;
-        $show->createTable($db);
+        $tables[] = $show->createTable($db);
 
         $slide = new \slideshow\Resource\SlideResource;
-        $slide->createTable($db);
+        $tables[] = $slide->createTable($db);
+
+        $phtml = new \slideshow\Resource\PanelHtmlResource;
+        $tables[] = $phtml->createTable($db);
+
+        $pimg = new \slideshow\Resource\PanelImageResource;
+        $tables[] = $pimg->createTable($db);
+
+        $pqanda = new \slideshow\Resource\PanelQuestionResource();
+        $tables[] = $pqanda->createTable($db);
         
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
+        $backout = array_reverse($tables);
+        foreach ($backout as $tbl) {
+            $tbl->drop();
+        }
         $db->rollback();
         throw $e;
     }

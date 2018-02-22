@@ -3,8 +3,7 @@ exports.APP_DIR = exports.path.resolve(__dirname, 'javascript')
 
 exports.entry = {
   vendor: ['react', 'react-dom'],
-  showform: exports.APP_DIR + '/ShowForm/index.jsx',
-  sectionform: exports.APP_DIR + '/SectionForm/index.jsx',
-  Section: exports.APP_DIR + '/Section/index.jsx',
-  Slide: exports.APP_DIR + '/Slide/index.jsx',
+  ShowList: exports.APP_DIR + '/ShowList/index.jsx',
+  SlideList: exports.APP_DIR + '/SlideList/index.jsx',
+  SlideEdit: exports.APP_DIR + '/SlideEdit/index.jsx',
 }

@@ -9,8 +9,13 @@ module.exports = {
     path: setup.path.join(setup.APP_DIR, "dev"),
     filename: "[name].js"
   },
+  resolve: {
+    extensions: [
+      '.js', '.jsx',
+    ],
+  },
   plugins: [
-    new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery",}),
+    new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery", }),
     new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.js'}),
     new BrowserSyncPlugin({
       host: 'localhost',
@@ -35,11 +40,11 @@ module.exports = {
         include: setup.APP_DIR,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react',]
+          presets: ['env', 'react', ]
         }
       }, {
-        test: /\.css$/,
-        loader: "style-loader!css-loader"
+        test: /\.(s*)css$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
       },
     ]
   },

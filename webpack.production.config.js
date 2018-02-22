@@ -11,30 +11,8 @@ module.exports = {
     filename: '[name].[chunkhash:8].min.js',
     chunkFilename: '[name].[chunkhash:8].chunk.js',
   },
-  plugins: [new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.js', })],
-  module: {
-    rules: [
-      {
-        test: /\.jsx?/,
-        include: setup.APP_DIR,
-        loader: 'babel-loader',
-        query: {
-          presets: ['es2015', 'react', ]
-        },
-      }, {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=100000',
-      }, {
-        test: [
-          /\.js$/, /\.es6$/, /\.jsx$/,
-        ],
-        exclude: /node_modules/,
-        loader: WebpackStripLoader.loader('console.log'),
-      }, {
-        test: /\.css$/,
-        loader: "style-loader!css-loader",
-      },
-    ]
+  resolve: {
+    extensions: ['.js', '.jsx',]
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin(
@@ -60,4 +38,28 @@ module.exports = {
     }),
     new AssetsPlugin({filename: 'assets.json', prettyPrint: true}),
   ],
+  module: {
+    rules: [
+      {
+        test: /\.jsx?/,
+        include: setup.APP_DIR,
+        loader: 'babel-loader',
+        query: {
+          presets: ['env', 'react',]
+        },
+      }, {
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        loader: 'url-loader?limit=100000',
+      }, {
+        test: [
+          /\.js$/, /\.es6$/, /\.jsx$/,
+        ],
+        exclude: /node_modules/,
+        loader: WebpackStripLoader.loader('console.log'),
+      }, {
+        test: /\.(s*)css$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
+      },
+    ]
+  },
 }

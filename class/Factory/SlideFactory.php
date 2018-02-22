@@ -41,12 +41,12 @@ class SlideFactory extends Base
     {
         return parent::load($id);
     }
-    
-    public function listing($sectionId)
+
+    public function listing($showId)
     {
         $db = Database::getDB();
         $tbl = $db->addTable('ss_slide');
-        $tbl->addFieldConditional('sectionId', $sectionId);
+        $tbl->addFieldConditional('showId', $showId);
         $tbl->addOrderBy('sorting');
         return $db->select();
     }
@@ -61,12 +61,12 @@ class SlideFactory extends Base
         foreach ($slides as &$slide) {
             $slide['decisions'] = $dFactory->listing($slide['id']);
             /*
-            $decisions = $dFactory->listing($slide['id']);
-            if (empty($decisions)) {
-                $slide['decisions'] = null;
-            } else {
-                $slide['decisions'] = $decisions;
-            }
+              $decisions = $dFactory->listing($slide['id']);
+              if (empty($decisions)) {
+              $slide['decisions'] = null;
+              } else {
+              $slide['decisions'] = $decisions;
+              }
              * 
              */
         }
@@ -124,11 +124,11 @@ class SlideFactory extends Base
         return $path;
     }
 
-    public function getCurrentSort($sectionId)
+    public function getCurrentSort($showId)
     {
         $db = Database::getDB();
         $tbl = $db->addTable('ss_slide');
-        $tbl->addFieldConditional('sectionId', $sectionId);
+        $tbl->addFieldConditional('showId', $showId);
         $sorting = $tbl->addField('sorting');
         $tbl->addOrderBy('sorting', 'desc');
         $db->setLimit(1);
@@ -142,15 +142,16 @@ class SlideFactory extends Base
     public function post(Request $request)
     {
         $slide = $this->build();
-        $slide->sectionId = $request->pullPostInteger('sectionId');
+        $slide->showId = $request->pullPostInteger('showId');
         $slide->content = '<p>Content...</p>';
-        $currentSort = $this->getCurrentSort($slide->sectionId);
+        $currentSort = $this->getCurrentSort($slide->showId);
         if ($currentSort === false) {
             $nextSort = 0;
         } else {
             $nextSort = $currentSort + 1;
         }
         $slide->sorting = $nextSort;
+        $this->createImageDirectory($slide);
         return $slide;
     }
 
@@ -178,6 +179,10 @@ class SlideFactory extends Base
         \phpws\PHPWS_File::rmdir($path);
     }
 
+    /**
+     * 
+     * @param slideshow\Resource\SlideResource $slide
+     */
     public function createImageDirectory($slide)
     {
         $path = $slide->getImagePath();
@@ -212,10 +217,10 @@ class SlideFactory extends Base
 
     public function getDecisions(Resource $slide)
     {
-         $dFactory = new DecisionFactory;
-         return $dFactory->listing($slide->id);
+        $dFactory = new DecisionFactory;
+        return $dFactory->listing($slide->id);
     }
-    
+
     public function sort($slide, $new_position)
     {
         $sortable = new \phpws2\Sortable('ss_slide', 'sorting');

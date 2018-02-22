@@ -1,0 +1,43 @@
+#SlideEdit {
+  h3 {
+    margin: 0 0 1em;
+  }
+
+  .panel-select {
+    text-align: center;
+
+    .panel-list {
+      margin: 0;
+      padding: 0;
+
+      .ss-panel {
+        display: inline-block;
+        background-color: white;
+        border: 1px solid black;
+        min-width: 120px;
+        border-radius: 8px;
+        padding: 1em;
+        text-align: center;
+        margin-bottom: 1em;
+        margin-right: 8px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .page-layout {
+    border: 1px solid black;
+    border-radius: 8px;
+    height: 600px;
+    padding: 1em;
+    
+    .panel-html-view {
+      width : 100%;
+      min-height : 100px;
+      border : 2px dashed blue;
+    }
+  }
+}

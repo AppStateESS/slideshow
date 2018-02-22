@@ -24,39 +24,51 @@ use slideshow\Factory\NavBar;
 class Admin extends Base
 {
 
-    public function createPostCommand(Request $request)
+    /**
+     * @var slideshow\Factory\ShowFactory
+     */
+    protected $factory;
+
+    public function postCommand(Request $request)
     {
-        return $this->factory->post($request);
+        $show = $this->factory->post($request);
+        return array('show'=>$show->getStringVars());
     }
-    
+
     protected function listHtmlCommand(Request $request)
     {
-        $this->addShowOption();
-        $showForm = $this->factory->reactView('showform');
-        return parent::listHtmlCommand($request) . $showForm;
+        $this->createShowButton();
+        return $this->factory->scriptView('ShowList');
+    }
+    
+    protected function listJsonCommand(Request $request)
+    {
+        return array('listing'=>$this->factory->listing(true));
     }
 
     protected function viewHtmlCommand(Request $request)
     {
-        $this->addSectionOption($this->id);
-        $showId = <<<EOF
-<script>const showId = {$this->id}</script>
+        return 'viewHtmlCommand empty';
+    }
+    
+    protected function deleteCommand(Request $request)
+    {
+        $this->factory->delete($this->id);
+    }
+    
+    protected function putCommand(Request $request)
+    {
+        $this->factory->put($this->id, $request);
+        return true;
+    }
+
+    private function createShowButton()
+    {
+        $nav = new NavBar();
+        $create = <<<EOF
+<button class="btn btn-success navbar-btn" id="createShow"><i class="fa fa-plus"></i> Create new show</button>
 EOF;
-        $sectionForm = $this->factory->reactView('sectionform');
-        return parent::viewHtmlCommand($request) . $showId . $sectionForm;
+        $nav->addItem($create);
     }
-    
-    private function addSectionOption($id)
-    {
-        $item = '<a id="add-section" class="pointer"><i class="fa fa-plus"></i> Add a new section</a>';
-        NavBar::addItem($item);
-    }
-    
-    private function addShowOption()
-    {
-        $item = '<a id="add-show" class="pointer"><i class="fa fa-plus"></i> Add new show</a>';
-        NavBar::addItem($item);
-    }
-            
 
 }

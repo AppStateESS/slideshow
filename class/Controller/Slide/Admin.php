@@ -25,7 +25,10 @@ class Admin extends Base
 
     protected function editHtmlCommand(Request $request)
     {
-        return $this->factory->scriptView('SlideEdit', true, array('slideId'=>$this->id));
+        $navbar = new \slideshow\Factory\NavBar;
+        $navbar->addItem('<a href="./slideshow/Slide/list/' . $this->id . '"><i class="fa fa-film"></i> Slide list</a>');
+        return $this->factory->scriptView('SlideEdit', true,
+                        array('slideId' => $this->id));
     }
 
     protected function listHtmlCommand(Request $request)
@@ -76,10 +79,7 @@ class Admin extends Base
 
     protected function deleteCommand(Request $request)
     {
-        /*
-          $this->factory->delete($this->id);
-         * 
-         */
+        $this->factory->delete($this->id);
     }
 
     protected function jsonPatchCommand(Request $request)

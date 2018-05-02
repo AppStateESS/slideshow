@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 const NewSlide = ({handleClick}) => {
   return (
-    <div className="new-slide text-center" onClick={handleClick}>
+    <div className="slide new-slide text-center" onClick={handleClick}>
       <i className="fa fa-plus fa-5x"></i>
     </div>
   )

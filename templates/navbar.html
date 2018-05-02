@@ -1,5 +1,4 @@
-<!-- Brand and toggle get grouped for better mobile display -->
-<div class="container-fluid">
+<div class="container-fluid" id="slideshow-navbar">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-sec">
             <span class="sr-only">Toggle navigation</span>
@@ -34,7 +33,7 @@
             </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-gear"></i>&nbsp;<?=$title?><span class="caret"></span>
+                    <i class="fas fa-cog"></i>&nbsp;<?=$title?><span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                     <li>
@@ -51,11 +50,11 @@
                 <ul class="dropdown-menu">
                     <?php if ($admin): ?>
                     <li>
-                        <a href="index.php?module=controlpanel"><i class="fa fa-gear"></i> Control panel</a>
+                        <a href="index.php?module=controlpanel"><i class="fas fa-cog"></i> Control panel</a>
                     </li>
                     <?php endif;?>
                     <li>
-                        <a href="<?=$logout_uri?>"><i class="fa fa-sign-out"></i> Sign out</a>
+                        <a href="<?=$logout_uri?>"><i class="fas sign-out-alt"></i> Sign out</a>
                     </li>
                 </ul>
             </li>

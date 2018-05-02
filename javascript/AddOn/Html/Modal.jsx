@@ -29,7 +29,7 @@ export default class Modal extends Component {
     return (
       <ReactModal isOpen={this.props.isOpen} contentLabel="Modal" style={styles} ariaHideApp={false}>
         <div>
-          <span className="fa-stack fa-lg pull-right pointer" onClick={this.props.close}>
+          <span className="fa-stack fa-lg float-right pointer" onClick={this.props.close}>
             <i className="fa fa-circle fa-stack-2x"></i>
             <i className="fa fa-times fa-stack-1x fa-inverse"></i>
           </span>

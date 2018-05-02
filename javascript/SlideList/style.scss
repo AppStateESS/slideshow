@@ -1,17 +1,32 @@
 $gray: #9f9f9f;
 
-.new-slide {
-  width : 140px;
-  height : 100px;
+.slide {
+  width: 140px;
+  height: 100px;
   padding-top: 15px;
   border: 2px dashed $gray;
-  border-radius : 6px;
-  
+  border-radius: 6px;
+  float: left;
+  margin-right: 1em;
+
+  &.current {
+    padding-top: 30px;
+    text-align: center;
+    
+    a.btn:first-child {
+      margin-right : 8px;
+    }
+  }
+
   &:hover {
-    cursor : pointer;
+    cursor: pointer;
   }
-  
-  .fa {
-    color : $gray;
-  }
+}
+
+.new-slide .fa {
+  color: $gray;
+}
+
+#slideshow-navbar .navbar-btn {
+  margin-right: 1em;
 }

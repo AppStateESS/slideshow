@@ -17,7 +17,7 @@ const ShowRow = ({
         <div className="btn-group">
           <button
             type="button"
-            className="btn btn-default dropdown-toggle"
+            className="btn btn-outline-dark dropdown-toggle"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false">
@@ -36,7 +36,7 @@ const ShowRow = ({
             <li role="separator" className="divider"></li>
             <li>
               <a className="pointer" onClick={deletePrompt}>
-                <i className="fa fa-trash-o"></i>&nbsp;Delete</a>
+                <i className="far fa-trash-alt"></i>&nbsp;Delete</a>
             </li>
           </ul>
         </div>

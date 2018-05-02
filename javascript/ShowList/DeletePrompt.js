@@ -8,7 +8,7 @@ const DeletePrompt = ({deleteShow, close,}) => {
       <h3>Deleting this Show will remove all associate slides.</h3>
       <p>Are you sure you want to do this?</p>
       <button className="btn btn-danger btn-block" onClick={deleteShow}>Yes, delete it</button>
-      <button className="btn btn-default btn-block" onClick={close}>No, nevermind</button>
+      <button className="btn btn-outline-dark btn-block" onClick={close}>No, nevermind</button>
     </div>
   )
 }

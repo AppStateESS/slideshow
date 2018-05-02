@@ -1,5 +1,5 @@
 #SlideEdit {
-  h3 {
+  h2, h3 {
     margin: 0 0 1em;
   }
 
@@ -33,11 +33,31 @@
     border-radius: 8px;
     height: 600px;
     padding: 1em;
+    margin-bottom: 1em;
     
-    .panel-html-view {
+    .panel-view {
       width : 100%;
+      padding: 10px 22px 10px 10px;
+      margin-bottom: 1em;
+      position: relative;
+      border : 2px solid transparent;
+      &:hover {
+        border : 2px dashed rgb(0, 179, 196);
+      }
+      
+    }
+    .panel-image {
       min-height : 100px;
-      border : 2px dashed blue;
+      
+      .empty-image {
+        color: #999999;
+      }
+    }
+    
+    .delete-panel {
+      position : absolute;
+      right : 0;
+      top :0;
     }
   }
 }

@@ -24,59 +24,32 @@
  * THE SOFTWARE.
  */
 
-namespace slideshow\Controller\Show;
+namespace slideshow\Controller\Panel;
 
 use Canopy\Request;
-use slideshow\Factory\NavBar;
+use slideshow\Factory\PanelFactory as Factory;
+use slideshow\Controller\RoleController;
 
-class Admin extends Base
+/**
+ *
+ * @author Matthew McNaney <mcnaneym@appstate.edu>
+ */
+class Admin extends RoleController
 {
 
     /**
-     * @var slideshow\Factory\ShowFactory
+     * @var Factory $factory
      */
     protected $factory;
 
-    public function postCommand(Request $request)
+    protected function loadFactory()
     {
-        $show = $this->factory->post($request);
-        return array('show'=>$show->getStringVars());
-    }
-
-    protected function listHtmlCommand(Request $request)
-    {
-        $this->createShowButton();
-        return $this->factory->scriptView('ShowList');
+        $this->factory = new Factory;
     }
     
-    protected function listJsonCommand(Request $request)
+    protected function postCommand(Request $request)
     {
-        return array('listing'=>$this->factory->listing(true));
-    }
-
-    protected function viewHtmlCommand(Request $request)
-    {
-        return 'viewHtmlCommand empty';
-    }
-    
-    protected function deleteCommand(Request $request)
-    {
-        $this->factory->delete($this->id);
-    }
-    
-    protected function putCommand(Request $request)
-    {
-        $this->factory->put($this->id, $request);
-        return true;
-    }
-
-    private function createShowButton()
-    {
-        $nav = new NavBar();
-        $create = <<<EOF
-<button class="btn btn-success navbar-btn" id="createShow"><i class="fa fa-plus"></i> Create new show</button>
-EOF;
-        $nav->addItem($create);
+        return array('post');
     }
 
 }

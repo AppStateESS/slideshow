@@ -51,28 +51,6 @@ class SlideFactory extends Base
         return $db->select();
     }
 
-    public function listingWithDecisions($sectionId)
-    {
-        $slides = $this->listing($sectionId);
-        if (empty($slides)) {
-            return null;
-        }
-        $dFactory = new DecisionFactory;
-        foreach ($slides as &$slide) {
-            $slide['decisions'] = $dFactory->listing($slide['id']);
-            /*
-              $decisions = $dFactory->listing($slide['id']);
-              if (empty($decisions)) {
-              $slide['decisions'] = null;
-              } else {
-              $slide['decisions'] = $decisions;
-              }
-             * 
-             */
-        }
-        return $slides;
-    }
-
     public function handlePicturePost($slideId)
     {
         if (!isset($_FILES) || empty($_FILES)) {
@@ -143,10 +121,9 @@ class SlideFactory extends Base
     {
         $slide = $this->build();
         $slide->showId = $request->pullPostInteger('showId');
-        $slide->content = '<p>Content...</p>';
         $currentSort = $this->getCurrentSort($slide->showId);
         if ($currentSort === false) {
-            $nextSort = 0;
+            $nextSort = 1;
         } else {
             $nextSort = $currentSort + 1;
         }
@@ -166,8 +143,7 @@ class SlideFactory extends Base
         $slide = $this->load($slideId);
         self::deleteResource($slide);
         $sortable = new \phpws2\Sortable('ss_slide', 'sorting');
-        $sortable->startAtZero();
-        $sortable->setAnchor('sectionId', $slide->sectionId);
+        $sortable->setAnchor('showId', $slide->showId);
         $sortable->reorder();
 
         $this->deleteImageDirectory($slide);
@@ -215,17 +191,11 @@ class SlideFactory extends Base
         return true;
     }
 
-    public function getDecisions(Resource $slide)
-    {
-        $dFactory = new DecisionFactory;
-        return $dFactory->listing($slide->id);
-    }
-
     public function sort($slide, $new_position)
     {
         $sortable = new \phpws2\Sortable('ss_slide', 'sorting');
         $sortable->startAtZero();
-        $sortable->setAnchor('sectionId', $slide->sectionId);
+        $sortable->setAnchor('slideId', $slide->slideId);
         $sortable->moveTo($slide->getId(), $new_position);
     }
 

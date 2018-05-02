@@ -119,7 +119,7 @@ export default class InputField extends Component {
           : undefined}
         {input}
         {errorMessage
-          ? <div className="label label-danger">{errorMessage}</div>
+          ? <div className="badge badge-danger">{errorMessage}</div>
           : null}
       </div>
     )

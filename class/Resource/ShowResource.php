@@ -22,6 +22,12 @@ class ShowResource extends BaseAbstract
 {
 
     /**
+    * Unique id that is associated with the show
+    * @var \phpws2\Variable\IntegerVar
+    */
+    protected $showId;
+
+    /**
      * Title of show
      * @var \phpws2\Variable\StringVar
      */
@@ -37,6 +43,7 @@ class ShowResource extends BaseAbstract
     public function __construct()
     {
         parent::__construct();
+        $this->showId = new \phpws2\Variable\IntegerVar(null, 'showId');
         $this->title = new \phpws2\Variable\StringVar(null, 'title');
         $this->title->setLimit('255');
         $this->active = new \phpws2\Variable\BooleanVar(0, 'active');

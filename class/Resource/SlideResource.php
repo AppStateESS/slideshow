@@ -28,16 +28,16 @@ class SlideResource extends BaseAbstract
     protected $delay;
 
     /**
-     * Id of section to which this show is associated
+     * Id of show that this slide belongs to.
      * @var \phpws2\Variable\IntegerVar
      */
     protected $showId;
 
     /**
      * Display order of slide
-     * @var \phpws2\Variable\SmallInteger 
+     * @var \phpws2\Variable\SmallInteger
      */
-    protected $sorting;
+    protected $slideNum;
 
     /**
      * Title or label of slide. Does not display
@@ -63,7 +63,7 @@ class SlideResource extends BaseAbstract
         parent::__construct();
         $this->delay = new \phpws2\Variable\IntegerVar(0, 'delay');
         $this->showId = new \phpws2\Variable\IntegerVar(null, 'showId');
-        $this->sorting = new \phpws2\Variable\SmallInteger(0, 'sorting');
+        $this->slideNum = new \phpws2\Variable\SmallInteger(0, 'slideNum');
         $this->title = new \phpws2\Variable\TextOnly('Untitled slide', 'title');
         $this->title->setLimit('255');
         $this->locked = new \phpws2\Variable\BooleanVar(false, 'locked');

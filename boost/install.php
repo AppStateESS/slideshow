@@ -9,21 +9,15 @@ function slideshow_install(&$content)
     $db->begin();
 
     try {
+        /* TODO: Add install commands for our tables using Canopy functions. */
+
+
         $show = new \slideshow\Resource\ShowResource;
-        $tables[] = $show->createTable($db);
+        $show->createTable($db);
 
         $slide = new \slideshow\Resource\SlideResource;
-        $tables[] = $slide->createTable($db);
+        $slide->createTable($db);
 
-        $phtml = new \slideshow\Resource\PanelHtmlResource;
-        $tables[] = $phtml->createTable($db);
-
-        $pimg = new \slideshow\Resource\PanelImageResource;
-        $tables[] = $pimg->createTable($db);
-
-        $pqanda = new \slideshow\Resource\PanelQuestionResource();
-        $tables[] = $pqanda->createTable($db);
-        
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
         $backout = array_reverse($tables);

@@ -48,7 +48,7 @@ class Admin extends Base
         $this->createShowButton();
         return $this->factory->scriptView('ShowList');
     }
-    
+
     protected function listJsonCommand(Request $request)
     {
         return array('listing'=>$this->factory->listing(true));
@@ -63,7 +63,7 @@ class Admin extends Base
     {
         $this->factory->delete($this->id);
     }
-    
+
     protected function putCommand(Request $request)
     {
         $this->factory->put($this->id, $request);
@@ -74,7 +74,7 @@ class Admin extends Base
     {
         $nav = new NavBar();
         $create = <<<EOF
-<button class="btn btn-success navbar-btn" id="createShow"><i class="fa fa-plus"></i> Create new show</button>
+<button class="btn btn-success navbar-btn" id="createShow"><i class="fa fa-plus"></i> Create New SlideShow</button>
 EOF;
         $nav->addItem($create);
     }

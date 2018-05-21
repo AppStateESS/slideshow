@@ -92,7 +92,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
 
     private function showList()
     {
-        return '<a href="./slideshow/Show/list"><i class="fa fa-list"></i> Show list</a>';
+        return '<a class="nav-link" href="./slideshow/Show/list"><i class="fas fa-list"></i> Show list</a>';
     }
 
     public static function autoloader($class_name)

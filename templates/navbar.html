@@ -1,64 +1,54 @@
-<div class="container-fluid" id="slideshow-navbar">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-sec">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-    </div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="navbar-collapse-sec">
-        <ul class="nav navbar-nav navbar-left">
-            <li>
-                <a href="<?=$home?>"><i class="fa fa-home"></i> Home</a>
-            </li>
+<nav class="navbar navbar-expand-md navbar-light bg-light" role="navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <a class="nav-link" href="<?=$home?>slideshow/Show"><i class="fa fa-home"></i> Home</a>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          <?=$current_area?>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="<?=$home?>properties/Property/list"><i class="fas fa-building"></i> Example - Does nothing</a>
+        </div>
+      </li>
 
-            <?php if ($items !== null):?>
-            <li class="navbar-text">|
-            </li>
-            <?php foreach($items as $item):
-            if ($item == '|'):?>
-            <li class="navbar-text">|
-            </li>
-            <?php else: ?>
-            <li>
-                <?=$item?>
-            </li>
-            <?php endif;?>
-            <?php endforeach;?>
-            <?php endif;?>
-            <?php if ($options !== null):?>
-            <li class="navbar-text">|
-            </li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-cog"></i>&nbsp;<?=$title?><span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <?=$options?>
-                    </li>
-                </ul>
-            </li>
-            <?php endif;?>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            <?php if ($logged):?>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?=$username ?><span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <?php if ($admin): ?>
-                    <li>
-                        <a href="index.php?module=controlpanel"><i class="fas fa-cog"></i> Control panel</a>
-                    </li>
-                    <?php endif;?>
-                    <li>
-                        <a href="<?=$logout_uri?>"><i class="fas sign-out-alt"></i> Sign out</a>
-                    </li>
-                </ul>
-            </li>
-            <?php endif; ?>
-        </ul>
-    </div><!-- /.navbar-collapse -->
-</div>
+      <?php if ($items !== null):?>
+      <?php foreach($items as $item):?>
+      <li class="nav-item">
+        <?=$item?>
+      </li>
+      <?php endforeach;?>
+      <?php endif;?>
+      <?php if ($options !== null):?>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+          <i class="fas fa-cog"></i>&nbsp;<?=$title?>
+        </a>
+        <div class="dropdown-menu">
+          <?=$options?>
+        </div>
+      </li>
+      <?php endif;?>
+      <?php if (isset($is_manager)):?>
+      <li class="nav-item">
+        <a class="nav-link" href="./properties/Manager/Properties"><i class="fa fa-list"></i> My properties</a>
+      </li>
+      <?php endif;?>
+      <?php if ($logged):?>
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          <?=$username ?></a>
+        <div class="dropdown-menu">
+          <?php if ($admin): ?>
+          <a class="dropdown-item" href="index.php?module=controlpanel"><i class="fas fa-cog"></i> Control panel</a>
+          <?php endif;?>
+          <a class="dropdown-item" href="<?=$logout_uri?>"><i class="fas fa-sign-out-alt"></i> Sign out</a>
+          <?php endif; ?>
+        </div>
+      </li>
+  </div>
+</nav>

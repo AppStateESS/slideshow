@@ -21,5 +21,19 @@
 
 function slideshow_uninstall(&$content)
 {
-    return TRUE;
+    $db = \phpws2\Database::getDB();
+    $db->begin();
+    try {
+      $db->buildTable('ss_show')->drop();
+      $db->buildTable('ss_slide')->drop();
+    }
+    catch (Exception $e) {
+      \phpws2\Error::log($e);
+      throw $e;
+    }
+    $db->commit();
+    
+    $content[] = "Tables dropped";
+    return true;
+
 }

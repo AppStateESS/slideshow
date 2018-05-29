@@ -12,6 +12,7 @@
  * GNU General Public License for more details.
  *
  * @author Matthew McNaney <mcnaney at gmail dot com>
+ * @author Tyler Craig <craigta1 at appstate dot edu>
  *
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
@@ -31,7 +32,25 @@ class ShowFactory extends Base
     }
 
     /**
-     * 
+    * Selects the details about a show from the db
+    *
+    * @param $show_id
+    */
+    public static function getDetails($show_id) {
+      if (empty($show_id)) {
+        throw new \Exception("Invalid show id");
+      }
+
+      $db = \phpws2\Database::getDB();
+      $tbl = $db->addTable('ss_show');
+      $tbl->addFieldConditional('id', $show_id);
+      $show = $db->selectOneRow();
+
+      return $show;
+    }
+
+    /**
+     *
      * @param slideshow\Resource\ShowResource $show
      */
     public function createImageDirectory($show)
@@ -75,15 +94,8 @@ class ShowFactory extends Base
     {
         /* @var $resource \slideshow\Resource\ShowResource */
         $resource = $this->load($id);
-        $sectionFactory = new SectionFactory();
-
         $vars = $resource->getStringVars();
-        $sections = $sectionFactory->listing($resource->id);
-        foreach ($sections as $sec) {
-            $slideFactory = new SlideFactory();
-            $slides = $slideFactory->listing($sec['id']);
-        }
-        $vars['sections'] = $sections;
+
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('slideshow', 'Show/view.html');
         return $template->get();

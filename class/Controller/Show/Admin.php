@@ -28,6 +28,8 @@ namespace slideshow\Controller\Show;
 
 use Canopy\Request;
 use slideshow\Factory\NavBar;
+use slideshow\Factory\ShowFactory;
+use slideshow\Factory\React; // Yet to be used.
 
 class Admin extends Base
 {
@@ -58,7 +60,7 @@ class Admin extends Base
     {
         return 'viewHtmlCommand empty';
     }
-    
+
     protected function deleteCommand(Request $request)
     {
         $this->factory->delete($this->id);
@@ -68,6 +70,19 @@ class Admin extends Base
     {
         $this->factory->put($this->id, $request);
         return true;
+    }
+
+    protected function getJsonView($data, \Canopy\Request $request)
+    {
+      $vars = $request->getRequestVars();
+      $command = '';
+      if (!empty($data['command'])) {
+        $command = $data['command'];
+      }
+      if ($command == 'getDetails' && \Current_User::allow('slideshow', 'edit')) {
+        $result = ShowFactory::getDetails($vars['show_id']);
+      }
+      return new \phpws2\View\JsonView($result);
     }
 
     private function createShowButton()

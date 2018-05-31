@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 
 export default class ShowList extends Component{
   constructor() {
+    super()
     this.state = {
       showsList: getShows()
     }
@@ -18,7 +19,7 @@ export default class ShowList extends Component{
               </div></div>)
     } else {
       cards = this.props.shows.map(function (id) {
-        return <ShowCard id={id}\>
+        return <ShowCard id={id}/>
       }.bind(this))
     }
 

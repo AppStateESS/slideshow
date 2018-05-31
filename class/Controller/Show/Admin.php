@@ -47,7 +47,7 @@ class Admin extends Base
     protected function listHtmlCommand(Request $request)
     {
         $this->createShowButton();
-        return $this->factory->scriptView('ShowList');
+        return $this->factory->scriptView('shows');
     }
 
     protected function listJsonCommand(Request $request)

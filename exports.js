@@ -3,9 +3,11 @@ exports.APP_DIR = exports.path.resolve(__dirname, 'javascript')
 
 exports.entry = {
   vendor: ['react', 'react-dom'],
-  /*
-  ShowList: exports.APP_DIR + '/ShowList/index.jsx',
-  SlideList: exports.APP_DIR + '/SlideList/index.jsx',
-  SlideEdit: exports.APP_DIR + '/SlideEdit/index.jsx',
-  */
+
+  shows: exports.APP_DIR + '/Show/index.jsx',
+  /*SlideEdit: exports.APP_DIR + '/Slide/edit.jsx',
+  Present: exports.APP_DIR + '/Show/Present.jsx',
+  ShowView: exports.APP_DIR + 'Show/ShowView.jsx',
+  ShowCard: exports.APP_DIR + 'Show/ShowCard.jsx'*/
+
 }

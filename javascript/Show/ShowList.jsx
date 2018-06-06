@@ -1,24 +1,29 @@
 import React, {Component} from 'react'
 
-export default class ShowList extends Component{
+export default class ShowList extends Component {
   constructor() {
     super()
     this.state = {
-      showsList: getShows()
     }
     this.getShows = this.getShows.bind(this)
+    this.pullShows = this.pullShows.bind(this)
+  }
+
+  /**
+  * Pulls all the shows from the back-end
+  */
+  pullShows() {
+    let shows
+    $.get()
+    return new array()
   }
 
   getShows() {
-    let shows
-
-    if (this.props.shows === null || this.props.shows.length === 0) {
-      cards = (<div class="card"><div class="card-body">
-                <h5>Add a Show:</h5>
-                <a href="#" class="btn btn-primary">New Show</a>
-              </div></div>)
+    let shows = pullShows()
+    if (shows === null) {
+      // Add a way to handle this or not.
     } else {
-      cards = this.props.shows.map(function (id) {
+      cards = shows.map(function (id) {
         return <ShowCard id={id}/>
       }.bind(this))
     }
@@ -33,7 +38,7 @@ export default class ShowList extends Component{
   render() {
     return (
       <div>
-        {this.state.showsList}
+        {this.getShows}
       </div>
     )
   }

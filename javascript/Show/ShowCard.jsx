@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+
 export default class ShowCard extends Component {
   constructor() {
       this.state = {

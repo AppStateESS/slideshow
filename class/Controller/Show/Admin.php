@@ -29,7 +29,6 @@ namespace slideshow\Controller\Show;
 use Canopy\Request;
 use slideshow\Factory\NavBar;
 use slideshow\Factory\ShowFactory;
-use slideshow\Factory\React; // Yet to be used.
 
 class Admin extends Base
 {
@@ -48,7 +47,7 @@ class Admin extends Base
     protected function listHtmlCommand(Request $request)
     {
         $this->createShowButton();
-        return $this->factory->scriptView('ShowList');
+        return $this->factory->scriptView('shows');
     }
 
     protected function listJsonCommand(Request $request)

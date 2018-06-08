@@ -46,6 +46,8 @@ class Admin extends Base
 
     protected function listHtmlCommand(Request $request)
     {
+        $script = $this->factory->scriptView('shows');
+        \Layout::addJSHeader($script);
         $this->createShowButton();
         return $this->factory->scriptView('shows');
     }

@@ -4,4 +4,4 @@ import ReactDOM from 'react-dom'
 import ShowView from './ShowView.jsx'
 
 ReactDOM.render(
-  <ShowView/>, document.getElementById('ShowView'))
+  <ShowView/>, document.getElementById('shows'))

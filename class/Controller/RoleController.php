@@ -135,8 +135,6 @@ abstract class RoleController
             if ($this->id && method_exists($this, 'viewHtmlCommand')) {
                 $method_name = 'viewHtmlCommand';
             } else {
-                //echo(method_exists($this, 'viewHtmlCommand'));
-                var_dump($this->id);
                 throw new BadCommand($method_name);
             }
         }

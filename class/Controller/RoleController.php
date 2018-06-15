@@ -27,14 +27,18 @@ abstract class RoleController
 {
 
     protected $factory;
+    protected $view;
     protected $role;
     protected $id;
 
     abstract protected function loadFactory();
 
+    abstract protected function loadView();
+
     public function __construct($role)
     {
         $this->loadFactory();
+        $this->loadView();
         $this->role = $role;
     }
 
@@ -108,7 +112,7 @@ abstract class RoleController
         } else {
             $method_name = $command . 'PutCommand';
         }
-        
+
         if (!method_exists($this, $method_name)) {
             throw new BadCommand($method_name);
         }

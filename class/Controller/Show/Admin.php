@@ -27,8 +27,8 @@
 namespace slideshow\Controller\Show;
 
 use Canopy\Request;
-use slideshow\Factory\NavBar;
 use slideshow\Factory\ShowFactory;
+use slideshow\View\ShowView;
 
 class Admin extends Base
 {
@@ -38,18 +38,20 @@ class Admin extends Base
      */
     protected $factory;
 
+    /**
+    * @var slideshow\View\ShowView
+    */
+    protected $view;
+
+    protected function listHtmlCommand(Request $request)
+    {
+        return $this->view->show();
+    }
+
     public function postCommand(Request $request)
     {
         $show = $this->factory->post($request);
         return array('show'=>$show->getStringVars());
-    }
-
-    protected function listHtmlCommand(Request $request)
-    {
-        $script = $this->factory->scriptView('shows');
-        \Layout::addJSHeader($script);
-        $this->createShowButton();
-        return $this->factory->scriptView('shows');
     }
 
     protected function listJsonCommand(Request $request)
@@ -84,15 +86,6 @@ class Admin extends Base
         $result = ShowFactory::getDetails($vars['show_id']);
       }
       return new \phpws2\View\JsonView($result);
-    }
-
-    private function createShowButton()
-    {
-        $nav = new NavBar();
-        $create = <<<EOF
-<button class="btn btn-success navbar-btn" id="createShow"><i class="fa fa-plus"></i> Create New SlideShow</button>
-EOF;
-        $nav->addItem($create);
     }
 
 }

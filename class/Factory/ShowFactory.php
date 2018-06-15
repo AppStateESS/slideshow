@@ -67,7 +67,7 @@ class ShowFactory extends Base
         $show->title = $request->pullPostString('title');
         $show->active = 0;
         $this->saveResource($show);
-        $this->createImageDirectory($show);
+        //$this->createImageDirectory($show);
         return $show;
     }
 
@@ -92,11 +92,7 @@ class ShowFactory extends Base
 
     public function view($id)
     {
-        /* @var $resource \slideshow\Resource\ShowResource */
-        $resource = $this->load($id);
-        $vars = $resource->getStringVars();
-
-        $template = new \phpws2\Template($vars);
+        $template = new \phpws2\Template();
         $template->setModuleTemplate('slideshow', 'Show/view.html');
         return $template->get();
     }

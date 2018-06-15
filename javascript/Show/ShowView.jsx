@@ -13,17 +13,30 @@ export default class ShowView extends Component {
         title: ""
       }
 
+      //this.load = this.load.bind(this)
       this.saveNewShow = this.saveNewShow.bind(this)
       this.switchModal = this.switchModal.bind(this)
+      this.successMessage = this.message.bind(this)
       this.updateTitle = this.updateTitle.bind(this)
     }
 
     saveNewShow(title) {
       if (this.state.title != null) {
-        $.post('./slideshow/show/', title).done(function () {
-          window.location.href = './slideshow/show/edit'
-        }.bind(this)).fail(function () {
-          console.log("Fatal Error On Save Has Occured")
+        $.ajax({
+          url: 'slideshow/Show',
+          data: {
+            title: this.state.title
+          },
+          dataType: 'json',
+          type: 'post',
+          success: () => {
+            this.switchModal(),
+            this.message(),
+            this.load()
+          },
+          error: () => {
+            alert('Sorry, but this slideshow cannot be created.')
+          },
         })
       }
     }
@@ -38,6 +51,17 @@ export default class ShowView extends Component {
       this.setState({
         title: event.target.value
       })
+    }
+
+    /* This should redirect the user to the edit page.
+    load() {
+      $.get({
+
+      })
+    }*/
+
+    message() {
+      alert("New SlideShow Created!")
     }
 
   render() {

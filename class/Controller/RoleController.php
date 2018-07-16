@@ -108,7 +108,7 @@ abstract class RoleController
         } else {
             $method_name = $command . 'PutCommand';
         }
-        
+
         if (!method_exists($this, $method_name)) {
             throw new BadCommand($method_name);
         }

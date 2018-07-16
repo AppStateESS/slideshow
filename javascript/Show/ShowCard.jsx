@@ -4,6 +4,7 @@ import { Card, CardBody, CardTitle, CardImg, Button } from 'reactstrap'
 import './custom.css'
 
 export default class ShowCard extends Component {
+<<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
   constructor(props) {
     super(props)
 
@@ -21,6 +22,20 @@ export default class ShowCard extends Component {
     this.editTitle = this.editTitle.bind(this)
     this.updateTitle = this.updateTitle.bind(this)
     this.handleActivation = this.handleActivation.bind(this)
+=======
+  constructor() {
+    super()
+      this.state = {
+          id: -1,
+          title: null,
+          img: "https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180",
+          active: 0,
+          color: "danger"
+      }
+      this.loadShow = this.loadShow.bind(this)
+      this.view = this.view.bind(this)
+      this.edit = this.edit.bind(this)
+>>>>>>> Work in progress, get and post work.
   }
 
   componentDidMount() {
@@ -30,14 +45,46 @@ export default class ShowCard extends Component {
 
           title: this.props.title,
           //img: this.props.img,
+<<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
           active: Number(this.props.active),
+=======
+          active: this.props.active,
+>>>>>>> Work in progress, get and post work.
           id: this.props.id
 
     })
   }
 
+<<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
  view() {
 
+=======
+/**
+* Loads the details fome the back end - see Show.php
+*/
+ loadShow(id) {
+   console.log("Made it");
+   if (id !== -1) {
+     $.getJSON('./slideshow/show/admin/getDetails', {show_id: id}).done(function (data) {
+       this.setState({show: data})
+     }.bind(this))
+
+     this.setState({
+       show: {
+         title: "Fake Data Placeholder",
+         img: "https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180"
+       }
+     })
+   }
+   else {
+     this.setState({
+       show: {
+         title: "Test Show",
+         img: "https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180"
+       }
+     })
+   }
+>>>>>>> Work in progress, get and post work.
  }
 
  handleSave() {
@@ -74,6 +121,7 @@ export default class ShowCard extends Component {
    });
  }
 
+<<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
  editTitle() {
    this.setState({edit: true})
  }
@@ -87,6 +135,10 @@ export default class ShowCard extends Component {
  handleActivation() {
    this.state.active > 0 ? this.setState({active: 0}, function(){this.handleSave()}) :
                            this.setState({active: 1}, function(){this.handleSave()})
+=======
+ edit() {
+   console.log("made it");
+>>>>>>> Work in progress, get and post work.
  }
 
   render() {
@@ -112,6 +164,7 @@ export default class ShowCard extends Component {
     return (
       <div style={{paddingBottom: "25px"}}>
         <Card>
+<<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
           <div className="card-img-caption">
             <a className="close card-text" aria-label="Close" onClick={this.deleteShow}>
               <span aria-hidden="true">&times;</span>
@@ -122,11 +175,22 @@ export default class ShowCard extends Component {
           <CardBody>
             <CardTitle className="d-flex justify-content-center">
               {cardTitle}
+=======
+          <CardImg top-width="100%" src={this.state.img}/>
+          <CardBody>
+            <CardTitle className="d-flex justify-content-center">
+              {this.state.title}
+              <a onClick={this.edit} style={{paddingLeft: "10px"}}> <i className="fas fa-edit fa-sm"></i> </a>
+>>>>>>> Work in progress, get and post work.
             </CardTitle>
             <div className="d-flex justify-content-around">
               <Button onClick={this.view} color="primary">Present</Button>
               <Button onClick={this.edit} color="secondary">Edit</Button>
+<<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
               <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>
+=======
+              <Button onClick={this.active} color={this.state.color}>{this.state.active}</Button>
+>>>>>>> Work in progress, get and post work.
             </div>
           </CardBody>
         </Card>

@@ -43,6 +43,7 @@ export default class ShowView extends Component {
       });
     }
   }
+<<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
 
   switchModal() {
     this.setState({
@@ -87,6 +88,43 @@ export default class ShowView extends Component {
     message() {
       alert("New SlideShow Created!")
     }
+=======
+
+  switchModal() {
+    this.setState({
+      modalOpen: !this.state.modalOpen
+    })
+  }
+
+  updateTitle(event) {
+    let r = this.state.resource;
+    r.title = event.target.value;
+    this.setState({
+      resource: r
+    })
+  }
+
+  /**
+  * Pulls all the shows from the back-end
+  */
+  getData() {
+    $.ajax({
+      url: './slideshow/Show',
+      type: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        this.setState({showData: data['listing']});
+      }.bind(this),
+      error: function(req, err) {
+
+                //alert("Failed to grab data.")
+        console.error(req, err.toString());
+      }.bind(this)
+    });
+    //let fakeData = {"id": "1"}
+    //this.setState({data: fakeData})
+  }
+>>>>>>> Work in progress, get and post work.
 
   render() {
 
@@ -126,6 +164,7 @@ export default class ShowView extends Component {
       // )
       return(<div></div>)
     } else {
+<<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
       let cards = this.state.showData.map(function(show) {
         return(
           <ShowCard
@@ -135,6 +174,12 @@ export default class ShowView extends Component {
              active={show.active}
              load={this.getData} />
          )}.bind(this)
+=======
+      let cards = this.state.showData.map(show => {
+          return(
+           <ShowCard key={show.id} id={show.id} title={show.title} active={show.active} />
+          )}
+>>>>>>> Work in progress, get and post work.
       );
 
       //let cards = <ShowCard id={1} {cards}/>

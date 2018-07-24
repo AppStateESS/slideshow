@@ -11,7 +11,7 @@
  */
 
  namespace slideshow\View;
- 
+
  use slideshow\Factory\NavBar;
 
  class ShowView extends BaseView
@@ -21,6 +21,11 @@
    {
      $this->createShowButton();
      return $this->scriptView('shows');
+   }
+
+   public function edit()
+   {
+      return $this->scriptView('edit');
    }
 
    private function createShowButton()

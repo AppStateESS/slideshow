@@ -24,12 +24,15 @@ export default class NavBar extends Component {
       fileOpen: false,
       editOpen: false,
       insertOpen: false,
-      renameOpen: false
+      renameOpen: false,
+      renameVal: ""
     }
 
     this.toggleFile = this.toggleFile.bind(this)
     this.toggleEdit = this.toggleEdit.bind(this)
     this.toggleInsert = this.toggleInsert.bind(this)
+    this.toggleRename = this.toggleRename.bind(this)
+    this.handleRename = this.handleRename.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
   }
 
@@ -57,16 +60,23 @@ export default class NavBar extends Component {
     })
   }
 
-  renameCurrentSlide() {
-    let newName
-    if (this.state.renameOpen) {
+  handleRename(event) {
+    this.setState({
+      renameVal: event.target.value
+    })
+  }
 
+  renameCurrentSlide(newName) {
+    if (this.state.renameVal !== null) {
+      this.props.renameSlide(newName)
+      this.toggleRename()
+    }
+    else {
+      console.log("Error: null value")
     }
   }
 
   render() {
-    let newName
-
     const modal = (
       <Modal isOpen={this.state.renameOpen} toggle={this.toggleRename} fade={false} backdrop={true}>
         <ModalHeader toggle={this.toggleRename}>Rename Slide Title:</ModalHeader>
@@ -74,10 +84,11 @@ export default class NavBar extends Component {
           <InputGroup>
             <Input
                     type="text"
-                    placeholder="New Title"
-                    value={newName} />
+                    placeholder="Rename Slide"
+                    onChange={this.handleRename}
+                    value={this.state.renameVal} />
               <InputGroupAddon addonType="append">
-            <Button onClick={this.props.renameCurrentSlide} color="success">Save</Button>
+            <Button onClick={this.renameCurrentSlide.bind(this, this.state.renameVal)} color="success">Save</Button>
             </InputGroupAddon>
           </InputGroup>
         </ModalBody>
@@ -92,7 +103,7 @@ export default class NavBar extends Component {
             File
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem>Save</DropdownItem>
+            <DropdownItem onClick={this.props.save}>Save</DropdownItem>
             <DropdownItem>Present Show</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
@@ -103,7 +114,7 @@ export default class NavBar extends Component {
           <DropdownMenu>
             <DropdownItem onClick={this.props.insertSlide}>Insert Slide</DropdownItem>
             <DropdownItem onClick={this.props.deleteSlide}>Delete Slide</DropdownItem>
-            <DropdownItem onClick={this.props.renameSlide}>Rename Slide</DropdownItem>
+            <DropdownItem onClick={this.toggleRename}>Rename Slide</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
         <ButtonDropdown isOpen={this.state.insertOpen} toggle={this.toggleInsert}>

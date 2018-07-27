@@ -4,6 +4,7 @@ import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import SlidesView from './SlidesView.jsx'
 
+
 export default class Edit extends Component {
   constructor() {
     super()
@@ -13,12 +14,14 @@ export default class Edit extends Component {
       // data that represents the slideshow:
       content: [
         {
-          title: "Slide 0",
-          body: "This will never be seen"
+          title: "Slide Title",
+          body: "This will never be seen and body isn't implemented yet",
+          textBoxContent: undefined
         },
         {
           title: "Slide 1",
-          body: "This is will be html(most likely) that will be loaded by the editorState in EditView.jsx"
+          body: "This is will be html(most likely) that will be loaded by the editorState in EditView.jsx",
+          textBoxContent: undefined
         }
       ]
     }
@@ -31,16 +34,22 @@ export default class Edit extends Component {
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
   }
 
-  save() {
+  save(contentState) {
     // Do something with content where we can save it as json to the db
+    //console.log("--- Saving ---")
+    let copy = [...this.state.content]
+    copy[this.state.currentSlide]['textBoxContent'] = contentState
+    this.setState({
+      content: copy
+    })
+    //console.log(this.state.content[this.state.currentSlide]['textBoxContent'])
   }
 
   load() {
-    // This will retrieve content and load it into the state.
+    // This will retrieve content and load it into the state through ajax/REST.
   }
 
   setCurrentSlide(val) {
-    //console.log(val)
     this.setState({
       currentSlide: val
     })
@@ -51,10 +60,11 @@ export default class Edit extends Component {
     const index = this.state.currentSlide + 1
     const newSlide = {
         title: "New Slide",
-        body: "Empty"
+        body: "Empty",
+        textBoxContent: undefined
     }
     let copy = [...this.state.content]
-    //copy.splice(this.state.currentSlide, 0, newSlide)
+    //copy.splice(this.state.currentSlide, 0, newSlide) -> this will replace below at some point
     copy.push(newSlide)
     this.setState({
       content: copy,
@@ -67,12 +77,15 @@ export default class Edit extends Component {
   }
 
   renameCurrentSlide(value) {
-    // This doesn't work yet
+    // This works but it doesn't update when it should.
+    // It's delayed for some reason.(it's bc of the way props/states work for parent-child relationships)
     let copy = [...this.state.content]
     copy[this.state.currentSlide]['title'] = value
     this.setState({
       content: copy
     })
+    console.log(copy)
+    console.log(this.state.content)
   }
 
   render() {
@@ -90,7 +103,8 @@ export default class Edit extends Component {
             addNewSlide={this.addNewSlide}/>
           <EditView
             currentSlide={this.state.currentSlide}
-            content={this.state.content[this.state.currentSlide]}/>
+            content={this.state.content[this.state.currentSlide]}
+            save={this.save}/>
         </div>
       </div>
     )

@@ -1,8 +1,8 @@
 'use strict'
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor'
-import {getDefaultKeyBinding, KeyBindingUtil} from 'draft-js'
+import Editor, { createEditorStateWithText, createWithContent } from 'draft-js-plugins-editor'
+import {EditorState, getDefaultKeyBinding, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
 
 import {
   ItalicButton,
@@ -53,7 +53,7 @@ export default class EditView extends Component {
     super(props)
     this.state = {
       activeIndex: props.currentSlide,
-      editorState: createEditorStateWithText("Click me to edit :)"),
+      editorState: EditorState.createEmpty(),
       toolBarActive: false,
       hasFocus: false,
       content: {
@@ -61,33 +61,58 @@ export default class EditView extends Component {
         body: props.content['body'],
       }
     }
-    this.onEditChange = (editorState) => this.setState({editorState})
+    this.onEditChange = (editorState) =>  {
+      this.saveEditorState()
+      this.setState({editorState})
+    }
 
+    this.loadEditorState = this.loadEditorState.bind(this)
     this.fetchContent = this.fetchContent.bind(this)
     this.handleKeyCommand = this.handleKeyCommand.bind(this)
     this.saveKeyBindingFn = this.saveKeyBindingFn.bind(this)
+  }
+
+  componentDidMount() {
+    this.loadEditorState()
   }
 
   componentDidUpdate(prevProps) {
    // this might cause an issue when a state that isn't related to slide change updates.
    // Like hasFocus
    //
-   // Also this is where I will save/update the body from the content
-    if (prevProps.currentSlide !== this.props.currentSlide) {
-      this.fetchContent()
+    if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
+      this.fetchContent(this.props)
     }
-    //console.log(this.state.editorState.getCurrentContent())
   }
 
-  fetchContent(value) {
-    let updatedTitle = "TODO: going to get this through an AJAX request"
-    let updatedBody = "TODO: going to then set these variable up below, but not for now."
+  loadEditorState(content) {
+    // if there is no saved data(content), then we make a new editor with content
+    if (!content) {
+      this.setState({
+        editorState: createEditorStateWithText("Click me to add text :)")
+      })
+    }
+    else {
+      this.setState({
+        editorState: EditorState.createWithContent(convertFromRaw(content))
+      })
+    }
+  }
+
+  saveEditorState() {
+    const contentState = convertToRaw(this.state.editorState.getCurrentContent())
+    this.props.save(contentState)
+  }
+
+  fetchContent(data) {
     this.setState({
+      activeIndex: data.currentSlide,
       content: {
-        title: this.props.content['title'],
-        body: this.props.content['body']
+        title: data.content['title'],
+        body: data.content['body'],
       }
     })
+    this.loadEditorState(data.content['textBoxContent'])
   }
 
   saveKeyBindingFn(e) {
@@ -102,7 +127,8 @@ export default class EditView extends Component {
     // This will handle other key comamnds such as "ctrl-z"
     if (command === 'save') {
       // perform a save whether this may be a function call or something idk.
-      alert("content saved!\nbut not really becasue this doesn't work yet :P")
+      this.saveEditorState()
+      alert("content saved!\nbut not to the db, but it's in the console tho :P")
       return 'handled'
     }
     return 'not-handled'
@@ -154,5 +180,6 @@ export default class EditView extends Component {
 
 EditView.propTypes = {
   currentSlide: PropTypes.number,
-  content: PropTypes.object
+  content: PropTypes.object,
+  save: PropTypes.func
 }

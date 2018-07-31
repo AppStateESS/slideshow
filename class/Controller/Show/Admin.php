@@ -48,6 +48,11 @@ class Admin extends Base
         return $this->view->show();
     }
 
+    protected function editHtmlCommand(Request $request)
+    {
+      return $this->view->edit();
+    }
+
     public function postCommand(Request $request)
     {
         $show = $this->factory->post($request);

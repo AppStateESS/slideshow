@@ -21,6 +21,7 @@ export default class ShowCard extends Component {
     this.editTitle = this.editTitle.bind(this)
     this.updateTitle = this.updateTitle.bind(this)
     this.handleActivation = this.handleActivation.bind(this)
+    this.editTransition = this.editTransition.bind(this)
   }
 
   componentDidMount() {
@@ -89,6 +90,12 @@ export default class ShowCard extends Component {
                            this.setState({active: 1}, function(){this.handleSave()})
  }
 
+ editTransition() {
+   // TODO:
+   // Pass showId to edit page. So far all shows point to the same edit page.
+   window.location.href = './slideshow/Show/Edit'
+ }
+
   render() {
     let cardTitle;
     if (this.state.edit) {
@@ -125,7 +132,7 @@ export default class ShowCard extends Component {
             </CardTitle>
             <div className="d-flex justify-content-around">
               <Button onClick={this.view} color="primary">Present</Button>
-              <Button onClick={this.edit} color="secondary">Edit</Button>
+              <Button onClick={this.editTransition} color="secondary">Edit</Button>
               <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>
             </div>
           </CardBody>

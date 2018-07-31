@@ -20,6 +20,7 @@ namespace slideshow\Controller\Show;
 
 use Canopy\Request;
 use slideshow\Factory\ShowFactory as Factory;
+use slideshow\View\ShowView as View;
 use slideshow\Controller\RoleController;
 
 class Base extends RoleController
@@ -33,6 +34,11 @@ class Base extends RoleController
     protected function loadFactory()
     {
         $this->factory = new Factory;
+    }
+
+    protected function loadView()
+    {
+        $this->view = new View;
     }
 
     protected function viewHtmlCommand(Request $request)

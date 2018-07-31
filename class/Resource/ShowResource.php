@@ -43,8 +43,13 @@ class ShowResource extends BaseAbstract
     public function __construct()
     {
         parent::__construct();
+<<<<<<< HEAD
         // $this->showId = new \phpws2\Variable\IntegerVar(null, 'showId');
         $this->title = new \phpws2\Variable\StringVar(null, 'title');
+=======
+        $this->showId = new \phpws2\Variable\IntegerVar(0, 'showId');
+        $this->title = new \phpws2\Variable\TextOnly(null, 'title');
+>>>>>>> 1a204c9d1553ee1dd1c06930ec467bbc9a5e9f95
         $this->title->setLimit('255');
         $this->active = new \phpws2\Variable\BooleanVar(0, 'active');
     }

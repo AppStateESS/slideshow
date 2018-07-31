@@ -15,15 +15,43 @@ export default class ShowView extends Component {
         modalOpen: false
       }
 
+<<<<<<< HEAD
       this.getData     = this.getData.bind(this)
+=======
+      //this.load = this.load.bind(this)
+>>>>>>> 1a204c9d1553ee1dd1c06930ec467bbc9a5e9f95
       this.saveNewShow = this.saveNewShow.bind(this)
       this.switchModal = this.switchModal.bind(this)
+      this.successMessage = this.message.bind(this)
       this.updateTitle = this.updateTitle.bind(this)
     }
 
+<<<<<<< HEAD
   componentDidMount() {
     this.getData();
   }
+=======
+    saveNewShow(title) {
+      if (this.state.title != null) {
+        $.ajax({
+          url: 'slideshow/Show',
+          data: {
+            title: this.state.title
+          },
+          dataType: 'json',
+          type: 'post',
+          success: () => {
+            this.switchModal(),
+            this.message(),
+            this.load()
+          },
+          error: () => {
+            alert('Sorry, but this slideshow cannot be created.')
+          },
+        })
+      }
+    }
+>>>>>>> 1a204c9d1553ee1dd1c06930ec467bbc9a5e9f95
 
   saveNewShow() {
     if (this.state.resource.title != null) {
@@ -75,6 +103,17 @@ export default class ShowView extends Component {
       }.bind(this)
     });
   }
+
+    /* This should redirect the user to the edit page.
+    load() {
+      $.get({
+
+      })
+    }*/
+
+    message() {
+      alert("New SlideShow Created!")
+    }
 
   render() {
 

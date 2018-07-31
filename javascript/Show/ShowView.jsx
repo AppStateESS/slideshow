@@ -121,8 +121,6 @@ export default class ShowView extends Component {
         console.error(req, err.toString());
       }.bind(this)
     });
-    //let fakeData = {"id": "1"}
-    //this.setState({data: fakeData})
   }
 >>>>>>> Work in progress, get and post work.
 
@@ -164,7 +162,10 @@ export default class ShowView extends Component {
       // )
       return(<div></div>)
     } else {
+<<<<<<< eed3d14aef61f328075b18766ed6d9a557bab405
 <<<<<<< 90d1b2dee082f26120dc33babcb5e9859dedbc0f
+=======
+>>>>>>> Everything works except changing the image.
       let cards = this.state.showData.map(function(show) {
         return(
           <ShowCard
@@ -174,12 +175,15 @@ export default class ShowView extends Component {
              active={show.active}
              load={this.getData} />
          )}.bind(this)
+<<<<<<< eed3d14aef61f328075b18766ed6d9a557bab405
 =======
       let cards = this.state.showData.map(show => {
           return(
            <ShowCard key={show.id} id={show.id} title={show.title} active={show.active} />
           )}
 >>>>>>> Work in progress, get and post work.
+=======
+>>>>>>> Everything works except changing the image.
       );
 
       //let cards = <ShowCard id={1} {cards}/>

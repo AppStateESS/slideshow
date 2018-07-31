@@ -50,16 +50,8 @@ class Admin extends Base
 
     public function postCommand(Request $request)
     {
-<<<<<<< HEAD
-        $script = $this->factory->scriptView('shows');
-        \Layout::addJSHeader($script);
-        $this->createShowButton();
-
-        return $this->factory->scriptView('shows');
-=======
         $show = $this->factory->post($request);
         return array('show'=>$show->getStringVars());
->>>>>>> 1a204c9d1553ee1dd1c06930ec467bbc9a5e9f95
     }
 
     protected function listJsonCommand(Request $request)

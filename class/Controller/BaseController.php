@@ -43,7 +43,7 @@ class BaseController extends \phpws2\Http\Controller
         $response = new \Canopy\Response($view);
         return $response;
     }
-    
+
 
     private function loadController(\Canopy\Request $request)
     {
@@ -114,9 +114,11 @@ class BaseController extends \phpws2\Http\Controller
     {
         if ($request->isAjax()) {
             $result = $this->controller->getJson($request);
+
         } else {
             $result = $this->controller->getHtml($request);
         }
+
         return $result;
     }
 

@@ -75,6 +75,12 @@ class Admin extends Base
         return true;
     }
 
+    protected function getCommand(Request $request)
+    {
+        $shows = $this->factory->getShows();
+        return json_encode($shows);
+    }
+
     protected function getJsonView($data, \Canopy\Request $request)
     {
       $vars = $request->getRequestVars();
@@ -85,6 +91,7 @@ class Admin extends Base
       if ($command == 'getDetails' && \Current_User::allow('slideshow', 'edit')) {
         $result = ShowFactory::getDetails($vars['show_id']);
       }
+
       return new \phpws2\View\JsonView($result);
     }
 

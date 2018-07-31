@@ -49,6 +49,14 @@ class ShowFactory extends Base
       return $show;
     }
 
+    public function getShows() {
+      $db = \phpws2\Database::getDB();
+      $tbl = $db->addTable('ss_show');
+      $shows = $db->fetchAll();
+
+      return $shows;
+    }
+
     /**
      *
      * @param slideshow\Resource\ShowResource $show
@@ -75,6 +83,7 @@ class ShowFactory extends Base
     {
         $resource = $this->load($showId);
         $resource->title = $request->pullPutString('title');
+        $resource->active = $request->pullPutString('active');
         $this->saveResource($resource);
         return $resource;
     }

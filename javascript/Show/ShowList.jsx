@@ -1,44 +1,25 @@
 import React, {Component} from 'react'
+import ShowCard from './ShowCard.jsx'
 
 export default class ShowList extends Component {
   constructor() {
     super()
     this.state = {
     }
-    this.getShows = this.getShows.bind(this)
-    this.pullShows = this.pullShows.bind(this)
+    this.showList = this.showList.bind(this)
   }
 
-  /**
-  * Pulls all the shows from the back-end
-  */
-  pullShows() {
-    let shows
-    $.get()
-    return new array()
+  showList() {
+
   }
 
-  getShows() {
-    let shows = pullShows()
-    if (shows === null) {
-      // Add a way to handle this or not.
-    } else {
-      cards = shows.map(function (id) {
-        return <ShowCard id={id}/>
-      }.bind(this))
-    }
+  render() {
+    console.log(this.props.data);
+    
 
     return (
       <div>
         {cards}
-      </div>
-    )
-  }
-
-  render() {
-    return (
-      <div>
-        {this.getShows}
       </div>
     )
   }

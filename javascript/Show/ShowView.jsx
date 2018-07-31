@@ -2,6 +2,7 @@
 import React, {Component} from 'react'
 import ShowList from './ShowList.jsx'
 import ShowCard from './ShowCard.jsx'
+import Show from '../Resources/Show.js'
 import { Card, CardBody, CardTitle, Row, Col, Button } from 'reactstrap'
 import { Modal, ModalHeader, ModalBody, Input, InputGroup, InputGroupAddon } from 'reactstrap'
 
@@ -9,49 +10,72 @@ export default class ShowView extends Component {
   constructor() {
       super()
       this.state = {
-        modalOpen: false,
-        title: ""
+        resource: Show,
+        showData: null,
+        modalOpen: false
       }
 
-      //this.load = this.load.bind(this)
+      this.getData     = this.getData.bind(this)
       this.saveNewShow = this.saveNewShow.bind(this)
       this.switchModal = this.switchModal.bind(this)
       this.successMessage = this.message.bind(this)
       this.updateTitle = this.updateTitle.bind(this)
     }
 
-    saveNewShow(title) {
-      if (this.state.title != null) {
-        $.ajax({
-          url: 'slideshow/Show',
-          data: {
-            title: this.state.title
-          },
-          dataType: 'json',
-          type: 'post',
-          success: () => {
-            this.switchModal(),
-            this.message(),
-            this.load()
-          },
-          error: () => {
-            alert('Sorry, but this slideshow cannot be created.')
-          },
-        })
-      }
-    }
+  componentDidMount() {
+    this.getData();
+  }
 
-    switchModal() {
-      this.setState({
-        modalOpen: !this.state.modalOpen
-      })
+  saveNewShow() {
+    if (this.state.resource.title != null) {
+      $.ajax({
+        url: './slideshow/Show',
+        data: this.state.resource,
+        type: 'post',
+        dataType: 'json',
+        success: function() {
+          this.getData();
+        }.bind(this),
+        error: function(req, err) {
+          alert("Failed to save data.")
+          console.error(req, err.toString());
+        }.bind(this)
+      });
     }
+  }
 
-    updateTitle(event) {
-      this.setState({
-        title: event.target.value
-      })
-    }
+  switchModal() {
+    this.setState({
+      modalOpen: !this.state.modalOpen
+    })
+  }
+
+  updateTitle(event) {
+    let r = this.state.resource;
+    r.title = event.target.value;
+    this.setState({
+      resource: r
+    })
+  }
+
+  /**
+  * Pulls all the shows from the back-end
+  */
+  getData() {
+    $.ajax({
+      url: './slideshow/Show',
+      type: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        this.setState({showData: data['listing']});
+      }.bind(this),
+      error: function(req, err) {
+
+                //alert("Failed to grab data.")
+        console.error(req, err.toString());
+      }.bind(this)
+    });
+  }
 
     /* This should redirect the user to the edit page.
     load() {
@@ -75,7 +99,7 @@ export default class ShowView extends Component {
                     type="text"
                     placeholder="New Show"
                     onChange={this.updateTitle}
-                    value={this.state.title} />
+                    value={this.state.resource.title} />
               <InputGroupAddon addonType="append">
             <Button onClick={this.saveNewShow} color="success">Save</Button>
             </InputGroupAddon>
@@ -93,21 +117,40 @@ export default class ShowView extends Component {
       </Card>
     )
 
-    return (
-      <div>
-        <h2>Shows:</h2>
-        <div className="jumbotron">
-          <div className="card-deck">
-            <ShowList />
-            <ShowCard id={-1} />
-            <ShowCard id={-1} />
-            <ShowCard id={-1} />
+    if (this.state.showData === null)
+    {
+      // return (
+      //   <div>
+      //     <i className="fas fa-spinner fa-spin"></i>
+      //   </div>
+      // )
+      return(<div></div>)
+    } else {
+      let cards = this.state.showData.map(function(show) {
+        return(
+          <ShowCard
+             key={show.id}
+             id={show.id}
+             title={show.title}
+             active={show.active}
+             load={this.getData} />
+         )}.bind(this)
+      );
+
+      //let cards = <ShowCard id={1} {cards}/>
+      return (
+        <div>
+          <h2>Shows:</h2>
+          <div className="jumbotron">
+            <div className="card-deck d-flex justify-content-center">
+              {cards}
+            </div>
+            <hr />
+            <Col>{newShow}</Col>
           </div>
-          <hr />
-          <Col>{newShow}</Col>
+          {modal}
         </div>
-        {modal}
-      </div>
-    )
+      )
+    }
   }
 }

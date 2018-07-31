@@ -74,8 +74,6 @@ export default class ShowView extends Component {
         console.error(req, err.toString());
       }.bind(this)
     });
-    //let fakeData = {"id": "1"}
-    //this.setState({data: fakeData})
   }
 
   render() {
@@ -116,10 +114,15 @@ export default class ShowView extends Component {
       // )
       return(<div></div>)
     } else {
-      let cards = this.state.showData.map(show => {
-          return(
-           <ShowCard key={show.id} id={show.id} title={show.title} active={show.active} />
-          )}
+      let cards = this.state.showData.map(function(show) {
+        return(
+          <ShowCard
+             key={show.id}
+             id={show.id}
+             title={show.title}
+             active={show.active}
+             load={this.getData} />
+         )}.bind(this)
       );
 
       //let cards = <ShowCard id={1} {cards}/>

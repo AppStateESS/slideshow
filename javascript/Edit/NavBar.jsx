@@ -122,10 +122,10 @@ export default class NavBar extends Component {
             Insert
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem>Title</DropdownItem>
-            <DropdownItem>Textbox</DropdownItem>
-            <DropdownItem>Image</DropdownItem>
-            <DropdownItem>Quiz</DropdownItem>
+            <DropdownItem onClick={this.props.addToStack} value="Title">Title</DropdownItem>
+            <DropdownItem onClick={this.props.addToStack} value="Textbox">Textbox</DropdownItem>
+            <DropdownItem onClick={this.props.addToStack} value="Image">Image</DropdownItem>
+            <DropdownItem onClick={this.props.addToStack} value="Quiz">Quiz</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
       </ButtonGroup>

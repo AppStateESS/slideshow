@@ -4,7 +4,6 @@ import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import SlidesView from './SlidesView.jsx'
 
-
 export default class Edit extends Component {
   constructor() {
     super()
@@ -14,14 +13,17 @@ export default class Edit extends Component {
       // data that represents the slideshow:
       content: [
         {
+          stack: ['test'],
           title: "Slide Title",
-          body: "This will never be seen and body isn't implemented yet",
-          textBoxContent: undefined
+          body: "This will never be seen",
+          textBoxContent: null
         },
         {
-          title: "Slide 1",
-          body: "This is will be html(most likely) that will be loaded by the editorState in EditView.jsx",
-          textBoxContent: undefined
+          stack: [],
+
+          //title: "Slide 1",
+          //body: "This is will be html(most likely) that will be loaded by the editorState in EditView.jsx",
+          //textBoxContent: undefined
         }
       ]
     }
@@ -32,6 +34,7 @@ export default class Edit extends Component {
     this.addNewSlide = this.addNewSlide.bind(this)
     this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
+    this.addToStack = this.addToStack.bind(this)
   }
 
   save(contentState) {
@@ -59,9 +62,7 @@ export default class Edit extends Component {
     // This function adds to the stack of slides held within state.content
     const index = this.state.currentSlide + 1
     const newSlide = {
-        title: "New Slide",
-        body: "Empty",
-        textBoxContent: undefined
+        stack: []
     }
     let copy = [...this.state.content]
     //copy.splice(this.state.currentSlide, 0, newSlide) -> this will replace below at some point
@@ -88,6 +89,35 @@ export default class Edit extends Component {
     console.log(this.state.content)
   }
 
+  addToStack(event) {
+    let tempStack = this.state.content[this.state.currentSlide].stack
+    let insertType
+
+    switch(event.target.value){
+      case 'Title':
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter a TITLE.", saveContent: undefined}
+        break;
+      case 'Textbox':
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter BODY TEXT.", saveContent: undefined}
+        break;
+      case 'Image':
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: undefined}
+        break;
+      case 'Quiz':
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: undefined}
+        break;
+      default:
+      //do nothing for now..
+    }
+    tempStack.push(insertType)
+
+    let copy = [...this.state.content]
+    copy[this.state.currentSlide]['stack'] = tempStack
+    this.setState({
+      content: copy
+    })
+  }
+
   render() {
     return (
       <div>
@@ -95,7 +125,8 @@ export default class Edit extends Component {
           save={this.save}
           insertSlide={this.addNewSlide}
           deleteSlide={this.deleteCurrentSlide}
-          renameSlide={this.renameCurrentSlide}/>
+          renameSlide={this.renameCurrentSlide}
+          addToStack ={this.addToStack}/>
         <div className="row">
           <SlidesView
             currentSlide={this.state.currentSlide}
@@ -103,7 +134,7 @@ export default class Edit extends Component {
             addNewSlide={this.addNewSlide}/>
           <EditView
             currentSlide={this.state.currentSlide}
-            content={this.state.content[this.state.currentSlide]}
+            content={this.state.content[this.state.currentSlide].stack}
             save={this.save}/>
         </div>
       </div>

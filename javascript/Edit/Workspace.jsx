@@ -23,7 +23,7 @@ import {
 
 const {hasCommandModifier} = KeyBindingUtil
 
-export default class EditView extends Component {
+export default class Workspace extends Component {
 
   constructor(props) {
     super(props)
@@ -159,6 +159,6 @@ export default class EditView extends Component {
 
 }
 
-EditView.propTypes = {
+Workspace.propTypes = {
   save: PropTypes.func
 }

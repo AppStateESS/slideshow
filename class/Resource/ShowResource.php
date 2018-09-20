@@ -38,15 +38,24 @@ class ShowResource extends BaseAbstract
      * @var \phpws2\Variable\Boolean
      */
     protected $active;
+
+    /**
+     *
+     * Data for each silde
+     * @var \phpws2\Variable\ArrayVar
+     */
+    protected $content;
+
     protected $table = 'ss_show';
 
     public function __construct()
     {
         parent::__construct();
-        // $this->showId = new \phpws2\Variable\IntegerVar(null, 'showId');
+        $this->showId = new \phpws2\Variable\IntegerVar(1, 'showId');
         $this->title = new \phpws2\Variable\StringVar(null, 'title');
         $this->title->setLimit('255');
         $this->active = new \phpws2\Variable\BooleanVar(0, 'active');
+        $this->content = new \phpws2\Variable\ArrayVar(null, 'content');
     }
 
     public function getImagePath()

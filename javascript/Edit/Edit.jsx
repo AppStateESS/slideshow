@@ -3,14 +3,21 @@ import React, { Component } from 'react'
 import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import SlidesView from './SlidesView.jsx'
+import Show from '../Resources/Show.js'
 
 export default class Edit extends Component {
   constructor() {
     super()
 
     this.state = {
+<<<<<<< a0d0e0f547e10b69b6811dc3a1448c66a8ddc81b
       currentSlide: 0,
+=======
+      id: 1,
+      currentSlide: 1,
+>>>>>>> Slideshows can now be saved to the database
       // data that represents the slideshow:
+      resource: Show,
       content: [
         {
           stack: []
@@ -28,19 +35,50 @@ export default class Edit extends Component {
     this.deleteFromStack = this.deleteFromStack.bind(this)
   }
 
-  save(contentState) {
+  save() {
     // Do something with content where we can save it as json to the db
-    //console.log("--- Saving ---")
+    console.log("--- Saving ---")
     let copy = [...this.state.content]
-    copy[this.state.currentSlide]['textBoxContent'] = contentState
+    // Save/update a new js resource
+    let r = this.state.resource
+    r.content = copy
     this.setState({
-      content: copy
+      content: copy,
+      resource: r
     })
+    console.log("*** Contetnt saved locally ***")
+    $.ajax({
+      url: './slideshow/Show/' + this.state.id,
+      data: {content: this.state.content, resource: this.state.resource},
+      type: 'put',
+      dataType: 'json',
+      success: function() {
+        console.log("*** Contetnt saved remotely ***")
+        this.props.load();
+      }.bind(this),
+      error: function(req, err) {
+        alert("Failed to save.")
+        console.error(req, err.toString());
+      }.bind(this)
+    });
     //console.log(this.state.content[this.state.currentSlide]['textBoxContent'])
   }
 
   load() {
     // This will retrieve content and load it into the state through ajax/REST.
+    $.ajax({
+      url: './slideshow/Show/Edit',
+      type: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        this.setState({content: data['slides'], id: data['id']});
+      }.bind(this),
+      error: function(req, err) {
+
+                //alert("Failed to grab data.")
+        console.error(req, err.toString());
+      }.bind(this)
+    });
   }
 
   setCurrentSlide(val) {

@@ -10,6 +10,7 @@ export default class Edit extends Component {
     super()
 
     this.state = {
+      id: 1,
       currentSlide: 0,
       // data that represents the slideshow:
       resource: Show,
@@ -46,12 +47,9 @@ export default class Edit extends Component {
       resource: r
     })
     console.log("*** Contetnt saved locally ***")
-    // Issue being caused when loading data!!!
-    //let stringContent = JSON.stringify(this.state.content)
-    //console.log(JSON.parse(stringContent))
     $.ajax({
       url: './slideshow/Show/' + this.state.id,
-      data: {content: this.state.content/*stringContent*/, resource: this.state.resource},
+      data: {content: this.state.content, resource: this.state.resource},
       type: 'put',
       dataType: 'json',
       success: function() {

@@ -72,8 +72,10 @@ class ShowFactory extends Base
     public function post(Request $request)
     {
         $show = $this->build();
+        // Pulls the title from the Post request if it's changed then it will be saved.
         $show->title = $request->pullPostString('title');
         $show->active = 0;
+        //$show->content = [];
         $this->saveResource($show);
         //$this->createImageDirectory($show);
         return $show;
@@ -81,11 +83,53 @@ class ShowFactory extends Base
 
     public function put($showId, Request $request)
     {
-        $resource = $this->load($showId);
-        $resource->title = $request->pullPutString('title');
-        $resource->active = $request->pullPutString('active');
-        $this->saveResource($resource);
-        return $resource;
+      if(gettype($showId) == "string") {
+        $showId = intval($showId);
+      }
+      $resource = $this->load($showId);
+      // pullPutVarIfSet will return false if not set
+      $title = $request->pullPutVarIfSet('title');
+      $active = $request->pullPutVarIfSet('active');
+      $content = $request->pullPutVarIfSet('content');
+      // if any of the vars are set to false we don't need to update them.
+      if (gettype($title) == "string") {
+        $resource->title = $title;
+      }
+      $resource->active = $active;
+      if (gettype($content) != "boolean") {
+        $resource->content = $content;
+      }
+      $this->saveResource($resource);
+      return $resource;
+    }
+    /**
+    *
+    * Creates a new slideshow upon the patch request.
+    * @var $showId id of the show to be saved.
+    */
+    public function patch($showId, Request $request)
+    {
+      $resource = $this->load($showId);
+      $resource->title = $request->pullPatchVarIfSet('title');
+      $resource->active = $request->pullPatchVarIfSet('active');
+      $resource->content = $request->pullPatchVarIfSet('content');
+      $this->saveResource($resource);
+      return $resource;
+    }
+
+    /**
+     *
+     * Returns the data for the slideshow contained from the $content var.
+     * @var $showId the id for the slideshow
+     */
+    public function getSlides($showId)
+    {
+      $sql = "SELECT content FROM 'ss_show' WHERE id=$showId";
+      $db = Database::getDB();
+      $db->loadPDO();
+      $db->execute($sql);
+      $data = $db->fetchOneRow();
+      var_dump($data);
     }
 
     public function listing($showAll = false)

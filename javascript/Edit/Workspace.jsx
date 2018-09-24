@@ -52,37 +52,32 @@ export default class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps) {
-   // this might cause an issue when a state that isn't related to slide change updates.
-   // Like hasFocus
-   //
-   if (this.props.content === undefined) {
+    if (this.props.content === undefined) {
      console.log(this.props);
      console.log(prevProps);
-   }
+    }
     if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-      this.fetchContent(this.props)
+      this.fetchContent(this.props.content)
     }
   }
 
   loadEditorState(content) {
-    if (content.saveContent === undefined || content.saveContent == null){
+    if (content.saveContent == undefined || content.saveContent == null) {
       this.setState({
          editorState: createEditorStateWithText(content.body)
        })
-       console.log("undefined")
-       this.props.saveContentState(convertToRaw(this.state.editorState.getCurrentContent()))
     } else {
       this.setState({
-        editorState: EditorState.createWithContent(convertFromRaw(content.saveContent))
+        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(content.saveContent)))
       })
-      this.props.saveContentState(convertToRaw(this.state.editorState.getCurrentContent()))
+
     }
   }
 
   saveEditorState() {
     const contentState = convertToRaw(this.state.editorState.getCurrentContent())
     this.setState({saveContent: contentState})
-    this.props.saveContentState(contentState)
+    this.props.saveContentState(JSON.stringify(contentState))
   }
 
   fetchContent(data) {
@@ -90,13 +85,8 @@ export default class Workspace extends Component {
       activeIndex: data.currentSlide,
       content: {
         // title: content.title
-<<<<<<< 60eae1eaaca430feef978521e2be4c6ee355d473
         body: data.content.body,
         saveContent: data.content.saveContent
-=======
-        body: data.body,
-        saveContent: data.saveContent
->>>>>>> Added loading of Slideshow content; however there are some bugs still.
       }
     })
     this.loadEditorState(data.content)

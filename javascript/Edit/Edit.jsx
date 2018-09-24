@@ -10,12 +10,7 @@ export default class Edit extends Component {
     super()
 
     this.state = {
-<<<<<<< a0d0e0f547e10b69b6811dc3a1448c66a8ddc81b
       currentSlide: 0,
-=======
-      id: 1,
-      currentSlide: 1,
->>>>>>> Slideshows can now be saved to the database
       // data that represents the slideshow:
       resource: Show,
       content: [
@@ -77,18 +72,14 @@ export default class Edit extends Component {
         let loaded = JSON.parse(data['slides'])
         console.log("loaded:");
         console.log(loaded);
-        console.log("current state:");
-        console.log(this.state.content);
         if (loaded[this.state.currentSlide] != undefined) {
           this.setState({
             content: loaded,
             id: data['id']
           });
         }
-
       }.bind(this),
       error: function(req, err) {
-
                 //alert("Failed to grab data.")
         console.error(req, err.toString());
       }.bind(this)
@@ -157,16 +148,16 @@ export default class Edit extends Component {
 
     switch(event.target.value){
       case 'Title':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter a TITLE.", saveContent: null}
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter a TITLE.", saveContent: undefined}
         break;
       case 'Textbox':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter BODY TEXT.", saveContent: null}
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter BODY TEXT.", saveContent: undefined}
         break;
       case 'Image':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: null}
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: undefined}
         break;
       case 'Quiz':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: null}
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: undefined}
         break;
       default:
       //do nothing for now..
@@ -197,10 +188,10 @@ export default class Edit extends Component {
     })
 
   saveContentState(saveContent) {
-    console.log("current stack:");
+    /*console.log("current stack:");
     console.log(this.state.content[this.state.currentSlide].stack[0].saveContent)
     console.log("saveContent passed:");
-    console.log(saveContent)
+    console.log(saveContent)*/
     this.state.content[this.state.currentSlide].stack[0].saveContent = saveContent
     //this.state.content[this.state.currentSlide].stack.saveContent = saveContent
   }

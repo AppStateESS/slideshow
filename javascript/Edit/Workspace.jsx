@@ -55,27 +55,34 @@ export default class Workspace extends Component {
    // this might cause an issue when a state that isn't related to slide change updates.
    // Like hasFocus
    //
+   if (this.props.content === undefined) {
+     console.log(this.props);
+     console.log(prevProps);
+   }
     if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
       this.fetchContent(this.props)
     }
   }
 
   loadEditorState(content) {
-    if (content.saveContent === undefined){
+    if (content.saveContent === undefined || content.saveContent == null){
       this.setState({
          editorState: createEditorStateWithText(content.body)
        })
+       console.log("undefined")
+       this.props.saveContentState(convertToRaw(this.state.editorState.getCurrentContent()))
     } else {
       this.setState({
         editorState: EditorState.createWithContent(convertFromRaw(content.saveContent))
       })
+      this.props.saveContentState(convertToRaw(this.state.editorState.getCurrentContent()))
     }
   }
 
   saveEditorState() {
     const contentState = convertToRaw(this.state.editorState.getCurrentContent())
     this.setState({saveContent: contentState})
-    //this.props.save(contentState)
+    this.props.saveContentState(contentState)
   }
 
   fetchContent(data) {
@@ -84,6 +91,7 @@ export default class Workspace extends Component {
       content: {
         // title: content.title
         body: data.body,
+        saveContent: data.saveContent
       }
     })
     this.loadEditorState(data.saveContent)
@@ -102,7 +110,7 @@ export default class Workspace extends Component {
     if (command === 'save') {
       // perform a save whether this may be a function call or something idk.
       this.saveEditorState()
-      alert("content saved!\nbut not to the db, but it's in the console tho :P")
+      alert("content saved!")
       return 'handled'
     }
     return 'not-handled'

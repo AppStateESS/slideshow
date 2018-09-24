@@ -34,6 +34,7 @@ export default class NavBar extends Component {
     this.toggleRename = this.toggleRename.bind(this)
     this.handleRename = this.handleRename.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
+    this.handleDeleteSlide = this.handleDeleteSlide.bind(this)
   }
 
   toggleFile() {
@@ -76,6 +77,10 @@ export default class NavBar extends Component {
     }
   }
 
+  handleDeleteSlide(){
+    this.props.deleteSlide(this.props.currentSlide)
+  }
+
   render() {
     const modal = (
       <Modal isOpen={this.state.renameOpen} toggle={this.toggleRename} fade={false} backdrop={true}>
@@ -113,7 +118,7 @@ export default class NavBar extends Component {
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem onClick={this.props.insertSlide}>Insert Slide</DropdownItem>
-            <DropdownItem onClick={this.props.deleteSlide}>Delete Slide</DropdownItem>
+            <DropdownItem onClick={this.handleDeleteSlide}>Delete Slide</DropdownItem>
             <DropdownItem onClick={this.toggleRename}>Rename Slide</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>

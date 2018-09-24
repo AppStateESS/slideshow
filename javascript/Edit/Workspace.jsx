@@ -52,37 +52,32 @@ export default class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps) {
-   // this might cause an issue when a state that isn't related to slide change updates.
-   // Like hasFocus
-   //
-   if (this.props.content === undefined) {
+    if (this.props.content === undefined) {
      console.log(this.props);
      console.log(prevProps);
-   }
+    }
     if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-      this.fetchContent(this.props)
+      this.fetchContent(this.props.content)
     }
   }
 
   loadEditorState(content) {
-    if (content.saveContent === undefined || content.saveContent == null){
+    if (content.saveContent == undefined || content.saveContent == null) {
       this.setState({
          editorState: createEditorStateWithText(content.body)
        })
-       console.log("undefined")
-       this.props.saveContentState(convertToRaw(this.state.editorState.getCurrentContent()))
     } else {
       this.setState({
-        editorState: EditorState.createWithContent(convertFromRaw(content.saveContent))
+        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(content.saveContent)))
       })
-      this.props.saveContentState(convertToRaw(this.state.editorState.getCurrentContent()))
+
     }
   }
 
   saveEditorState() {
     const contentState = convertToRaw(this.state.editorState.getCurrentContent())
     this.setState({saveContent: contentState})
-    this.props.saveContentState(contentState)
+    this.props.saveContentState(JSON.stringify(contentState))
   }
 
   fetchContent(data) {
@@ -94,7 +89,7 @@ export default class Workspace extends Component {
         saveContent: data.saveContent
       }
     })
-    this.loadEditorState(data.saveContent)
+    this.loadEditorState(data)
   }
 
   saveKeyBindingFn(e) {

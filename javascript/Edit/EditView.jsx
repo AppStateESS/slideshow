@@ -81,6 +81,7 @@ export default class EditView extends Component {
         <Workspace
           content = {content}
           plugins = {this.plugins}
+          saveContentState = {this.props.saveContentState}
           save = {this.props.save}
           currentSlide = {this.props.currentSlide}
           key = {content.id + content.type + this.props.currentSlide}
@@ -104,5 +105,6 @@ export default class EditView extends Component {
 EditView.propTypes = {
   currentSlide: PropTypes.number,
   content: PropTypes.array,
+  saveContentState: PropTypes.func,
   save: PropTypes.func
 }

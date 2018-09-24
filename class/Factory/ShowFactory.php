@@ -31,44 +31,6 @@ class ShowFactory extends Base
         return new Resource;
     }
 
-    /**
-    * Selects the details about a show from the db
-    *
-    * @param $show_id
-    */
-    public static function getDetails($show_id) {
-      if (empty($show_id)) {
-        throw new \Exception("Invalid show id");
-      }
-
-      $db = \phpws2\Database::getDB();
-      $tbl = $db->addTable('ss_show');
-      $tbl->addFieldConditional('id', $show_id);
-      $show = $db->selectOneRow();
-
-      return $show;
-    }
-
-    public function getShows() {
-      $db = \phpws2\Database::getDB();
-      $tbl = $db->addTable('ss_show');
-      $shows = $db->fetchAll();
-
-      return $shows;
-    }
-
-    /**
-     *
-     * @param slideshow\Resource\ShowResource $show
-     */
-    public function createImageDirectory($show)
-    {
-        $path = $show->getImagePath();
-        if (!is_dir($path)) {
-            mkdir($path);
-        }
-    }
-
     public function post(Request $request)
     {
         $show = $this->build();
@@ -118,23 +80,66 @@ class ShowFactory extends Base
     }
 
     /**
+    * Selects the details about a show from the db
+    *
+    * @param $show_id
+    */
+    public static function getDetails($show_id) {
+      if (empty($show_id)) {
+        throw new \Exception("Invalid show id");
+      }
+
+      $db = \phpws2\Database::getDB();
+      $tbl = $db->addTable('ss_show');
+      $tbl->addFieldConditional('id', $show_id);
+      $show = $db->selectOneRow();
+
+      return $show;
+    }
+
+    public function getShows() {
+      $db = \phpws2\Database::getDB();
+      $tbl = $db->addTable('ss_show');
+      $shows = $db->fetchAll();
+
+      return $shows;
+    }
+
+    /**
+     *
+     * @param slideshow\Resource\ShowResource $show
+     */
+    public function createImageDirectory($show)
+    {
+        $path = $show->getImagePath();
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
+    }
+
+    /**
      *
      * Returns the data for the slideshow contained from the $content var.
      * @var $showId the id for the slideshow
      */
     public function getSlides($showId)
     {
-      $sql = "SELECT content FROM 'ss_show' WHERE id=$showId";
+      if ($showId == null) {
+        throw new \Exception("ShowId is not valid: $showId", 1);
+      }
+      $sql = "SELECT content FROM ss_show WHERE id=:showId;";
+
       $db = Database::getDB();
-      $db->loadPDO();
-      $db->execute($sql);
-      $data = $db->fetchOneRow();
-      var_dump($data);
+      $pdo = $db->getPDO();
+      $q = $pdo->prepare($sql);
+      $q->execute(array('showId'=>$showId));
+      $data = $q->fetchColumn(0);
+      return $data;
     }
 
     public function listing($showAll = false)
     {
-        $db = Database::getDB();
+        $db = \phpws2\Database::getDB();
         $tbl = $db->addTable('ss_show');
         $tbl->addOrderBy('title');
         if (!$showAll) {

@@ -84,7 +84,15 @@ class Admin extends Base
 
     protected function editJsonCommand(Request $request)
     {
-      return array('slides'=>$this->factory->getSlides($this->id));
+      $vars = $request->getRequestVars();
+      //$id = $vars['show_id'];
+      $id = 1;
+      //var_dump($vars);
+      //echo "id: " . $id;
+      return array(
+        'slides'=>$this->factory->getSlides($id),
+        'id'=> $id
+      );
     }
 
     protected function viewHtmlCommand(Request $request)

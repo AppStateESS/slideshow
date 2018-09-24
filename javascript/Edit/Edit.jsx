@@ -41,6 +41,10 @@ export default class Edit extends Component {
     this.deleteFromStack = this.deleteFromStack.bind(this)
   }
 
+  componentDidMount() {
+    this.load();
+  }
+
   save() {
     // Do something with content where we can save it as json to the db
     console.log("--- Saving ---")
@@ -60,24 +64,34 @@ export default class Edit extends Component {
       dataType: 'json',
       success: function() {
         console.log("*** Contetnt saved remotely ***")
-        this.props.load();
+        this.load();
       }.bind(this),
       error: function(req, err) {
         alert("Failed to save.")
         console.error(req, err.toString());
       }.bind(this)
     });
-    //console.log(this.state.content[this.state.currentSlide]['textBoxContent'])
   }
 
   load() {
     // This will retrieve content and load it into the state through ajax/REST.
     $.ajax({
-      url: './slideshow/Show/Edit',
+      url: './slideshow/Show/edit',
       type: 'GET',
       dataType: 'json',
       success: function(data) {
-        this.setState({content: data['slides'], id: data['id']});
+        let loaded = JSON.parse(data['slides'])
+        console.log("loaded:");
+        console.log(loaded);
+        console.log("current state:");
+        console.log(this.state.content);
+        if (loaded[this.state.currentSlide] != undefined) {
+          this.setState({
+            content: loaded,
+            id: data['id']
+          });
+        }
+
       }.bind(this),
       error: function(req, err) {
 
@@ -150,16 +164,16 @@ export default class Edit extends Component {
 
     switch(event.target.value){
       case 'Title':
-        insertType = {type: event.target.value, id: idNum + 1, body: "Please click me to enter a TITLE.", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter a TITLE.", saveContent: null}
         break;
       case 'Textbox':
-        insertType = {type: event.target.value, id: idNum + 1, body: "Please click me to enter BODY TEXT.", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter BODY TEXT.", saveContent: null}
         break;
       case 'Image':
-        insertType = {type: event.target.value, id: idNum + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: null}
         break;
       case 'Quiz':
-        insertType = {type: event.target.value, id: idNum + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: null}
         break;
       default:
       //do nothing for now..
@@ -172,6 +186,7 @@ export default class Edit extends Component {
       content: copy
     })
   }
+
 
   deleteFromStack(element) {
     // remove id-1 from array
@@ -187,6 +202,14 @@ export default class Edit extends Component {
     this.setState({
       content: copy
     })
+
+  saveContentState(saveContent) {
+    console.log("current stack:");
+    console.log(this.state.content[this.state.currentSlide].stack[0].saveContent)
+    console.log("saveContent passed:");
+    console.log(saveContent)
+    this.state.content[this.state.currentSlide].stack[0].saveContent = saveContent
+    //this.state.content[this.state.currentSlide].stack.saveContent = saveContent
   }
 
   render() {
@@ -208,7 +231,8 @@ export default class Edit extends Component {
             currentSlide={this.state.currentSlide}
             content={this.state.content[this.state.currentSlide].stack}
             save={this.save}
-            deleteElement={this.deleteFromStack}/>
+            deleteElement={this.deleteFromStack}
+            saveContentState={this.saveContentState.bind(this)}/>
         </div>
       </div>
     )

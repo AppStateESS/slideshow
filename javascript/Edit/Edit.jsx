@@ -35,6 +35,7 @@ export default class Edit extends Component {
     this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
     this.addToStack = this.addToStack.bind(this)
+    this.deleteFromStack = this.deleteFromStack.bind(this)
   }
 
   save(contentState) {
@@ -73,8 +74,25 @@ export default class Edit extends Component {
     })
   }
 
-  deleteCurrentSlide() {
-    alert("This is not yet implemented.")
+  deleteCurrentSlide(slideNum) {
+    console.log(slideNum)
+
+    if (slideNum === 1) {
+      let copy = [...this.state.content]
+      copy[1]['stack'] = []
+      this.setState({content: copy})
+      return
+    } else {
+      console.log("madeit")
+      let tempContent = this.state.content
+
+      tempContent.splice(slideNum, 1)
+      this.setState({
+        content: tempContent,
+        currentSlide: slideNum - 1
+      })
+
+    }
   }
 
   renameCurrentSlide(value) {
@@ -91,25 +109,44 @@ export default class Edit extends Component {
 
   addToStack(event) {
     let tempStack = this.state.content[this.state.currentSlide].stack
+    // If the array length - 1 < 0 then there is nothing so idNum starts at 0
+    // Otherwise, go into the array at index - 1 and use that object's id
+    let idNum = (tempStack.length - 1 >= 0) ? tempStack[tempStack.length - 1].id : 0
     let insertType
 
     switch(event.target.value){
       case 'Title':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter a TITLE.", saveContent: undefined}
+        insertType = {type: event.target.value, id: idNum + 1, body: "Please click me to enter a TITLE.", saveContent: undefined}
         break;
       case 'Textbox':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter BODY TEXT.", saveContent: undefined}
+        insertType = {type: event.target.value, id: idNum + 1, body: "Please click me to enter BODY TEXT.", saveContent: undefined}
         break;
       case 'Image':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: undefined}
+        insertType = {type: event.target.value, id: idNum + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: undefined}
         break;
       case 'Quiz':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: undefined}
+        insertType = {type: event.target.value, id: idNum + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: undefined}
         break;
       default:
       //do nothing for now..
     }
     tempStack.push(insertType)
+
+    let copy = [...this.state.content]
+    copy[this.state.currentSlide]['stack'] = tempStack
+    this.setState({
+      content: copy
+    })
+  }
+
+  deleteFromStack(element) {
+    // remove id-1 from array
+    let tempStack = this.state.content[this.state.currentSlide].stack
+    let index = tempStack.indexOf(element);
+
+    if (index > -1) {
+      tempStack.splice(index, 1)
+    }
 
     let copy = [...this.state.content]
     copy[this.state.currentSlide]['stack'] = tempStack
@@ -126,7 +163,8 @@ export default class Edit extends Component {
           insertSlide={this.addNewSlide}
           deleteSlide={this.deleteCurrentSlide}
           renameSlide={this.renameCurrentSlide}
-          addToStack ={this.addToStack}/>
+          addToStack ={this.addToStack}
+          currentSlide={this.state.currentSlide}/>
         <div className="row">
           <SlidesView
             currentSlide={this.state.currentSlide}
@@ -135,7 +173,8 @@ export default class Edit extends Component {
           <EditView
             currentSlide={this.state.currentSlide}
             content={this.state.content[this.state.currentSlide].stack}
-            save={this.save}/>
+            save={this.save}
+            deleteElement={this.deleteFromStack}/>
         </div>
       </div>
     )

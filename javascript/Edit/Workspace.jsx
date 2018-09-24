@@ -1,6 +1,7 @@
 'use strict'
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
+import './custom.css'
 
 import Editor, { createEditorStateWithText, createWithContent } from 'draft-js-plugins-editor'
 import {EditorState, getDefaultKeyBinding, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
@@ -43,6 +44,7 @@ export default class EditView extends Component {
     this.fetchContent = this.fetchContent.bind(this)
     this.handleKeyCommand = this.handleKeyCommand.bind(this)
     this.saveKeyBindingFn = this.saveKeyBindingFn.bind(this)
+    this.deleteElement = this.deleteElement.bind(this)
   }
 
   componentDidMount() {
@@ -118,6 +120,10 @@ export default class EditView extends Component {
     this.onEditChange(EditorState.redo(EditorState))
   }
 
+  deleteElement() {
+    this.props.deleteElement(this.props.content)
+  }
+
   render() {
     var editorStyle = {
       padding: '5px',
@@ -127,17 +133,25 @@ export default class EditView extends Component {
 
     return (
       <div>
-        <h2>{this.state.content.title}</h2>
         <div style={this.state.hasFocus ? editorStyle : {}}>
-        <Editor
-          editorState={this.state.editorState}
-          onChange={this.onEditChange}
-          plugins={this.props.plugins}
-          handleKeyCommand={this.handleKeyCommand}
-          keyBindingFn={this.saveKeyBindingFn}
-          onFocus={() => this.setState({ hasFocus: true })}
-          onBlur={() => this.setState({ hasFocus: false })}
-          ref={(element) => { this.editor = element; }} />
+          <div className="row no-gutters">
+            <div className="cust-col-11">
+              <Editor
+                editorState={this.state.editorState}
+                onChange={this.onEditChange}
+                plugins={this.props.plugins}
+                handleKeyCommand={this.handleKeyCommand}
+                keyBindingFn={this.saveKeyBindingFn}
+                onFocus={() => this.setState({ hasFocus: true })}
+                onBlur={() => this.setState({ hasFocus: false })}
+                ref={(element) => { this.editor = element; }} />
+            </div>
+            <div className="cust-col-1">
+              <a className="close" aria-label="Close" onClick={this.deleteElement}>
+                <span aria-hidden="true">&times;</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     )

@@ -192,6 +192,14 @@ export default class Edit extends Component {
     this.setState({
       content: copy
     })
+
+  saveContentState(saveContent) {
+    console.log("current stack:");
+    console.log(this.state.content[this.state.currentSlide].stack[0].saveContent)
+    console.log("saveContent passed:");
+    console.log(saveContent)
+    this.state.content[this.state.currentSlide].stack[0].saveContent = saveContent
+    //this.state.content[this.state.currentSlide].stack.saveContent = saveContent
   }
 
   saveContentState(saveContent, stackNum) {

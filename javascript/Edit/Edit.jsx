@@ -47,9 +47,11 @@ export default class Edit extends Component {
       resource: r
     })
     console.log("*** Contetnt saved locally ***")
+    // Issue being caused when loading data!!!
+    let stringContent = JSON.stringify(this.state.content)
     $.ajax({
       url: './slideshow/Show/' + this.state.id,
-      data: {content: this.state.content, resource: this.state.resource},
+      data: {content: stringContent, resource: this.state.resource},
       type: 'put',
       dataType: 'json',
       success: function() {
@@ -72,7 +74,6 @@ export default class Edit extends Component {
       success: function(data) {
         let loaded = JSON.parse(data['slides'])
         console.log("loaded:");
-        console.log(loaded);
         if (loaded[this.state.currentSlide] != undefined) {
           this.setState({
             content: loaded,
@@ -150,16 +151,16 @@ export default class Edit extends Component {
 
     switch(event.target.value){
       case 'Title':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter a TITLE.", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
         break;
       case 'Textbox':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "Please click me to enter BODY TEXT.", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
         break;
       case 'Image':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
         break;
       case 'Quiz':
-        insertType = {type: event.target.value, id: tempStack.length + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
         break;
       default:
       //do nothing for now..

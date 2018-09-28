@@ -47,9 +47,11 @@ export default class Edit extends Component {
       resource: r
     })
     console.log("*** Contetnt saved locally ***")
+    // Issue being caused when loading data!!!
+    let stringContent = JSON.stringify(this.state.content)
     $.ajax({
       url: './slideshow/Show/' + this.state.id,
-      data: {content: this.state.content, resource: this.state.resource},
+      data: {content: stringContent, resource: this.state.resource},
       type: 'put',
       dataType: 'json',
       success: function() {

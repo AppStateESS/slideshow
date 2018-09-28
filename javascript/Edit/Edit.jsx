@@ -71,8 +71,11 @@ export default class Edit extends Component {
       type: 'GET',
       dataType: 'json',
       success: function(data) {
+        console.log("pre JSON conversion:")
+        console.log(data['slides'])
         let loaded = JSON.parse(data['slides'])
-        console.log("loaded:");
+        console.log("post JSON conversion: ")
+        console.log(loaded)
         if (loaded[this.state.currentSlide] != undefined) {
           this.setState({
             content: loaded,

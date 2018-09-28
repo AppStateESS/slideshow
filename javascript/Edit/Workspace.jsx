@@ -31,7 +31,6 @@ export default class Workspace extends Component {
       editorState: EditorState.createEmpty(),
       content: {
         // title: props.content['title'],
-        body: props.content.body,
         saveContent: props.content.saveContent
       }
     }
@@ -52,21 +51,44 @@ export default class Workspace extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.content === undefined) {
-     console.log(this.props);
-     console.log(prevProps);
-    }
-    if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-      this.fetchContent(this.props.content)
+    if (this.props.content != undefined) {
+      console.log("componentDidUpdate:")
+      console.log(this.props.content.saveContent)
+      console.log(prevProps.content.saveContent)
+      if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
+        this.fetchContent(this.props.content)
+      }
     }
   }
 
   loadEditorState(content) {
     if (content.saveContent == undefined || content.saveContent == null) {
+
+      let body = ""
+      switch (content.type) {
+        case 'Title':
+          body = "Please click me to enter a TITLE."
+          break;
+        case 'Textbox':
+          body = "Please click me to enter BODY TEXT."
+          break;
+        case 'Image':
+          body = "PLACEHOLDER FOR AN IMAGE"
+          break;
+        case 'Quiz':
+          body = "PLACEHOLDER FRO A QUIZ"
+          break;
+        default:
+          body = "Insert text here."
+      }
       this.setState({
-         editorState: createEditorStateWithText(content.body)
+         editorState: createEditorStateWithText(body)
        })
     } else {
+      console.log("Loaded Content:")
+      console.log(content.saveContent)
+      //console.log(JSON.parse(content.saveContent))
+      //console.log(convertFromRaw(JSON.parse(content.saveContent)))
       this.setState({
         editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(content.saveContent)))
       })

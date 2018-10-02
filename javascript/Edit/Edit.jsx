@@ -192,6 +192,7 @@ export default class Edit extends Component {
     this.setState({
       content: copy
     })
+  }
 
   saveContentState(saveContent) {
     /*console.log("current stack:");

@@ -9,21 +9,11 @@ export default class Edit extends Component {
     super()
 
     this.state = {
-      currentSlide: 1,
+      currentSlide: 0,
       // data that represents the slideshow:
       content: [
         {
-          stack: ['test'],
-          title: "Slide Title",
-          body: "This will never be seen",
-          textBoxContent: null
-        },
-        {
-          stack: [],
-
-          //title: "Slide 1",
-          //body: "This is will be html(most likely) that will be loaded by the editorState in EditView.jsx",
-          //textBoxContent: undefined
+          stack: []
         }
       ]
     }
@@ -167,9 +157,10 @@ export default class Edit extends Component {
           currentSlide={this.state.currentSlide}/>
         <div className="row">
           <SlidesView
-            currentSlide={this.state.currentSlide}
-            setCurrentSlide={this.setCurrentSlide}
-            addNewSlide={this.addNewSlide}/>
+            slides          ={this.state.content}
+            currentSlide    ={this.state.currentSlide}
+            setCurrentSlide ={this.setCurrentSlide}
+            addNewSlide     ={this.addNewSlide}/>
           <EditView
             currentSlide={this.state.currentSlide}
             content={this.state.content[this.state.currentSlide].stack}

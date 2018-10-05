@@ -11,7 +11,6 @@ export default class SlidesView extends Component {
     }
     this.handleSlide = this.handleSlide.bind(this)
     this.handleNewSlide = this.handleNewSlide.bind(this)
-    this.addNewSlide = this.addNewSlide.bind(this)
   }
 
   handleSlide(event) {
@@ -19,15 +18,9 @@ export default class SlidesView extends Component {
   }
 
   handleNewSlide() {
-    this.addNewSlide()
+    this.props.addNewSlide()
     this.props.setCurrentSlide(this.state.currentSlide + 1)
   }
-
-  addNewSlide() {
-    this.props.addNewSlide()
-  }
-
-
 
   render() {
     let slideCount = 0

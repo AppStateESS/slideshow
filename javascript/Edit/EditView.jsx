@@ -89,6 +89,7 @@ export default class EditView extends Component {
 
     return (
       <div className="col-8" >
+        <p></p>
         <Toolbar />
         <span><br /></span>
         <div className="jumbotron">

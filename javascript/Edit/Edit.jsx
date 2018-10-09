@@ -36,8 +36,6 @@ export default class Edit extends Component {
   }
 
   save() {
-    // Do something with content where we can save it as json to the db
-    console.log("--- Saving ---")
     let copy = [...this.state.content]
     // Save/update a new js resource
     let r = this.state.resource
@@ -46,17 +44,13 @@ export default class Edit extends Component {
       content: copy,
       resource: r
     })
-    console.log("*** Contetnt saved locally ***")
-    // Issue being caused when loading data!!!
-    //let stringContent = JSON.stringify(this.state.content)
-    //console.log(JSON.parse(stringContent))
+
     $.ajax({
       url: './slideshow/Show/' + this.state.id,
-      data: {content: this.state.content/*stringContent*/, resource: this.state.resource},
+      data: {content: this.state.content, resource: this.state.resource},
       type: 'put',
       dataType: 'json',
       success: function() {
-        console.log("*** Contetnt saved remotely ***")
         this.load();
       }.bind(this),
       error: function(req, err) {
@@ -73,14 +67,9 @@ export default class Edit extends Component {
       type: 'GET',
       dataType: 'json',
       success: function(data) {
-        console.log("pre JSON conversion:")
-        //let quotes = data['slides'].replace(/"/g,'\'')
-        console.log(data['slides'])
-        //let loaded = JSON.parse(data['slides'])
+
         let loaded = data['slides']
-        //loaded.saveContent = JSON.parse(loaded.saveContent);
-        console.log("post JSON conversion: ")
-        console.log(loaded)
+
         if (loaded[this.state.currentSlide] != undefined) {
           this.setState({
             content: loaded,
@@ -89,7 +78,7 @@ export default class Edit extends Component {
         }
       }.bind(this),
       error: function(req, err) {
-                //alert("Failed to grab data.")
+        alert("Failed to load data.")
         console.error(req, err.toString());
       }.bind(this)
     });
@@ -199,13 +188,8 @@ export default class Edit extends Component {
   }
 
   saveContentState(saveContent, stackNum) {
-    /*console.log("current stack:");
-    console.log(this.state.content[this.state.currentSlide].stack[0].saveContent)
-    console.log("saveContent passed:");
-    console.log(saveContent)*/
+    // Updates the saveContent variable within the slideshow stack.
     this.state.content[this.state.currentSlide].stack[stackNum].saveContent = saveContent
-    console.log(this.state.content[this.state.currentSlide].stack[stackNum].saveContent)
-    //this.state.content[this.state.currentSlide].stack.saveContent = saveContent
   }
 
   render() {

@@ -47,9 +47,6 @@ export default class Workspace extends Component {
   }
 
   componentDidMount() {
-    console.log("componentDidMount:")
-    console.log(this.props.content)
-    //console.log(ContentState.createFromBlockArray(this.props.content.saveContent[0], this.props.content.saveContent[1]));
     if (this.props.content != null || this.props.content != undefined) {
       this.loadEditorState(this.props.content)
     }
@@ -57,21 +54,16 @@ export default class Workspace extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.content != undefined) {
-      console.log("componentDidUpdate:")
-      console.log(this.props.content)
-      console.log(prevProps.content)
       this.saveEditorState()
       if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-        this.saveEditorState()
         this.loadEditorState(this.props.content)
       }
     }
   }
 
   loadEditorState(content) {
-    console.log("loadEditorState:")
+    // If there isn't any content then we make some
     if (content.saveContent === undefined || content.saveContent == null) {
-      console.log("New workspace has been made.")
       let body = ""
       switch (content.type) {
         case 'Title':
@@ -89,17 +81,14 @@ export default class Workspace extends Component {
         default:
           body = "Insert text here."
       }
+
       this.setState({
          editorState: createEditorStateWithText(body)
        })
+
        this.saveEditorState()
     } else {
-      console.log("saveContent from loadEditorState:")
-      console.log(content.saveContent)
-      /*
-      let contentState = ContentState.createFromBlockArray(
-                          JSON.parse(content.saveContent[0]),
-                          JSON.parse(content.saveContent[1]));*/
+
       let contentState = convertFromRaw(JSON.parse(content.saveContent))
 
       this.setState({
@@ -109,23 +98,10 @@ export default class Workspace extends Component {
   }
 
   saveEditorState() {
-
     if (this.state.editorState != undefined) {
       // See draft.js documentation to understand what these are:
-      /*
-      This way of saving using block maps but im getting an error so I must go back to raw content states.
-      let contentState = this.state.editorState.getCurrentContent()
-      const blockMap = contentState.getBlockMap();
-      const entityMap = contentState.getEntityMap();
-
-      const saveContent = [JSON.stringify(blockMap), JSON.stringify(entityMap)];
-      */
-      console.log("saveEditorState:")
-
       let contentState = this.state.editorState.getCurrentContent()
       let saveContent = JSON.stringify(convertToRaw(contentState))
-      console.log("saveContent from saveEditorState:")
-      console.log(saveContent)
 
       this.props.saveContentState(saveContent, this.props.content.id - 1)
     }
@@ -144,7 +120,6 @@ export default class Workspace extends Component {
     if (command === 'save') {
       // perform a save whether this may be a function call or something idk.
       this.saveEditorState()
-      alert("content saved!")
       return 'handled'
     }
     return 'not-handled'

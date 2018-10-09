@@ -85,12 +85,10 @@ class Admin extends Base
     protected function editJsonCommand(Request $request)
     {
       $vars = $request->getRequestVars();
-      //$id = $vars['show_id'];
-      $id = 1;
-      //var_dump($vars);
+      $id = $vars['id'];
       //echo "id: " . $id;
       return array(
-        'slides'=>$this->factory->getSlides($id),
+        'slides'=> $this->factory->getSlides($id),
         'id'=> $id
       );
     }
@@ -107,7 +105,7 @@ class Admin extends Base
 
     protected function putCommand(Request $request)
     {
-        $this->factory->put($this->id, $request);
+        $this->factory->put($request);
         return true;
     }
 

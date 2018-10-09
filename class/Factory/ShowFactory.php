@@ -43,12 +43,15 @@ class ShowFactory extends Base
         return $show;
     }
 
-    public function put($showId, Request $request)
+    public function put(Request $request)
     {
-      if(gettype($showId) == "string") {
-        $showId = intval($showId);
-      }
-      $resource = $this->load($showId);
+      // Pull the id from the request:
+      $vars = $request->getRequestVars();
+      $id = intval($vars['Show']);
+      // Load the resource corresponding to the id from the db:
+      $resource = $this->load($id);
+
+      // Update/PUT the values that are changed:
       // pullPutVarIfSet will return false if not set
       $title = $request->pullPutVarIfSet('title');
       $active = $request->pullPutVarIfSet('active');
@@ -59,8 +62,9 @@ class ShowFactory extends Base
       }
       $resource->active = $active;
       if (gettype($content) != "boolean") {
-        $resource->content = $content;
+        $resource->content = json_encode($content);
       }
+      // Save the updated resource to the Database
       $this->saveResource($resource);
       return $resource;
     }
@@ -134,7 +138,7 @@ class ShowFactory extends Base
       $q = $pdo->prepare($sql);
       $q->execute(array('showId'=>$showId));
       $data = $q->fetchColumn(0);
-      return $data;
+      return json_decode($data);
     }
 
     public function listing($showAll = false)

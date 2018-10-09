@@ -38,7 +38,7 @@ export default class ShowView extends Component {
           // We probs need to create a showId right here
           // There's a better way to do this :/
           // I need to thik this one out mang.
-          window.location.href = './slideshow/Show/edit'
+          //window.location.href = './slideshow/Show/edit'
           //console.log(this.state.resource);
         }.bind(this),
         error: function(req, err) {

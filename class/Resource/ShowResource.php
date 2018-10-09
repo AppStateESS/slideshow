@@ -42,7 +42,7 @@ class ShowResource extends BaseAbstract
     /**
      *
      * Data for each silde
-     * @var \phpws2\Variable\ArrayVar
+     * @var \phpws2\Variable\StringVar
      */
     protected $content;
 
@@ -55,7 +55,7 @@ class ShowResource extends BaseAbstract
         $this->title = new \phpws2\Variable\StringVar(null, 'title');
         $this->title->setLimit('255');
         $this->active = new \phpws2\Variable\BooleanVar(0, 'active');
-        $this->content = new \phpws2\Variable\ArrayVar(null, 'content');
+        $this->content = new \phpws2\Variable\StringVar(null, 'content');
     }
 
     public function getImagePath()

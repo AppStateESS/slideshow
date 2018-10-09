@@ -11,11 +11,7 @@ export default class Edit extends Component {
 
     this.state = {
       id: 1,
-<<<<<<< HEAD
-      currentSlide: 1,
-=======
       currentSlide: 0,
->>>>>>> backMerge
       // data that represents the slideshow:
       resource: Show,
       content: [

@@ -105,7 +105,6 @@ export default class Workspace extends Component {
       this.setState({
         editorState: EditorState.createWithContent(contentState)
       })
-
     }
   }
 

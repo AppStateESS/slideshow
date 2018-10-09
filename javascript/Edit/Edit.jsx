@@ -48,10 +48,11 @@ export default class Edit extends Component {
     })
     console.log("*** Contetnt saved locally ***")
     // Issue being caused when loading data!!!
-    let stringContent = JSON.stringify(this.state.content)
+    //let stringContent = JSON.stringify(this.state.content)
+    //console.log(JSON.parse(stringContent))
     $.ajax({
       url: './slideshow/Show/' + this.state.id,
-      data: {content: stringContent, resource: this.state.resource},
+      data: {content: this.state.content/*stringContent*/, resource: this.state.resource},
       type: 'put',
       dataType: 'json',
       success: function() {
@@ -196,12 +197,13 @@ export default class Edit extends Component {
     })
   }
 
-  saveContentState(saveContent) {
+  saveContentState(saveContent, stackNum) {
     /*console.log("current stack:");
     console.log(this.state.content[this.state.currentSlide].stack[0].saveContent)
     console.log("saveContent passed:");
     console.log(saveContent)*/
-    this.state.content[this.state.currentSlide].stack[0].saveContent = saveContent
+    this.state.content[this.state.currentSlide].stack[stackNum].saveContent = saveContent
+    console.log(this.state.content[this.state.currentSlide].stack[stackNum].saveContent)
     //this.state.content[this.state.currentSlide].stack.saveContent = saveContent
   }
 

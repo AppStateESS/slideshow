@@ -72,11 +72,11 @@ export default class EditView extends Component {
 
   render() {
     // Lazy with creating name.
+    console.log("EditView:")
     console.log(this.props.content)
     let data = this.props.content.map(function(content) {
       // lol, the key is ridiculous, but it works!
       // Needs to be unique for a given slide AND unique between all slides
-      console.log(content.id + content.type + this.props.currentSlide)
       return(
         <Workspace
           content = {content}

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import './custom.css'
 
 import Editor, { createEditorStateWithText, createWithContent } from 'draft-js-plugins-editor'
-import {EditorState, getDefaultKeyBinding, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
+import {EditorState, ContentState, getDefaultKeyBinding, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
 
 import {
   ItalicButton,
@@ -29,41 +29,49 @@ export default class Workspace extends Component {
     super(props)
     this.state = {
       editorState: EditorState.createEmpty(),
-      content: {
+      /*content: {
         // title: props.content['title'],
         saveContent: props.content.saveContent
-      }
+      }*/
     }
     this.onEditChange = (editorState) =>  {
-      this.saveEditorState()
       this.setState({editorState})
+      //this.saveEditorState()
     }
 
     this.loadEditorState = this.loadEditorState.bind(this)
-    this.fetchContent = this.fetchContent.bind(this)
+    this.saveEditorState = this.saveEditorState.bind(this)
     this.handleKeyCommand = this.handleKeyCommand.bind(this)
     this.saveKeyBindingFn = this.saveKeyBindingFn.bind(this)
     this.deleteElement = this.deleteElement.bind(this)
   }
 
   componentDidMount() {
-    this.loadEditorState(this.props.content)
+    console.log("componentDidMount:")
+    console.log(this.props.content)
+    //console.log(ContentState.createFromBlockArray(this.props.content.saveContent[0], this.props.content.saveContent[1]));
+    if (this.props.content != null || this.props.content != undefined) {
+      this.loadEditorState(this.props.content)
+    }
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.content != undefined) {
       console.log("componentDidUpdate:")
-      console.log(this.props.content.saveContent)
-      console.log(prevProps.content.saveContent)
+      console.log(this.props.content)
+      console.log(prevProps.content)
+      this.saveEditorState()
       if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-        this.fetchContent(this.props.content)
+        this.saveEditorState()
+        this.loadEditorState(this.props.content)
       }
     }
   }
 
   loadEditorState(content) {
-    if (content.saveContent == undefined || content.saveContent == null) {
-
+    console.log("loadEditorState:")
+    if (content.saveContent === undefined || content.saveContent == null) {
+      console.log("New workspace has been made.")
       let body = ""
       switch (content.type) {
         case 'Title':
@@ -76,7 +84,7 @@ export default class Workspace extends Component {
           body = "PLACEHOLDER FOR AN IMAGE"
           break;
         case 'Quiz':
-          body = "PLACEHOLDER FRO A QUIZ"
+          body = "PLACEHOLDER FROM A QUIZ"
           break;
         default:
           body = "Insert text here."
@@ -84,34 +92,42 @@ export default class Workspace extends Component {
       this.setState({
          editorState: createEditorStateWithText(body)
        })
+       this.saveEditorState()
     } else {
-      console.log("Loaded Content:")
+      console.log("saveContent from loadEditorState:")
       console.log(content.saveContent)
-      //console.log(JSON.parse(content.saveContent))
-      //console.log(convertFromRaw(JSON.parse(content.saveContent)))
-      this.setState({
-        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(content.saveContent)))
-      })
+      /*
+      let contentState = ContentState.createFromBlockArray(
+                          JSON.parse(content.saveContent[0]),
+                          JSON.parse(content.saveContent[1]));*/
+      let contentState = convertFromRaw(JSON.parse(content.saveContent))
 
+      this.setState({
+        editorState: EditorState.createWithContent(contentState)
+      })
     }
   }
 
   saveEditorState() {
-    const contentState = convertToRaw(this.state.editorState.getCurrentContent())
-    this.setState({saveContent: contentState})
-    this.props.saveContentState(JSON.stringify(contentState))
-  }
+    if (this.state.editorState != undefined) {
+      // See draft.js documentation to understand what these are:
+      /*
+      This way of saving using block maps but im getting an error so I must go back to raw content states.
+      let contentState = this.state.editorState.getCurrentContent()
+      const blockMap = contentState.getBlockMap();
+      const entityMap = contentState.getEntityMap();
 
-  fetchContent(data) {
-    this.setState({
-      activeIndex: data.currentSlide,
-      content: {
-        // title: content.title
-        body: data.content.body,
-        saveContent: data.content.saveContent
-      }
-    })
-    this.loadEditorState(data.content)
+      const saveContent = [JSON.stringify(blockMap), JSON.stringify(entityMap)];
+      */
+      console.log("saveEditorState:")
+
+      let contentState = this.state.editorState.getCurrentContent()
+      let saveContent = JSON.stringify(convertToRaw(contentState))
+      console.log("saveContent from saveEditorState:")
+      console.log(saveContent)
+
+      this.props.saveContentState(saveContent, this.props.content.id - 1)
+    }
   }
 
   saveKeyBindingFn(e) {

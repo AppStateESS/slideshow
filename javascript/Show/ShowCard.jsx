@@ -95,14 +95,15 @@ export default class ShowCard extends Component {
    // Pass showId to edit page. So far all shows point to the same edit page.
    $.ajax({
      method: 'GET',
-     url: './slideshow/Show/Edit/' + this.state.id,
+     url: './slideshow/Show/Edit/',
      data: { id: this.state.id },
      error: function(req, err) {
        alert("Failed to load show.")
        console.error(req, err.toString())
      }.bind(this)
    })
-   window.location.href = './slideshow/Show/Edit'
+   window.sessionStorage.setItem('id', this.state.id)
+   window.location.href = './slideshow/Show/Edit/?id=' + this.state.id
  }
 
   render() {

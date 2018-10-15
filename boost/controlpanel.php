@@ -23,6 +23,6 @@ $link[] = array(
     'label' => 'Slideshow',
     'restricted' => TRUE,
     'url' => 'slideshow/',
-    'description' => 'Slideshow', 'Slideshow module using reveal.js.',
+    'description' => 'Slideshow', 'Slideshow module',
     'image' => 'slideshow.png',
     'tab' => 'content');

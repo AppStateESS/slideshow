@@ -128,11 +128,10 @@ class ShowFactory extends Base
      */
     public function getSlides($showId)
     {
-      if ($showId == null) {
+      if ($showId == null || $showId == -1) {
         throw new \Exception("ShowId is not valid: $showId", 1);
       }
       $sql = "SELECT content FROM ss_show WHERE id=:showId;";
-
       $db = Database::getDB();
       $pdo = $db->getPDO();
       $q = $pdo->prepare($sql);

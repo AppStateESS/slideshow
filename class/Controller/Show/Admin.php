@@ -59,12 +59,6 @@ class Admin extends Base
       return $this->view->edit();
     }
 
-    protected function createHtmlCommand(Request $request)
-    {
-      $show = $this->factory->create();
-      \Canopy\Server::forward('./Slideshow/Show/Edit/' . $show->id . '/?new=1');
-    }
-
     protected function postCommand(Request $request)
     {
         $show = $this->factory->post($request);
@@ -86,10 +80,8 @@ class Admin extends Base
     {
       $vars = $request->getRequestVars();
       $id = $vars['id'];
-      //echo "id: " . $id;
       return array(
         'slides'=> $this->factory->getSlides($id),
-        'id'=> $id
       );
     }
 

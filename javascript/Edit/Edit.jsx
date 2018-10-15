@@ -10,7 +10,8 @@ export default class Edit extends Component {
     super()
 
     this.state = {
-      id: 1,
+      // There are some wierd bugs with this and it's not really neccesary to have.
+      // id: sessionStorage.getItem('id'),
       currentSlide: 0,
       // data that represents the slideshow:
       resource: Show,
@@ -46,7 +47,7 @@ export default class Edit extends Component {
     })
 
     $.ajax({
-      url: './slideshow/Show/' + this.state.id,
+      url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
       data: {content: this.state.content, resource: this.state.resource},
       type: 'put',
       dataType: 'json',
@@ -54,7 +55,7 @@ export default class Edit extends Component {
         this.load();
       }.bind(this),
       error: function(req, err) {
-        alert("Failed to save.")
+        alert("Failed to save show " + window.sessionStorage.getItem('id'))
         console.error(req, err.toString());
       }.bind(this)
     });
@@ -63,10 +64,10 @@ export default class Edit extends Component {
   load() {
     // This will retrieve content and load it into the state through ajax/REST.
     $.ajax({
-      url: './slideshow/Show/edit/?id=' + this.state.id,
+      url: './slideshow/Show/edit/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
       dataType: 'json',
-      success: function(data) {
+      success: function (data) {
 
         let loaded = data['slides']
 

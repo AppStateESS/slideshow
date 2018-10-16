@@ -65,23 +65,22 @@ export default class Edit extends Component {
   }
 
   deleteCurrentSlide(slideNum) {
-    console.log(slideNum)
-
-    if (slideNum === 1) {
+    // There always has to be one slide, this will reset the
+    // stack to ensure there is always one slide per slideshow
+    if (slideNum === 0 && this.state.content.length == 1) {
       let copy = [...this.state.content]
-      copy[1]['stack'] = []
+      copy[0]['stack'] = []
       this.setState({content: copy})
-      return
     } else {
-      console.log("madeit")
       let tempContent = this.state.content
-
       tempContent.splice(slideNum, 1)
+      // If the first slide needs to be deleted but the slideshow
+      // already has multiple slides, we can safely delete the first slide.
+      let cslide = (slideNum == 0) ? 0 : slideNum - 1
       this.setState({
         content: tempContent,
-        currentSlide: slideNum - 1
+        currentSlide: cslide
       })
-
     }
   }
 

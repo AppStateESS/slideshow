@@ -47,9 +47,7 @@ class slideshowUpdate
     $dt = new \phpws2\Database\Datatype\Varchar($t, 'content');
     $dt->setDefault(null);
     $dt->add();
-    $t->dropColumn('showId');
 
-    $changes[] = 'removed unnecessary field showId';
     $changes[] = 'content now saves to the database';
     $changes[] = 'content can now be loaded from the database';
     $this->addContent('1.1.0', $changes);

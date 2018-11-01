@@ -83,10 +83,11 @@ export default class EditView extends Component {
       activeIndex: data.currentSlide,
       content: {
         // title: content.title
-        body: data.body,
+        body: data.content.body,
+        saveContent: data.content.saveContent
       }
     })
-    this.loadEditorState(data.saveContent)
+    this.loadEditorState(data.content)
   }
 
   saveKeyBindingFn(e) {

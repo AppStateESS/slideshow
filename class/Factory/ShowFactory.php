@@ -31,6 +31,58 @@ class ShowFactory extends Base
         return new Resource;
     }
 
+    public function post(Request $request)
+    {
+        $show = $this->build();
+        // Pulls the title from the Post request if it's changed then it will be saved.
+        $show->title = $request->pullPostString('title');
+        $show->active = 0;
+        //$show->content = [];
+        $this->saveResource($show);
+        //$this->createImageDirectory($show);
+        return $show;
+    }
+
+    public function put(Request $request)
+    {
+      // Pull the id from the request:
+      $vars = $request->getRequestVars();
+      $id = intval($vars['Show']);
+      // Load the resource corresponding to the id from the db:
+      $resource = $this->load($id);
+
+      // Update/PUT the values that are changed:
+      // pullPutVarIfSet will return false if not set
+      $title = $request->pullPutVarIfSet('title');
+      $active = $request->pullPutVarIfSet('active');
+      $content = $request->pullPutVarIfSet('content');
+      // if any of the vars are set to false we don't need to update them.
+      if (gettype($title) == "string") {
+        $resource->title = $title;
+      }
+      $resource->active = $active;
+      if (gettype($content) != "boolean") {
+        $resource->content = json_encode($content);
+      }
+      // Save the updated resource to the Database
+      $this->saveResource($resource);
+      return $resource;
+    }
+    /**
+    *
+    * Creates a new slideshow upon the patch request.
+    * @var $showId id of the show to be saved.
+    */
+    public function patch($showId, Request $request)
+    {
+      $resource = $this->load($showId);
+      $resource->title = $request->pullPatchVarIfSet('title');
+      $resource->active = $request->pullPatchVarIfSet('active');
+      $resource->content = $request->pullPatchVarIfSet('content');
+      $this->saveResource($resource);
+      return $resource;
+    }
+
     /**
     * Selects the details about a show from the db
     *
@@ -69,28 +121,28 @@ class ShowFactory extends Base
         }
     }
 
-    public function post(Request $request)
+    /**
+     *
+     * Returns the data for the slideshow contained from the $content var.
+     * @var $showId the id for the slideshow
+     */
+    public function getSlides($showId)
     {
-        $show = $this->build();
-        $show->title = $request->pullPostString('title');
-        $show->active = 0;
-        $this->saveResource($show);
-        //$this->createImageDirectory($show);
-        return $show;
-    }
-
-    public function put($showId, Request $request)
-    {
-        $resource = $this->load($showId);
-        $resource->title = $request->pullPutString('title');
-        $resource->active = $request->pullPutString('active');
-        $this->saveResource($resource);
-        return $resource;
+      if ($showId == null || $showId == -1) {
+        throw new \Exception("ShowId is not valid: $showId", 1);
+      }
+      $sql = "SELECT content FROM ss_show WHERE id=:showId;";
+      $db = Database::getDB();
+      $pdo = $db->getPDO();
+      $q = $pdo->prepare($sql);
+      $q->execute(array('showId'=>$showId));
+      $data = $q->fetchColumn(0);
+      return json_decode($data);
     }
 
     public function listing($showAll = false)
     {
-        $db = Database::getDB();
+        $db = \phpws2\Database::getDB();
         $tbl = $db->addTable('ss_show');
         $tbl->addOrderBy('title');
         if (!$showAll) {

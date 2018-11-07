@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import './custom.css'
 
 import Editor, { createEditorStateWithText, createWithContent } from 'draft-js-plugins-editor'
-import {EditorState, getDefaultKeyBinding, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
+import {EditorState, ContentState, getDefaultKeyBinding, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
 
 import {
   ItalicButton,
@@ -23,71 +23,88 @@ import {
 
 const {hasCommandModifier} = KeyBindingUtil
 
-export default class EditView extends Component {
+export default class Workspace extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
       editorState: EditorState.createEmpty(),
-      content: {
+      /*content: {
         // title: props.content['title'],
-        body: props.content.body,
         saveContent: props.content.saveContent
-      }
+      }*/
     }
     this.onEditChange = (editorState) =>  {
-      this.saveEditorState()
       this.setState({editorState})
+      //this.saveEditorState()
     }
 
     this.loadEditorState = this.loadEditorState.bind(this)
-    this.fetchContent = this.fetchContent.bind(this)
+    this.saveEditorState = this.saveEditorState.bind(this)
     this.handleKeyCommand = this.handleKeyCommand.bind(this)
     this.saveKeyBindingFn = this.saveKeyBindingFn.bind(this)
     this.deleteElement = this.deleteElement.bind(this)
   }
 
   componentDidMount() {
-    this.loadEditorState(this.props.content)
+    if (this.props.content != null || this.props.content != undefined) {
+      this.loadEditorState(this.props.content)
+    }
   }
 
   componentDidUpdate(prevProps) {
-   // this might cause an issue when a state that isn't related to slide change updates.
-   // Like hasFocus
-   //
-    if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-      this.fetchContent(this.props)
+    if (this.props.content != undefined) {
+      this.saveEditorState()
+      if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
+        this.loadEditorState(this.props.content)
+      }
     }
   }
 
   loadEditorState(content) {
-    if (content.saveContent === undefined){
+    // If there isn't any content then we make some
+    if (content.saveContent === undefined || content.saveContent == null) {
+      let body = ""
+      switch (content.type) {
+        case 'Title':
+          body = "Please click me to enter a TITLE."
+          break;
+        case 'Textbox':
+          body = "Please click me to enter BODY TEXT."
+          break;
+        case 'Image':
+          body = "PLACEHOLDER FOR AN IMAGE"
+          break;
+        case 'Quiz':
+          body = "PLACEHOLDER FROM A QUIZ"
+          break;
+        default:
+          body = "Insert text here."
+      }
+
       this.setState({
-         editorState: createEditorStateWithText(content.body)
+         editorState: createEditorStateWithText(body)
        })
+
+       this.saveEditorState()
     } else {
+
+      let contentState = convertFromRaw(JSON.parse(content.saveContent))
+
       this.setState({
-        editorState: EditorState.createWithContent(convertFromRaw(content.saveContent))
+        editorState: EditorState.createWithContent(contentState)
       })
     }
   }
 
   saveEditorState() {
-    const contentState = convertToRaw(this.state.editorState.getCurrentContent())
-    this.setState({saveContent: contentState})
-    //this.props.save(contentState)
-  }
+    if (this.state.editorState != undefined) {
+      // See draft.js documentation to understand what these are:
+      let contentState = this.state.editorState.getCurrentContent()
+      let saveContent = JSON.stringify(convertToRaw(contentState))
 
-  fetchContent(data) {
-    this.setState({
-      activeIndex: data.currentSlide,
-      content: {
-        // title: content.title
-        body: data.content.body,
-        saveContent: data.content.saveContent
-      }
-    })
-    this.loadEditorState(data.content)
+      this.props.saveContentState(saveContent, this.props.content.id - 1)
+    }
   }
 
   saveKeyBindingFn(e) {
@@ -103,7 +120,6 @@ export default class EditView extends Component {
     if (command === 'save') {
       // perform a save whether this may be a function call or something idk.
       this.saveEditorState()
-      alert("content saved!\nbut not to the db, but it's in the console tho :P")
       return 'handled'
     }
     return 'not-handled'
@@ -160,6 +176,6 @@ export default class EditView extends Component {
 
 }
 
-EditView.propTypes = {
+Workspace.propTypes = {
   save: PropTypes.func
 }

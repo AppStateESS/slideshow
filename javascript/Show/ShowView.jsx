@@ -34,7 +34,9 @@ export default class ShowView extends Component {
         type: 'post',
         dataType: 'json',
         success: function() {
-          this.getData();
+          // TODO: eventually I would like this to redirect to edit rather than alert.
+          this.switchModal()
+          this.getData()
         }.bind(this),
         error: function(req, err) {
           alert("Failed to save data.")

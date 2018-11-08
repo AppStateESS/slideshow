@@ -19,7 +19,8 @@
 
    public function show()
    {
-     $this->createShowButton();
+     // Removed this until fixed or implemented or deleted..idk
+     //$this->createShowButton();
      return $this->scriptView('shows');
    }
 

@@ -43,25 +43,46 @@ class Admin extends Base
     */
     protected $view;
 
+    /**
+    * Handles the request to render the list page.
+    */
     protected function listHtmlCommand(Request $request)
     {
         return $this->view->show();
     }
 
+    /**
+    * Handles the request to render the edit page.
+    */
     protected function editHtmlCommand(Request $request)
     {
       return $this->view->edit();
     }
 
-    public function postCommand(Request $request)
+    protected function postCommand(Request $request)
     {
         $show = $this->factory->post($request);
         return array('show'=>$show->getStringVars());
     }
 
+    protected function patchCommand(Request $request)
+    {
+      $show = $this->factory->patch($request);
+      return array('show'=>$show->getStringVars());
+    }
+
     protected function listJsonCommand(Request $request)
     {
         return array('listing'=>$this->factory->listing(true));
+    }
+
+    protected function editJsonCommand(Request $request)
+    {
+      $vars = $request->getRequestVars();
+      $id = $vars['id'];
+      return array(
+        'slides'=> $this->factory->getSlides($id),
+      );
     }
 
     protected function viewHtmlCommand(Request $request)
@@ -76,7 +97,7 @@ class Admin extends Base
 
     protected function putCommand(Request $request)
     {
-        $this->factory->put($this->id, $request);
+        $this->factory->put($request);
         return true;
     }
 

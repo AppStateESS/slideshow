@@ -3,14 +3,18 @@ import React, { Component } from 'react'
 import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import SlidesView from './SlidesView.jsx'
+import Show from '../Resources/Show.js'
 
 export default class Edit extends Component {
   constructor() {
     super()
 
     this.state = {
+      // There are some wierd bugs with this and it's not really neccesary to have.
+      // id: sessionStorage.getItem('id'),
       currentSlide: 0,
       // data that represents the slideshow:
+      resource: Show,
       content: [
         {
           stack: []
@@ -28,19 +32,57 @@ export default class Edit extends Component {
     this.deleteFromStack = this.deleteFromStack.bind(this)
   }
 
-  save(contentState) {
-    // Do something with content where we can save it as json to the db
-    //console.log("--- Saving ---")
+  componentDidMount() {
+    this.load();
+  }
+
+  save() {
     let copy = [...this.state.content]
-    copy[this.state.currentSlide]['textBoxContent'] = contentState
+    // Save/update a new js resource
+    let r = this.state.resource
+    r.content = copy
     this.setState({
-      content: copy
+      content: copy,
+      resource: r
     })
-    //console.log(this.state.content[this.state.currentSlide]['textBoxContent'])
+
+    $.ajax({
+      url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
+      data: {content: this.state.content, resource: this.state.resource},
+      type: 'put',
+      dataType: 'json',
+      success: function() {
+        this.load();
+      }.bind(this),
+      error: function(req, err) {
+        alert("Failed to save show " + window.sessionStorage.getItem('id'))
+        console.error(req, err.toString());
+      }.bind(this)
+    });
   }
 
   load() {
     // This will retrieve content and load it into the state through ajax/REST.
+    $.ajax({
+      url: './slideshow/Show/edit/?id=' + window.sessionStorage.getItem('id'),
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+
+        let loaded = data['slides']
+
+        if (loaded[this.state.currentSlide] != undefined) {
+          this.setState({
+            content: loaded,
+            id: data['id']
+          });
+        }
+      }.bind(this),
+      error: function(req, err) {
+        alert("Failed to load data.")
+        console.error(req, err.toString());
+      }.bind(this)
+    });
   }
 
   setCurrentSlide(val) {
@@ -105,16 +147,16 @@ export default class Edit extends Component {
 
     switch(event.target.value){
       case 'Title':
-        insertType = {type: event.target.value, id: idNum + 1, body: "Please click me to enter a TITLE.", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
         break;
       case 'Textbox':
-        insertType = {type: event.target.value, id: idNum + 1, body: "Please click me to enter BODY TEXT.", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
         break;
       case 'Image':
-        insertType = {type: event.target.value, id: idNum + 1, body: "PLACEHOLDER FOR AN IMAGE", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
         break;
       case 'Quiz':
-        insertType = {type: event.target.value, id: idNum + 1, body: "PLACEHOLDER FOR A QUIZ", saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
         break;
       default:
       //do nothing for now..
@@ -127,6 +169,7 @@ export default class Edit extends Component {
       content: copy
     })
   }
+
 
   deleteFromStack(element) {
     // remove id-1 from array
@@ -142,6 +185,21 @@ export default class Edit extends Component {
     this.setState({
       content: copy
     })
+  }
+
+  saveContentState(saveContent, stackNum) {
+    // Updates the saveContent variable within the slideshow stack.
+    this.state.content[this.state.currentSlide].stack[stackNum].saveContent = saveContent
+  }
+
+  saveContentState(saveContent, stackNum) {
+    /*console.log("current stack:");
+    console.log(this.state.content[this.state.currentSlide].stack[0].saveContent)
+    console.log("saveContent passed:");
+    console.log(saveContent)*/
+    this.state.content[this.state.currentSlide].stack[stackNum].saveContent = saveContent
+    console.log(this.state.content[this.state.currentSlide].stack[stackNum].saveContent)
+    //this.state.content[this.state.currentSlide].stack.saveContent = saveContent
   }
 
   render() {
@@ -164,7 +222,8 @@ export default class Edit extends Component {
             currentSlide={this.state.currentSlide}
             content={this.state.content[this.state.currentSlide].stack}
             save={this.save}
-            deleteElement={this.deleteFromStack}/>
+            deleteElement={this.deleteFromStack}
+            saveContentState={this.saveContentState.bind(this)}/>
         </div>
       </div>
     )

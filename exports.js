@@ -6,9 +6,5 @@ exports.entry = {
 
   shows: exports.APP_DIR + '/Show/index.jsx',
   edit: exports.APP_DIR + '/Edit/index.jsx',
-  /*SlideEdit: exports.APP_DIR + '/Slide/edit.jsx',
-  Present: exports.APP_DIR + '/Show/Present.jsx',
-  ShowView: exports.APP_DIR + 'Show/ShowView.jsx',
-  ShowCard: exports.APP_DIR + 'Show/ShowCard.jsx'*/
-
+  present: exports.APP_DIR + '/Present/index.jsx',
 }

@@ -22,6 +22,7 @@ export default class ShowCard extends Component {
     this.updateTitle = this.updateTitle.bind(this)
     this.handleActivation = this.handleActivation.bind(this)
     this.editTransition = this.editTransition.bind(this)
+    this.presentTransition = this.presentTransition.bind(this)
   }
 
   componentDidMount() {
@@ -91,8 +92,6 @@ export default class ShowCard extends Component {
  }
 
  editTransition() {
-   // TODO:
-   // Pass showId to edit page. So far all shows point to the same edit page.
    $.ajax({
      method: 'GET',
      url: './slideshow/Show/Edit/',
@@ -104,6 +103,19 @@ export default class ShowCard extends Component {
    })
    window.sessionStorage.setItem('id', this.state.id)
    window.location.href = './slideshow/Show/Edit/?id=' + this.state.id
+ }
+
+ presentTransition() {
+  $.ajax({
+   method: 'GET',
+   url: './slideshow/Show/Present/',
+   error: function(req, err) {
+     alert("Failed to present show.")
+     console.log(req, err.toString())
+   }.bind(this)
+  })
+  window.sessionStorage.setItem('id', this.state.id)
+  window.location.href = './slideshow/Show/Present/?id=' + this.state.id
  }
 
   render() {
@@ -141,7 +153,7 @@ export default class ShowCard extends Component {
               {cardTitle}
             </CardTitle>
             <div className="d-flex justify-content-around">
-              <Button onClick={this.view} color="primary">Present</Button>
+              <Button onClick={this.presentTransition} color="primary">Present</Button>
               <Button onClick={this.editTransition} color="secondary">Edit</Button>
               <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>
             </div>

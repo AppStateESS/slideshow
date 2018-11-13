@@ -3,18 +3,13 @@ import React, { Component } from 'react'
 import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import SlidesView from './SlidesView.jsx'
-import Show from '../Resources/Show.js'
 
 export default class Edit extends Component {
   constructor() {
     super()
 
     this.state = {
-      // There are some wierd bugs with this and it's not really neccesary to have.
-      // id: sessionStorage.getItem('id'),
       currentSlide: 0,
-      // data that represents the slideshow:
-      resource: Show,
       content: [
         {
           stack: []
@@ -38,17 +33,13 @@ export default class Edit extends Component {
 
   save() {
     let copy = [...this.state.content]
-    // Save/update a new js resource
-    let r = this.state.resource
-    r.content = copy
     this.setState({
-      content: copy,
-      resource: r
+      content: copy
     })
 
     $.ajax({
       url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
-      data: {content: this.state.content, resource: this.state.resource},
+      data: {content: this.state.content},
       type: 'put',
       dataType: 'json',
       success: function() {
@@ -73,8 +64,7 @@ export default class Edit extends Component {
 
         if (loaded[this.state.currentSlide] != undefined) {
           this.setState({
-            content: loaded,
-            id: data['id']
+            content: loaded
           });
         }
       }.bind(this),
@@ -190,16 +180,6 @@ export default class Edit extends Component {
   saveContentState(saveContent, stackNum) {
     // Updates the saveContent variable within the slideshow stack.
     this.state.content[this.state.currentSlide].stack[stackNum].saveContent = saveContent
-  }
-
-  saveContentState(saveContent, stackNum) {
-    /*console.log("current stack:");
-    console.log(this.state.content[this.state.currentSlide].stack[0].saveContent)
-    console.log("saveContent passed:");
-    console.log(saveContent)*/
-    this.state.content[this.state.currentSlide].stack[stackNum].saveContent = saveContent
-    console.log(this.state.content[this.state.currentSlide].stack[stackNum].saveContent)
-    //this.state.content[this.state.currentSlide].stack.saveContent = saveContent
   }
 
   render() {

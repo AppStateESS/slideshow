@@ -55,26 +55,9 @@ export default class EditView extends Component {
     }
   }
 
-  componentDidMount() {
-    // Could be used eventually, but too lazy to delete function.
-  }
-
-  componentDidUpdate(prevProps) {
-    // This looks like a nightmare to figure out. So I just commented it out.
-
-   // this might cause an issue when a state that isn't related to slide change updates.
-   // Like hasFocus
-   //
-    // if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-    //   this.fetchContent(this.props)
-    // }
-  }
-
   render() {
-    // Lazy with creating name.
-    let data = this.props.content.map(function(content) {
+    let workspace = this.props.content.map(function(content) {
       // lol, the key is ridiculous, but it works!
-      // Needs to be unique for a given slide AND unique between all slides
       return(
         <Workspace
           content = {content}
@@ -92,7 +75,7 @@ export default class EditView extends Component {
         <Toolbar />
         <span><br /></span>
         <div className="jumbotron">
-          {data}
+          {workspace}
         </div>
       </div>
     )

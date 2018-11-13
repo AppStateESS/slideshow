@@ -19,8 +19,12 @@ export default class Viewspace extends Component {
     }
   }
 
-  componentDidUpdate () {
-    // TODO: we might not need this.
+  componentDidUpdate (prevProps) {
+    if (this.props.content != undefined) {
+      if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
+        this.loadEditorState(this.props.content)
+      }
+    }
   }
 
   loadEditorState(content) {

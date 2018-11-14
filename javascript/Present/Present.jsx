@@ -34,7 +34,8 @@ export default class Present extends Component {
         let loaded = data['slides']
         if (loaded[this.state.currentSlide] != undefined) {
           this.setState({
-            content: loaded
+            content: loaded,
+            slideName: data['title']
           });
         }
       }.bind(this),
@@ -80,24 +81,29 @@ export default class Present extends Component {
     }.bind(this));
     return(
       <div>
-        <h1>{this.state.slideName}</h1>
+        <h1 style={{textDecorationLine: 'underline'}}>{this.state.slideName}</h1>
         <br></br>
-        <div>
-          <PresentView
-            currentSlide={this.state.currentSlide}
-            content={this.state.content[this.state.currentSlide].stack} />
+        <div className="row">
+          <div className="col-2"></div>
+          <div className="col-7">
+            <PresentView
+              currentSlide={this.state.currentSlide}
+              content={this.state.content[this.state.currentSlide].stack} />
+          </div>
+          <div className="col"></div>
         </div>
-        <div>
-          <div className="btn-toolbar">
-            <div className="btn-group">
-              <button className="btn btn-secondary" onClick={this.prev}>Previous</button>
-              {slidesButtons}
-              <button className="btn btn-secondary" onClick={this.next}>Next</button>
+        <div className="row">
+          <div className="col"></div>
+          <div className="col">
+            <div className="btn-toolbar">
+              <div className="btn-group">
+                <button className="btn btn-secondary" onClick={this.prev}>Previous</button>
+                {slidesButtons}
+                <button className="btn btn-secondary" onClick={this.next}>Next</button>
+              </div>
             </div>
           </div>
-        </div>
-        <div>
-
+          <div className="col"></div>
         </div>
       </div>
     )

@@ -21,8 +21,8 @@ export default class PresentView extends Component {
       }.bind(this));
 
     return (
-      <div>
-        <div className="jumbotron">
+      <div className="mh-100">
+        <div className="jumbotron" style={{height: 300}}>
           {viewspace}
         </div>
       </div>

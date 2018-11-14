@@ -69,12 +69,12 @@ export default class Present extends Component {
       inc += 1
       if (inc - 1 == this.state.currentSlide) {
         return (
-          <button className="btn btn-primary">{inc}</button>
+          <button key={inc} className="btn btn-primary">{inc}</button>
         )
       }
       else {
         return (
-          <button className="btn btn-secondary" onClick={this.changeSlide.bind(this,inc-1)}>{inc}</button>
+          <button key={inc} className="btn btn-secondary" onClick={this.changeSlide.bind(this,inc-1)}>{inc}</button>
         )
       }
     }.bind(this));

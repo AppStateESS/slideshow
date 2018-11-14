@@ -17,7 +17,7 @@ export default class PresentView extends Component {
   render() {
     let viewspace = this.props.content.map(function(content) {
         return(
-          <Viewspace content={content} />)
+          <Viewspace key={content.id + this.props.currentSlide} content={content} />)
       }.bind(this));
 
     return (

@@ -92,28 +92,11 @@ export default class ShowCard extends Component {
  }
 
  editTransition() {
-   $.ajax({
-     method: 'GET',
-     url: './slideshow/Show/Edit/',
-     data: { id: this.state.id },
-     error: function(req, err) {
-       alert("Failed to load show.")
-       console.error(req, err.toString())
-     }.bind(this)
-   })
    window.sessionStorage.setItem('id', this.state.id)
    window.location.href = './slideshow/Show/Edit/?id=' + this.state.id
  }
 
  presentTransition() {
-  $.ajax({
-   method: 'GET',
-   url: './slideshow/Show/Present/',
-   error: function(req, err) {
-     alert("Failed to present show.")
-     console.log(req, err.toString())
-   }.bind(this)
-  })
   window.sessionStorage.setItem('id', this.state.id)
   window.location.href = './slideshow/Show/Present/?id=' + this.state.id
  }

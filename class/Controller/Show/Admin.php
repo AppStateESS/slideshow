@@ -59,6 +59,14 @@ class Admin extends Base
       return $this->view->edit();
     }
 
+    /**
+    * Handles the request to render the present page.
+    */
+    protected function presentHtmlCommand(Request $request)
+    {
+      return $this->view->present();
+    }
+
     protected function postCommand(Request $request)
     {
         $show = $this->factory->post($request);
@@ -82,6 +90,16 @@ class Admin extends Base
       $id = $vars['id'];
       return array(
         'slides'=> $this->factory->getSlides($id),
+      );
+    }
+
+    protected function presentJsonCommand(Request $request)
+    {
+      $vars = $request->getRequestVars();
+      $id = $vars['id'];
+      return array(
+        'slides' => $this->factory->getSlides($id),
+        'title' => $this->factory->getShowName($id),
       );
     }
 

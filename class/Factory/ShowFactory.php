@@ -140,6 +140,20 @@ class ShowFactory extends Base
       return json_decode($data);
     }
 
+    public function getShowName($showId)
+    {
+      if ($showId == null || $showId == -1) {
+        throw new \Exception("ShowId is not valid: $showId", 1);
+      }
+      $sql = "SELECT title FROM ss_show WHERE id=:showId;";
+      $db = Database::getDB();
+      $pdo = $db->getPDO();
+      $q = $pdo->prepare($sql);
+      $q->execute(array('showId'=>$showId));
+      $title = $q->fetchColumn(0);
+      return $title;
+    }
+
     public function listing($showAll = false)
     {
         $db = \phpws2\Database::getDB();

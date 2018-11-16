@@ -29,14 +29,9 @@ export default class Workspace extends Component {
     super(props)
     this.state = {
       editorState: EditorState.createEmpty(),
-      /*content: {
-        // title: props.content['title'],
-        saveContent: props.content.saveContent
-      }*/
     }
     this.onEditChange = (editorState) =>  {
       this.setState({editorState})
-      //this.saveEditorState()
     }
 
     this.loadEditorState = this.loadEditorState.bind(this)
@@ -109,6 +104,7 @@ export default class Workspace extends Component {
 
   saveKeyBindingFn(e) {
     // This function will handle a "ctrl-s" as a save
+    // TODO: this method currently doesn't work in the way that it should.
     if (e.keyCode === 83 && hasCommandModifier(e)) {
       return 'save'
     }
@@ -177,5 +173,6 @@ export default class Workspace extends Component {
 }
 
 Workspace.propTypes = {
+  content: PropTypes.object,
   save: PropTypes.func
 }

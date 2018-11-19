@@ -29,6 +29,11 @@
       return $this->scriptView('edit');
    }
 
+   public function present()
+   {
+     return $this->scriptView('present');
+   }
+
    private function createShowButton()
     {
         $nav = new NavBar();

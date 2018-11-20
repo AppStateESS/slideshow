@@ -19,15 +19,16 @@ export default class SlidesView extends Component {
 
   handleNewSlide() {
     this.props.addNewSlide()
-    this.props.setCurrentSlide(this.state.currentSlide + 1)
+    this.props.setCurrentSlide(this.props.currentSlide + 1)
   }
 
   render() {
     let slideCount = 0
     let data = this.props.slides.map(function(slide) {
       slideCount += 1
+      let bClass = (this.props.currentSlide + 1 == slideCount) ? "btn btn-outline-secondary active" : "btn btn-outline-secondary"
       return(
-        <button type="button" className="btn btn-outline-secondary" key={slideCount} onClick={this.handleSlide} value={slideCount}>Slide {slideCount}</button>
+        <button type="button" className={bClass} key={slideCount} onClick={this.handleSlide} value={slideCount}>Slide {slideCount}</button>
       )
     }.bind(this));
 

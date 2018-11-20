@@ -135,7 +135,6 @@ class Admin extends Base
       if ($command == 'getDetails' && \Current_User::allow('slideshow', 'edit')) {
         $result = ShowFactory::getDetails($vars['show_id']);
       }
-
       return new \phpws2\View\JsonView($result);
     }
 

@@ -124,8 +124,6 @@ export default class Edit extends Component {
     this.setState({
       content: copy
     })
-    console.log(copy)
-    console.log(this.state.content)
   }
 
   addToStack(event) {

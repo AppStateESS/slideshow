@@ -46,6 +46,8 @@ export default class SlidesView extends Component {
 }
 
 SlidesView.propTypes = {
+  slides: PropTypes.array,
   currentSlide: PropTypes.number,
-  setCurrentSlide: PropTypes.func
+  setCurrentSlide: PropTypes.func,
+  addNewSlide: PropTypes.func
 }

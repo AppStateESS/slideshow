@@ -35,6 +35,7 @@ export default class NavBar extends Component {
     this.handleRename = this.handleRename.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
     this.handleDeleteSlide = this.handleDeleteSlide.bind(this)
+    this.handlePresent = this.handlePresent.bind(this)
   }
 
   toggleFile() {
@@ -77,8 +78,13 @@ export default class NavBar extends Component {
     }
   }
 
-  handleDeleteSlide(){
+  handleDeleteSlide() {
     this.props.deleteSlide(this.props.currentSlide)
+  }
+
+  handlePresent() {
+    window.sessionStorage.setItem('id', this.props.id)
+    window.location.href = './slideshow/Show/Present/?id=' + this.props.id
   }
 
   render() {
@@ -109,7 +115,7 @@ export default class NavBar extends Component {
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem onClick={this.props.save}>Save</DropdownItem>
-            <DropdownItem>Present Show</DropdownItem>
+            <DropdownItem onClick={this.handlePresent}>Present</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
         <ButtonDropdown isOpen={this.state.editOpen} toggle={this.toggleEdit}>
@@ -131,6 +137,8 @@ export default class NavBar extends Component {
             <DropdownItem onClick={this.props.addToStack} value="Textbox">Textbox</DropdownItem>
             <DropdownItem onClick={this.props.addToStack} value="Image">Image</DropdownItem>
             <DropdownItem onClick={this.props.addToStack} value="Quiz">Quiz</DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem onClick={this.props.insertSlide}>New Slide</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
       </ButtonGroup>
@@ -145,5 +153,7 @@ NavBar.propTypes = {
   save: PropTypes.func,
   insertSlide: PropTypes.func,
   deleteSlide: PropTypes.func,
-  renameSlide: PropTypes.func
+  renameSlide: PropTypes.func,
+  addToStack: PropTypes.func,
+  currentSlide: PropTypes.number
 }

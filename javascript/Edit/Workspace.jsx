@@ -85,7 +85,7 @@ export default class Workspace extends Component {
     } else {
 
       let contentState = convertFromRaw(JSON.parse(content.saveContent))
-
+      //console.log(content.saveContent)
       this.setState({
         editorState: EditorState.createWithContent(contentState)
       })

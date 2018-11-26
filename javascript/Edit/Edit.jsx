@@ -107,13 +107,10 @@ export default class Edit extends Component {
       this.setState({content: copy})
     } else {
       let tempContent = [...this.state.content]
-      console.log(slideNum)
-      console.log(this.state.content)
       tempContent.splice(slideNum, 1)
       // If the first slide needs to be deleted but the slideshow
       // already has multiple slides, we can safely delete the first slide.
       let cslide = (slideNum == 0) ? 0 : slideNum - 1
-      console.log(tempContent)
       this.setState({
         content: tempContent,
         currentSlide: cslide

@@ -33,12 +33,8 @@ export default class Edit extends Component {
     this.load();
   }
 
-  save() {
-    let copy = [...this.state.content]
-    this.setState({
-      content: copy
-    })
 
+  save() {
     $.ajax({
       url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
       data: {content: this.state.content},
@@ -54,8 +50,8 @@ export default class Edit extends Component {
     });
   }
 
+
   load() {
-    // This will retrieve content and load it into the state through ajax/REST.
     $.ajax({
       url: './slideshow/Show/edit/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
@@ -78,11 +74,13 @@ export default class Edit extends Component {
     });
   }
 
+
   setCurrentSlide(val) {
     this.setState({
       currentSlide: val
     })
   }
+
 
   addNewSlide() {
     // This function adds to the stack of slides held within state.content
@@ -98,49 +96,60 @@ export default class Edit extends Component {
     })
   }
 
+
   deleteCurrentSlide(slideNum) {
-    // There always has to be one slide, this will reset the
-    // stack to ensure there is always one slide per slideshow
-    if (slideNum === 0 && this.state.content.length === 1) {
-      let copy = [...this.state.content]
-      copy[0]['stack'] = []
-      this.setState({content: copy})
-    } else {
-      let tempContent = [...this.state.content]
-      tempContent.splice(slideNum, 1)
-      // If the first slide needs to be deleted but the slideshow
-      // already has multiple slides, we can safely delete the first slide.
-      let cslide = (slideNum == 0) ? 0 : slideNum - 1
+    // If we try to delete the content from the first slide
+    // and there are no slides after.
+    if (slideNum === 0 && this.state.content.length == 1) {
       this.setState({
-        content: tempContent,
-        currentSlide: cslide
+        content: [
+          {
+            stack: []
+          }
+        ]
+      })
+    } else {
+      // Clear out stack before deleting it. Other ways caused a lot of issues.
+      let copy = [...this.state.content]
+      copy[slideNum].stack = []
+      this.setState({
+        content: copy
+      }, () => {
+        copy.splice(slideNum, 1)
+        let slideIndex = (slideNum === copy.length) ? copy.length - 1 : slideNum
+        this.setState({
+          content: copy,
+          currentSlide: slideIndex
+        })
+        // Save to database
+        this.save()
       })
     }
   }
+
 
   renameCurrentSlide(value) {
     alert("This has not yet been implemented")
   }
 
+
   addToStack(event) {
     let tempStack = this.state.content[this.state.currentSlide].stack
-    // If the array length - 1 < 0 then there is nothing so idNum starts at 0
-    // Otherwise, go into the array at index - 1 and use that object's id
-    let idNum = (tempStack.length - 1 >= 0) ? tempStack[tempStack.length - 1].id : 0
+
     let insertType
 
     switch(event.target.value){
       case 'Title':
-        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length , saveContent: undefined}
         break;
       case 'Textbox':
-        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length , saveContent: undefined}
         break;
       case 'Image':
-        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length , saveContent: undefined}
         break;
       case 'Quiz':
-        insertType = {type: event.target.value, id: tempStack.length + 1, saveContent: undefined}
+        insertType = {type: event.target.value, id: tempStack.length , saveContent: undefined}
         break;
       default:
       //do nothing for now..

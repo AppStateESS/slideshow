@@ -42,25 +42,22 @@ export default class Workspace extends Component {
   }
 
   componentDidMount() {
-    if (this.props.content != null || this.props.content != undefined) {
-      this.loadEditorState(this.props.content)
+    if (this.props.content != undefined) {
+      this.loadEditorState()
     }
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.content != undefined) {
       this.saveEditorState()
-      if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-        this.loadEditorState(this.props.content)
-      }
     }
   }
 
-  loadEditorState(content) {
+  loadEditorState() {
     // If there isn't any content then we make some
-    if (content.saveContent === undefined || content.saveContent == null) {
+    if (this.props.content.saveContent == undefined) {
       let body = ""
-      switch (content.type) {
+      switch (this.props.content.type) {
         case 'Title':
           body = "Please click me to enter a TITLE."
           break;
@@ -81,10 +78,8 @@ export default class Workspace extends Component {
          editorState: createEditorStateWithText(body)
        })
 
-       this.saveEditorState()
     } else {
-
-      let contentState = convertFromRaw(JSON.parse(content.saveContent))
+      let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
       this.setState({
         editorState: EditorState.createWithContent(contentState)
       })
@@ -97,7 +92,7 @@ export default class Workspace extends Component {
       let contentState = this.state.editorState.getCurrentContent()
       let saveContent = JSON.stringify(convertToRaw(contentState))
 
-      this.props.saveContentState(saveContent, this.props.content.id - 1)
+      this.props.saveContentState(saveContent, this.props.content.id)
     }
   }
 
@@ -173,5 +168,8 @@ export default class Workspace extends Component {
 
 Workspace.propTypes = {
   content: PropTypes.object,
-  save: PropTypes.func
+  save: PropTypes.func,
+  saveContentState: PropTypes.func,
+  currentSlide: PropTypes.number,
+  deleteElement: PropTypes.func
 }

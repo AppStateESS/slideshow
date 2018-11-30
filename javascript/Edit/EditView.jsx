@@ -58,14 +58,14 @@ export default class EditView extends Component {
   render() {
     let workspace = this.props.content.map(function(content) {
       // lol, the key is ridiculous, but it works!
+      const key = "id" + content.id + "t" + content.type + "i" + this.props.currentSlide;
       return(
         <Workspace
           content = {content}
           plugins = {this.plugins}
           saveContentState = {this.props.saveContentState}
-          save = {this.props.save}
           currentSlide = {this.props.currentSlide}
-          key = {content.id + content.type + this.props.currentSlide}
+          key = {key}
           deleteElement = {this.props.deleteElement} />)
     }.bind(this));
 
@@ -87,6 +87,6 @@ export default class EditView extends Component {
 EditView.propTypes = {
   currentSlide: PropTypes.number,
   content: PropTypes.array,
+  deleteElement: PropTypes.func,
   saveContentState: PropTypes.func,
-  save: PropTypes.func
 }

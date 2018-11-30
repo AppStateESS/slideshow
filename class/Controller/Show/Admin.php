@@ -90,6 +90,7 @@ class Admin extends Base
       $id = $vars['id'];
       return array(
         'slides'=> $this->factory->getSlides($id),
+        'id' => $id
       );
     }
 

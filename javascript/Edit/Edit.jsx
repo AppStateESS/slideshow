@@ -121,10 +121,10 @@ export default class Edit extends Component {
           content: copy,
           currentSlide: slideIndex
         })
-        // Save to database
-        this.save()
       })
     }
+    // Save to database
+    this.save()
   }
 
 

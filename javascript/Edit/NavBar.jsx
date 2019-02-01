@@ -34,7 +34,6 @@ export default class NavBar extends Component {
     this.toggleRename = this.toggleRename.bind(this)
     this.handleRename = this.handleRename.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
-    this.handleDeleteSlide = this.handleDeleteSlide.bind(this)
     this.handlePresent = this.handlePresent.bind(this)
   }
 
@@ -76,10 +75,6 @@ export default class NavBar extends Component {
     else {
       console.log("Error: null value")
     }
-  }
-
-  handleDeleteSlide() {
-    this.props.deleteSlide(this.props.currentSlide)
   }
 
   handlePresent() {
@@ -124,7 +119,7 @@ export default class NavBar extends Component {
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem onClick={this.props.insertSlide}>Insert Slide</DropdownItem>
-            <DropdownItem onClick={this.handleDeleteSlide}>Delete Slide</DropdownItem>
+            <DropdownItem onClick={this.props.deleteSlide}>Delete Slide</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
         <ButtonDropdown isOpen={this.state.insertOpen} toggle={this.toggleInsert}>

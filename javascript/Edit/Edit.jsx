@@ -56,14 +56,13 @@ export default class Edit extends Component {
       type: 'GET',
       dataType: 'json',
       success: function (data) {
-        let loaded = data['slides'].slice()
+        let loaded = data['slides']
         if (loaded != null) {
           this.setState({
             content: loaded,
             id: data['id']
           });
         }
-        //console.log("content loaded")
       }.bind(this),
       error: function(req, err) {
         alert("Failed to load data.")
@@ -95,34 +94,25 @@ export default class Edit extends Component {
   }
 
 
-  deleteCurrentSlide(slideNum) {
-    // If we try to delete the content from the first slide
-    // and there are no slides after.
-    if (slideNum === 0 && this.state.content.length == 1) {
-      this.setState({
-        content: [
-          {
-            saveContent: undefined
-          }
-        ]
-      })
-    } else {
-      // Clear out stack before deleting it. Other ways caused a lot of issues.
-      let copy = [...this.state.content]
-      copy[slideNum].saveContent = undefined
-      this.setState({
-        content: copy
-      }, () => {
-        copy.splice(slideNum, 1)
-        let slideIndex = (slideNum === copy.length) ? copy.length - 1 : slideNum
-        this.setState({
-          content: copy,
-          currentSlide: slideIndex
-        })
-      })
+  deleteCurrentSlide() {
+    let copy = [...this.state.content]
+    let newIndex = this.state.currentSlide
+    // splice one slide at the current index
+    copy.splice(this.state.currentSlide, 1)
+    // Current slide is the first slide and there are no other slides
+    if (this.state.currentSlide === 0 && this.state.content.length == 1) {
+      // set the array to an empty slide
+      copy = [{saveContent: undefined}]
     }
-    // Save to database
-    this.save()
+    // If we are deleting the last slide
+    if (this.state.currentSlide == copy.length) {
+      newIndex = this.state.currentSlide - 1
+    }
+
+    this.setState({
+      content: copy,
+      currentSlide: newIndex
+    })
   }
 
 

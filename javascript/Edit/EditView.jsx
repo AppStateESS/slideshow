@@ -99,7 +99,6 @@ export default class EditView extends Component {
 
   saveEditorState() {
     if (this.state.editorState != undefined) {
-      console.log("saved locally")
       // See draft.js documentation to understand what these are:
       let contentState = this.state.editorState.getCurrentContent()
       let saveContent = JSON.stringify(convertToRaw(contentState))

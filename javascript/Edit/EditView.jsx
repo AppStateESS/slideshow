@@ -1,7 +1,9 @@
 'use strict'
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import Workspace from './Workspace.jsx'
+
+import Editor, { createEditorStateWithText, createWithContent } from 'draft-js-plugins-editor'
+import {EditorState, ContentState, getDefaultKeyBinding, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
 
 import {
   ItalicButton,
@@ -49,25 +51,82 @@ export default class EditView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      activeIndex: props.currentSlide,
-      toolBarActive: false,
-      hasFocus: false,
+      editorState: EditorState.createEmpty()
+    }
+
+    this.onEditChange = (editorState) =>  {
+      this.setState({editorState})
+    }
+
+
+    this.loadEditorState = this.loadEditorState.bind(this)
+    this.saveEditorState = this.saveEditorState.bind(this)
+  }
+
+  componentDidMount() {
+    this.loadEditorState()
+  }
+
+  componentDidUpdate(prevProps) {
+    // This catches the load from the db, which is slower than React's render which is why it's in componentDidUpdate.
+    // and when a slide (props) is changed.
+    if (prevProps.content.saveContent != this.props.content.saveContent) {
+      this.loadEditorState()
+    }
+    // Save local state anytime that the Component is updated
+    if (this.props.content.saveContent != undefined) {
+      this.saveEditorState()
     }
   }
 
+  loadEditorState() {
+    // If there isn't any content then we make some
+    if (this.props.content.saveContent == undefined) {
+      let body = "New Slide"
+      this.setState({
+         editorState: createEditorStateWithText(body)
+       }, function() {
+         this.onEditChange(RichUtils.toggleBlockType(this.state.editorState, 'header-one'))
+         this.saveEditorState()
+       })
+    } else {
+      let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
+      this.setState({
+        editorState: EditorState.createWithContent(contentState)
+      })
+    }
+  }
+
+  saveEditorState() {
+    if (this.state.editorState != undefined) {
+      console.log("saved locally")
+      // See draft.js documentation to understand what these are:
+      let contentState = this.state.editorState.getCurrentContent()
+      let saveContent = JSON.stringify(convertToRaw(contentState))
+
+      this.props.saveContentState(saveContent)
+    }
+  }
+
+  _undo()
+  {
+    // This is here but it is not yet implemented
+    // I will add this to a button on the nav bar at some point
+    this.onEditChange(EditorState.undo(EditorState))
+  }
+
+  _redo()
+  {
+    this.onEditChange(EditorState.redo(EditorState))
+  }
+
   render() {
-    let workspace = this.props.content.map(function(content) {
-      // lol, the key is ridiculous, but it works!
-      const key = "id" + content.id + "t" + content.type + "i" + this.props.currentSlide;
-      return(
-        <Workspace
-          content = {content}
-          plugins = {this.plugins}
-          saveContentState = {this.props.saveContentState}
-          currentSlide = {this.props.currentSlide}
-          key = {key}
-          deleteElement = {this.props.deleteElement} />)
-    }.bind(this));
+
+    var editorStyle = {
+      padding: '5px',
+      border: '1px solid grey',
+      borderRadius: '5px'
+    }
 
     return (
       <div className="col-8" >
@@ -75,7 +134,17 @@ export default class EditView extends Component {
         <Toolbar />
         <span><br /></span>
         <div className="jumbotron">
-          {workspace}
+          <div className="cust-col-11" style={this.state.hasFocus ? editorStyle : {padding: '5px'}}>
+            <Editor
+              editorState={this.state.editorState}
+              onChange={this.onEditChange}
+              plugins={plugins}
+              handleKeyCommand={this.handleKeyCommand}
+              keyBindingFn={this.saveKeyBindingFn}
+              onFocus={() => this.setState({ hasFocus: true })}
+              onBlur={() => this.setState({ hasFocus: false })}
+              ref={(element) => { this.editor = element; }} />
+          </div>
         </div>
       </div>
     )
@@ -86,7 +155,6 @@ export default class EditView extends Component {
 
 EditView.propTypes = {
   currentSlide: PropTypes.number,
-  content: PropTypes.array,
-  deleteElement: PropTypes.func,
+  content: PropTypes.object,
   saveContentState: PropTypes.func,
 }

@@ -13,10 +13,12 @@ export default class Edit extends Component {
       id: -1,
       content: [
         {
-          stack: []
-        }
+          saveContent: undefined,
+          id: 0
+        },
       ]
     }
+
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
@@ -24,15 +26,12 @@ export default class Edit extends Component {
     this.addNewSlide = this.addNewSlide.bind(this)
     this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
-    this.addToStack = this.addToStack.bind(this)
-    this.deleteFromStack = this.deleteFromStack.bind(this)
     this.saveContentState = this.saveContentState.bind(this)
   }
 
   componentDidMount() {
-    this.load();
+    this.load()
   }
-
 
   save() {
     $.ajax({
@@ -57,15 +56,14 @@ export default class Edit extends Component {
       type: 'GET',
       dataType: 'json',
       success: function (data) {
-
-        let loaded = data['slides']
-
-        if (loaded[this.state.currentSlide] != undefined) {
+        let loaded = data['slides'].slice()
+        if (loaded != null) {
           this.setState({
             content: loaded,
             id: data['id']
           });
         }
+        //console.log("content loaded")
       }.bind(this),
       error: function(req, err) {
         alert("Failed to load data.")
@@ -86,7 +84,7 @@ export default class Edit extends Component {
     // This function adds to the stack of slides held within state.content
     const index = this.state.currentSlide + 1
     const newSlide = {
-        stack: []
+        saveContent: undefined
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
@@ -104,14 +102,14 @@ export default class Edit extends Component {
       this.setState({
         content: [
           {
-            stack: []
+            saveContent: undefined
           }
         ]
       })
     } else {
       // Clear out stack before deleting it. Other ways caused a lot of issues.
       let copy = [...this.state.content]
-      copy[slideNum].stack = []
+      copy[slideNum].saveContent = undefined
       this.setState({
         content: copy
       }, () => {
@@ -133,57 +131,10 @@ export default class Edit extends Component {
   }
 
 
-  addToStack(event) {
-    let tempStack = this.state.content[this.state.currentSlide].stack
-
-    let insertType
-
-    switch(event.target.value){
-      case 'Title':
-        insertType = {type: event.target.value, id: tempStack.length , saveContent: undefined}
-        break;
-      case 'Textbox':
-        insertType = {type: event.target.value, id: tempStack.length , saveContent: undefined}
-        break;
-      case 'Image':
-        insertType = {type: event.target.value, id: tempStack.length , saveContent: undefined}
-        break;
-      case 'Quiz':
-        insertType = {type: event.target.value, id: tempStack.length , saveContent: undefined}
-        break;
-      default:
-      //do nothing for now..
-    }
-    tempStack.push(insertType)
-
-    let copy = [...this.state.content]
-    copy[this.state.currentSlide]['stack'] = tempStack
-    this.setState({
-      content: copy
-    })
+  saveContentState(saveContent) {
+    this.state.content[this.state.currentSlide].saveContent = saveContent
   }
 
-
-  deleteFromStack(element) {
-    // remove id-1 from array
-    let tempStack = this.state.content[this.state.currentSlide].stack
-    let index = tempStack.indexOf(element);
-
-    if (index > -1) {
-      tempStack.splice(index, 1)
-    }
-
-    let copy = [...this.state.content]
-    copy[this.state.currentSlide]['stack'] = tempStack
-    this.setState({
-      content: copy
-    })
-  }
-
-  saveContentState(saveContent, stackNum) {
-    // Updates the saveContent variable within the slideshow stack.
-    this.state.content[this.state.currentSlide].stack[stackNum].saveContent = saveContent
-  }
 
   render() {
     return (
@@ -204,7 +155,7 @@ export default class Edit extends Component {
             addNewSlide     ={this.addNewSlide}/>
           <EditView
             currentSlide={this.state.currentSlide}
-            content={this.state.content[this.state.currentSlide].stack}
+            content={this.state.content[this.state.currentSlide]}
             deleteElement={this.deleteFromStack}
             saveContentState={this.saveContentState}/>
         </div>

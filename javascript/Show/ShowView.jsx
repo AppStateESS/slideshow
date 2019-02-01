@@ -1,6 +1,5 @@
 'use strict'
 import React, {Component} from 'react'
-import ShowList from './ShowList.jsx'
 import ShowCard from './ShowCard.jsx'
 import Show from '../Resources/Show.js'
 import { Card, CardBody, CardTitle, Row, Col, Button } from 'reactstrap'

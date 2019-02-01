@@ -31,8 +31,7 @@ export default class Present extends Component {
       type: 'GET',
       dataType: 'json',
       success: function (data) {
-        let loaded = data['slides'].slice()
-        console.log(loaded)
+        let loaded = data['slides']
         if (loaded != null) {
           this.setState({
             content: loaded,

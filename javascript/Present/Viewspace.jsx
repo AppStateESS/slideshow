@@ -26,7 +26,6 @@ export default class Viewspace extends Component {
   }
 
   loadEditorState(content) {
-    //console.log(this.props.content.saveContent)
     let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
 
     this.setState({

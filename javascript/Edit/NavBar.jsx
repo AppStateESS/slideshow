@@ -125,7 +125,6 @@ export default class NavBar extends Component {
           <DropdownMenu>
             <DropdownItem onClick={this.props.insertSlide}>Insert Slide</DropdownItem>
             <DropdownItem onClick={this.handleDeleteSlide}>Delete Slide</DropdownItem>
-            <DropdownItem onClick={this.toggleRename}>Rename Slide</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
         <ButtonDropdown isOpen={this.state.insertOpen} toggle={this.toggleInsert}>
@@ -133,10 +132,8 @@ export default class NavBar extends Component {
             Insert
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem onClick={this.props.addToStack} value="Title">Title</DropdownItem>
-            <DropdownItem onClick={this.props.addToStack} value="Textbox">Textbox</DropdownItem>
-            <DropdownItem onClick={this.props.addToStack} value="Image">Image</DropdownItem>
-            <DropdownItem onClick={this.props.addToStack} value="Quiz">Quiz</DropdownItem>
+            <DropdownItem value="Image">Image</DropdownItem>
+            <DropdownItem value="Quiz">Quiz</DropdownItem>
             <DropdownItem divider />
             <DropdownItem onClick={this.props.insertSlide}>New Slide</DropdownItem>
           </DropdownMenu>
@@ -154,6 +151,5 @@ NavBar.propTypes = {
   insertSlide: PropTypes.func,
   deleteSlide: PropTypes.func,
   renameSlide: PropTypes.func,
-  addToStack: PropTypes.func,
   currentSlide: PropTypes.number
 }

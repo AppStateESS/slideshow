@@ -7,23 +7,13 @@ export default class PresentView extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      content: props.content,
-      currentSlide: props.currentSlide
-    }
-
   }
 
   render() {
-    let viewspace = this.props.content.map(function(content) {
-        return(
-          <Viewspace key={content.id + this.props.currentSlide} content={content} />)
-      }.bind(this));
-
     return (
       <div className="mh-100">
         <div className="jumbotron" style={{height: 300}}>
-          {viewspace}
+          <Viewspace content={this.props.content} />
         </div>
       </div>
     )
@@ -31,6 +21,6 @@ export default class PresentView extends Component {
 }
 
 PresentView.propTypes = {
-  content: PropTypes.array,
+  content: PropTypes.object,
   currentSlide: PropTypes.number
 }

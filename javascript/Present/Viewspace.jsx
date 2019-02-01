@@ -14,16 +14,14 @@ export default class Viewspace extends Component {
 
   componentDidMount() {
     // decode the Editor state from the content field.
-    if (this.props.content != null || this.props.content != undefined) {
+    if (this.props.content.saveContent != undefined) {
       this.loadEditorState(this.props.content)
     }
   }
 
   componentDidUpdate (prevProps) {
-    if (this.props.content != undefined) {
-      if (prevProps.content != this.props.content || prevProps.currentSlide !== this.props.currentSlide) {
-        this.loadEditorState(this.props.content)
-      }
+    if (prevProps.content.saveContent != this.props.content.saveContent) {
+      this.loadEditorState()
     }
   }
 

@@ -26,8 +26,6 @@ export default class ShowCard extends Component {
   }
 
   componentDidMount() {
-    //console.log(this.props.title);
-    //this.loadShow(this.props.id)
     this.setState({
 
           title: this.props.title,

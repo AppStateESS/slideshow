@@ -34,7 +34,6 @@ export default class NavBar extends Component {
     this.toggleRename = this.toggleRename.bind(this)
     this.handleRename = this.handleRename.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
-    this.handleDeleteSlide = this.handleDeleteSlide.bind(this)
     this.handlePresent = this.handlePresent.bind(this)
   }
 
@@ -76,10 +75,6 @@ export default class NavBar extends Component {
     else {
       console.log("Error: null value")
     }
-  }
-
-  handleDeleteSlide() {
-    this.props.deleteSlide(this.props.currentSlide)
   }
 
   handlePresent() {
@@ -124,8 +119,7 @@ export default class NavBar extends Component {
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem onClick={this.props.insertSlide}>Insert Slide</DropdownItem>
-            <DropdownItem onClick={this.handleDeleteSlide}>Delete Slide</DropdownItem>
-            <DropdownItem onClick={this.toggleRename}>Rename Slide</DropdownItem>
+            <DropdownItem onClick={this.props.deleteSlide}>Delete Slide</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
         <ButtonDropdown isOpen={this.state.insertOpen} toggle={this.toggleInsert}>
@@ -133,10 +127,8 @@ export default class NavBar extends Component {
             Insert
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem onClick={this.props.addToStack} value="Title">Title</DropdownItem>
-            <DropdownItem onClick={this.props.addToStack} value="Textbox">Textbox</DropdownItem>
-            <DropdownItem onClick={this.props.addToStack} value="Image">Image</DropdownItem>
-            <DropdownItem onClick={this.props.addToStack} value="Quiz">Quiz</DropdownItem>
+            <DropdownItem value="Image">Image</DropdownItem>
+            <DropdownItem value="Quiz">Quiz</DropdownItem>
             <DropdownItem divider />
             <DropdownItem onClick={this.props.insertSlide}>New Slide</DropdownItem>
           </DropdownMenu>
@@ -154,6 +146,5 @@ NavBar.propTypes = {
   insertSlide: PropTypes.func,
   deleteSlide: PropTypes.func,
   renameSlide: PropTypes.func,
-  addToStack: PropTypes.func,
   currentSlide: PropTypes.number
 }

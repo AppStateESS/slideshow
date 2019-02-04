@@ -10,7 +10,7 @@ export default class Present extends Component {
       currentSlide: 0,
       content: [
         {
-          stack: []
+          saveContent: undefined
         }
       ],
       slideName: "Present: ",
@@ -32,7 +32,7 @@ export default class Present extends Component {
       dataType: 'json',
       success: function (data) {
         let loaded = data['slides']
-        if (loaded[this.state.currentSlide] != undefined) {
+        if (loaded != null) {
           this.setState({
             content: loaded,
             slideName: data['title']
@@ -88,7 +88,7 @@ export default class Present extends Component {
           <div className="col-7">
             <PresentView
               currentSlide={this.state.currentSlide}
-              content={this.state.content[this.state.currentSlide].stack} />
+              content={this.state.content[this.state.currentSlide]} />
           </div>
           <div className="col"></div>
         </div>

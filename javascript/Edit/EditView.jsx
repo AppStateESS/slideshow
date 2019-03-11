@@ -2,9 +2,10 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
-import Editor, { createEditorStateWithText, createWithContent } from 'draft-js-plugins-editor'
+import Editor, { createEditorStateWithText, createWithContent, composeDecorators } from 'draft-js-plugins-editor'
 import {EditorState, ContentState, getDefaultKeyBinding, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
 
+// Toolbar imports
 import {
   ItalicButton,
   BoldButton,
@@ -15,15 +16,29 @@ import {
   HeadlineThreeButton,
   UnorderedListButton,
   OrderedListButton,
-  BlockquoteButton,
-  CodeBlockButton
 } from 'draft-js-buttons'
+
+import CustomButtons from './CustomToolbarButtons.jsx'
+import UndoRedo from './UndoRedoButtons.jsx'
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
 import 'draft-js-static-toolbar-plugin/lib/plugin.css'
 
+// Imports for images
+import createImagePlugin from 'draft-js-image-plugin'
+import createResizeablePlugin from 'draft-js-resizeable-plugin'
+import createAlignmentPlugin from 'draft-js-alignment-plugin'
+import createFocusPlugin from 'draft-js-focus-plugin';
+
+const alignmentPlugin = createAlignmentPlugin()
+const { AlignmentTool } = alignmentPlugin
+const resizeablePlugin = createResizeablePlugin()
+const focusPlugin = createFocusPlugin();
+
 const staticToolbar = createToolbarPlugin({
   structure: [
+    UndoRedo,
+    Separator,
     BoldButton,
     ItalicButton,
     UnderlineButton,
@@ -34,16 +49,27 @@ const staticToolbar = createToolbarPlugin({
     HeadlineThreeButton,
     UnorderedListButton,
     OrderedListButton,
-    BlockquoteButton,
-    CodeBlockButton,
+    Separator,
+    CustomButtons
   ]
 })
 
+const decorator = composeDecorators(
+  resizeablePlugin.decorator,
+  alignmentPlugin.decorator,
+  focusPlugin.decorator,
+)
+
+const imagePlugin = createImagePlugin({ decorator })
 
 const { Toolbar } = staticToolbar
 
 const plugins = [
   staticToolbar,
+  focusPlugin,
+  alignmentPlugin,
+  resizeablePlugin,
+  imagePlugin
 ]
 
 export default class EditView extends Component {
@@ -66,7 +92,7 @@ export default class EditView extends Component {
   componentDidMount() {
     this.loadEditorState()
   }
-
+CustomToolbar
   componentDidUpdate(prevProps) {
     // This catches the load from the db, which is slower than React's render which is why it's in componentDidUpdate.
     // and when a slide (props) is changed.
@@ -107,18 +133,6 @@ export default class EditView extends Component {
     }
   }
 
-  _undo()
-  {
-    // This is here but it is not yet implemented
-    // I will add this to a button on the nav bar at some point
-    this.onEditChange(EditorState.undo(EditorState))
-  }
-
-  _redo()
-  {
-    this.onEditChange(EditorState.redo(EditorState))
-  }
-
   render() {
 
     var editorStyle = {
@@ -143,6 +157,7 @@ export default class EditView extends Component {
               onFocus={() => this.setState({ hasFocus: true })}
               onBlur={() => this.setState({ hasFocus: false })}
               ref={(element) => { this.editor = element; }} />
+
           </div>
         </div>
       </div>

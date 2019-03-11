@@ -72,9 +72,6 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
 
     public function runTime(Request $request)
     {
-        if (\Current_User::allow('slideshow')) {
-            NavBar::addItem($this->showList());
-        }
         if ($request->getModule() !== 'slideshow') {
             \Layout::addStyle('slideshow');
             $this->showNavBar($request);
@@ -90,10 +87,6 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         }
     }
 
-    private function showList()
-    {
-        return '<a class="btn btn-primary" href="./slideshow/Show/list"><i class="fas fa-list"></i> Show list</a>';
-    }
 
     public static function autoloader($class_name)
     {

@@ -25,16 +25,25 @@ export default class NavBar extends Component {
       editOpen: false,
       insertOpen: false,
       renameOpen: false,
+      imageOpen: false,
       renameVal: ""
     }
 
+    this.returnToShowList = this.returnToShowList.bind(this)
     this.toggleFile = this.toggleFile.bind(this)
     this.toggleEdit = this.toggleEdit.bind(this)
     this.toggleInsert = this.toggleInsert.bind(this)
     this.toggleRename = this.toggleRename.bind(this)
+    this.toggleImage = this.toggleImage.bind(this)
     this.handleRename = this.handleRename.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
     this.handlePresent = this.handlePresent.bind(this)
+    this.handleImage = this.handleImage.bind(this)
+  }
+
+  returnToShowList() {
+    this.props.save()
+    window.location.href = './slideshow/Show/list'
   }
 
   toggleFile() {
@@ -61,9 +70,21 @@ export default class NavBar extends Component {
     })
   }
 
+  toggleImage() {
+    this.setState({
+      imageOpen: !this.state.imageOpen
+    })
+  }
+
   handleRename(event) {
     this.setState({
       renameVal: event.target.value
+    })
+  }
+
+  handleImage(event) {
+    this.setState({
+      imageUrl: event.target.value
     })
   }
 
@@ -82,28 +103,31 @@ export default class NavBar extends Component {
     window.location.href = './slideshow/Show/Present/?id=' + this.props.id
   }
 
+
   render() {
-    const modal = (
-      <Modal isOpen={this.state.renameOpen} toggle={this.toggleRename} fade={false} backdrop={true}>
-        <ModalHeader toggle={this.toggleRename}>Rename Slide Title:</ModalHeader>
+    const imageModal = (
+      <Modal isOpen={this.state.imageOpen} toggle={this.toggleImage} fade={false} backdrop={true}>
+        <ModalHeader toggle={this.toggleImage}>Enter Image Url</ModalHeader>
         <ModalBody>
           <InputGroup>
             <Input
                     type="text"
-                    placeholder="Rename Slide"
-                    onChange={this.handleRename}
-                    value={this.state.renameVal} />
+                    placeholder="Image Url"
+                    onChange={this.handleImage}
+                    value={this.state.imageUrl} />
               <InputGroupAddon addonType="append">
-            <Button onClick={this.renameCurrentSlide.bind(this, this.state.renameVal)} color="success">Save</Button>
+            <Button onClick={this.toggleImage} color="primary">Submit</Button>
             </InputGroupAddon>
           </InputGroup>
         </ModalBody>
       </Modal>
     )
 
+
     return (
       <div>
       <ButtonGroup>
+        <Button onClick={this.returnToShowList} color="primary"><i className="fas fa-arrow-circle-left"></i> Show List</Button>
         <ButtonDropdown isOpen={this.state.fileOpen} toggle={this.toggleFile}>
           <DropdownToggle caret>
             File
@@ -127,14 +151,14 @@ export default class NavBar extends Component {
             Insert
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem value="Image">Image</DropdownItem>
+            <DropdownItem value="Image" onClick={this.toggleImage}>Image</DropdownItem>
             <DropdownItem value="Quiz">Quiz</DropdownItem>
             <DropdownItem divider />
             <DropdownItem onClick={this.props.insertSlide}>New Slide</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
       </ButtonGroup>
-      {modal}
+      {imageModal}
     </div>
     )
   }

@@ -29,6 +29,7 @@ export default class NavBar extends Component {
       renameVal: ""
     }
 
+    this.returnToShowList = this.returnToShowList.bind(this)
     this.toggleFile = this.toggleFile.bind(this)
     this.toggleEdit = this.toggleEdit.bind(this)
     this.toggleInsert = this.toggleInsert.bind(this)
@@ -38,6 +39,11 @@ export default class NavBar extends Component {
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
     this.handlePresent = this.handlePresent.bind(this)
     this.handleImage = this.handleImage.bind(this)
+  }
+
+  returnToShowList() {
+    this.props.save()
+    window.location.href = './slideshow/Show/list'
   }
 
   toggleFile() {
@@ -121,6 +127,7 @@ export default class NavBar extends Component {
     return (
       <div>
       <ButtonGroup>
+        <Button onClick={this.returnToShowList} color="primary"><i className="fas fa-arrow-circle-left"></i> Show List</Button>
         <ButtonDropdown isOpen={this.state.fileOpen} toggle={this.toggleFile}>
           <DropdownToggle caret>
             File

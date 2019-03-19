@@ -83,29 +83,23 @@ export default class Present extends Component {
       <div>
         <h1 style={{textDecorationLine: 'underline'}}>{this.state.slideName}</h1>
         <br></br>
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-7">
+        <div style={{justifyContent: 'center', display: 'flex'}}>
+          <div style={{maxWidth: 700, width: "95%"}}>
             <PresentView
               currentSlide={this.state.currentSlide}
               content={this.state.content[this.state.currentSlide]} />
           </div>
-          <div className="col"></div>
         </div>
-        <div className="row">
-          <div className="col"></div>
-          <div className="col">
-            <div className="btn-toolbar">
-              <div className="btn-group">
-                <button className="btn btn-secondary" onClick={this.prev}>Previous</button>
-                {slidesButtons}
-                <button className="btn btn-secondary" onClick={this.next}>Next</button>
-              </div>
+        <div style={{justifyContent: 'center', display: 'flex', marginBottom: '2rem'}}>
+          <div className="btn-toolbar">
+            <div className="btn-group">
+              <button className="btn btn-secondary" onClick={this.prev}>Previous</button>
+              {slidesButtons}
+              <button className="btn btn-secondary" onClick={this.next}>Next</button>
             </div>
           </div>
-          <div className="col"></div>
         </div>
-      </div>
+    </div>
     )
   }
 }

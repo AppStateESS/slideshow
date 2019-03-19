@@ -12,7 +12,7 @@ export default class PresentView extends Component {
   render() {
     return (
       <div className="mh-100">
-        <div className="jumbotron" style={{height: 350}}>
+        <div className="jumbotron" style={{minHeight: 350}}>
           <Viewspace content={this.props.content} />
         </div>
       </div>

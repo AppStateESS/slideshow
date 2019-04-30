@@ -5,6 +5,9 @@ import PropTypes from 'prop-types'
 import Editor, { createEditorStateWithText, createWithContent, composeDecorators } from 'draft-js-plugins-editor'
 import {EditorState, ContentState, getDefaultKeyBinding, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
 
+import QuizCreateForm from './Quiz/QuizCreateForm.jsx'
+import QuizView from './Quiz/QuizView.jsx'
+
 // Toolbar imports
 import {
   ItalicButton,
@@ -77,7 +80,8 @@ export default class EditView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      editorState: EditorState.createEmpty()
+      editorState: EditorState.createEmpty(),
+      quizEditView: true,
     }
 
     this.onEditChange = (editorState) =>  {
@@ -87,12 +91,14 @@ export default class EditView extends Component {
 
     this.loadEditorState = this.loadEditorState.bind(this)
     this.saveEditorState = this.saveEditorState.bind(this)
+    this.saveQuizContent = this.saveQuizContent.bind(this)
+    this.toggleQuizEdit = this.toggleQuizEdit.bind(this)
   }
 
   componentDidMount() {
     this.loadEditorState()
   }
-CustomToolbar
+
   componentDidUpdate(prevProps) {
     // This catches the load from the db, which is slower than React's render which is why it's in componentDidUpdate.
     // and when a slide (props) is changed.
@@ -102,6 +108,17 @@ CustomToolbar
     // Save local state anytime that the Component is updated
     if (this.props.content.saveContent != undefined) {
       this.saveEditorState()
+    }
+
+    // If component updated and the data is there then we switch to view mode else we switch to edit.
+    if (prevProps.content.quizContent != this.props.content.quizContent) {
+      // Yes i understand this would be a good spot to use a ternary operator but we use that too much.
+      if ( this.props.content.quizContent != undefined) {
+        this.setState({quizEditView: false})
+      }
+      else {
+        this.setState({quizEditView: true})
+      }
     }
   }
 
@@ -133,6 +150,17 @@ CustomToolbar
     }
   }
 
+  saveQuizContent(quizContent) {
+    this.toggleQuizEdit()
+    this.props.saveQuizContent(quizContent)
+  }
+
+  toggleQuizEdit() {
+    this.setState({
+      quizEditView: !this.state.quizEditView
+    })
+  }
+
   render() {
 
     var editorStyle = {
@@ -141,24 +169,33 @@ CustomToolbar
       borderRadius: '5px'
     }
 
-    return (
-      <div className="col-8" >
-        <p></p>
-        <Toolbar />
-        <span><br /></span>
-        <div className="jumbotron">
-          <div className="cust-col-11" style={this.state.hasFocus ? editorStyle : {padding: '5px'}}>
-            <Editor
-              editorState={this.state.editorState}
-              onChange={this.onEditChange}
-              plugins={plugins}
-              handleKeyCommand={this.handleKeyCommand}
-              keyBindingFn={this.saveKeyBindingFn}
-              onFocus={() => this.setState({ hasFocus: true })}
-              onBlur={() => this.setState({ hasFocus: false })}
-              ref={(element) => { this.editor = element; }} />
+    let editor = (
+      <div className="cust-col-11" style={this.state.hasFocus ? editorStyle : {padding: '5px'}}>
+        <Editor
+          editorState={this.state.editorState}
+          onChange={this.onEditChange}
+          plugins={plugins}
+          handleKeyCommand={this.handleKeyCommand}
+          keyBindingFn={this.saveKeyBindingFn}
+          onFocus={() => this.setState({ hasFocus: true })}
+          onBlur={() => this.setState({ hasFocus: false })}
+          ref={(element) => { this.editor = element; }} />
+      </div>
+    )
 
-          </div>
+    let quizView = (this.state.quizEditView) ?
+      <QuizCreateForm quizContent={this.props.content.quizContent} save={this.saveQuizContent} toggle={this.toggleQuizEdit}/> :
+      <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit}/>
+
+    let editRender = (this.props.content.isQuiz) ? (quizView) : (editor)
+    let toolbar = (this.props.content.isQuiz) ? undefined : (<Toolbar />)
+    return (
+      <div className="col-8" style={{minWidth: 700}}>
+        <p></p>
+        {toolbar}
+        <span><br /></span>
+        <div className="jumbotron" style={{minHeight: 350}}>
+          {editRender}
         </div>
       </div>
     )
@@ -171,4 +208,5 @@ EditView.propTypes = {
   currentSlide: PropTypes.number,
   content: PropTypes.object,
   saveContentState: PropTypes.func,
+  saveQuizContent: PropTypes.func,
 }

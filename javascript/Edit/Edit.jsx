@@ -14,9 +14,11 @@ export default class Edit extends Component {
       content: [
         {
           saveContent: undefined,
+          quizContent: null,
+          isQuiz: false,
           id: 0
         },
-      ]
+      ],
     }
 
 
@@ -24,9 +26,11 @@ export default class Edit extends Component {
     this.load = this.load.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
+    this.addNewQuiz = this.addNewQuiz.bind(this)
     this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this)
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
     this.saveContentState = this.saveContentState.bind(this)
+    this.saveQuizContent = this.saveQuizContent.bind(this)
   }
 
   componentDidMount() {
@@ -83,7 +87,28 @@ export default class Edit extends Component {
     // This function adds to the stack of slides held within state.content
     const index = this.state.currentSlide + 1
     const newSlide = {
-        saveContent: undefined
+        saveContent: undefined,
+        quizContent: null,
+        isQuiz: false
+    }
+    let copy = [...this.state.content]
+    copy.splice(index, 0, newSlide)
+    this.setState({
+      content: copy,
+      currentSlide: index
+    })
+  }
+
+
+  addNewQuiz() {
+    // Adds a new quiz slide
+    // This function is the same as above, however the values are changed for
+    // saveContent and quizContent. We could merge these methods in the future
+    const index = this.state.currentSlide + 1
+    const newSlide = {
+      saveContent: null,
+      quizContent: undefined,
+      isQuiz: true
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
@@ -115,14 +140,18 @@ export default class Edit extends Component {
     })
   }
 
-
   renameCurrentSlide(value) {
     alert("This has not yet been implemented")
   }
 
-
   saveContentState(saveContent) {
     this.state.content[this.state.currentSlide].saveContent = saveContent
+  }
+
+  saveQuizContent(quizContent) {
+    let c = [...this.state.content]
+    c[this.state.currentSlide].quizContent = quizContent
+    this.setState({content: c})
   }
 
 
@@ -136,7 +165,8 @@ export default class Edit extends Component {
           deleteSlide={this.deleteCurrentSlide}
           renameSlide={this.renameCurrentSlide}
           addToStack ={this.addToStack}
-          currentSlide={this.state.currentSlide}/>
+          currentSlide={this.state.currentSlide}
+          insertQuiz={this.addNewQuiz} />
         <div className="row">
           <SlidesView
             slides          ={this.state.content}
@@ -147,7 +177,9 @@ export default class Edit extends Component {
             currentSlide={this.state.currentSlide}
             content={this.state.content[this.state.currentSlide]}
             deleteElement={this.deleteFromStack}
-            saveContentState={this.saveContentState}/>
+            saveContentState={this.saveContentState}
+            saveQuizContent={this.saveQuizContent}
+            />
         </div>
       </div>
     )

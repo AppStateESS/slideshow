@@ -15,8 +15,6 @@ import AnswerTypeCards from './AnswerTypeCards.jsx'
 import MultipleChoice from './MultipleChoiceBlock.jsx'
 import OpenAnswer from './OpenAnswerBlock.jsx'
 
-// We might not need to use this
-import QuizResource from '../../Resources/QuizResource.js'
 
 export default class QuizCreateForm extends Component {
   constructor(props) {

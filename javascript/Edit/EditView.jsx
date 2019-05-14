@@ -82,15 +82,22 @@ export default class EditView extends Component {
     this.state = {
       editorState: EditorState.createEmpty(),
       quizEditView: true,
+      updated: false
     }
 
+    this.saveEditorState = this.saveEditorState.bind(this)
+
     this.onEditChange = (editorState) =>  {
-      this.setState({editorState})
+      this.setState({
+        editorState,
+        updated: true
+      })
+      //this.saveEditorState()
     }
 
 
     this.loadEditorState = this.loadEditorState.bind(this)
-    this.saveEditorState = this.saveEditorState.bind(this)
+
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.toggleQuizEdit = this.toggleQuizEdit.bind(this)
   }
@@ -100,20 +107,24 @@ export default class EditView extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    // This catches the load from the db, which is slower than React's render which is why it's in componentDidUpdate.
-    // and when a slide (props) is changed.
-    if (prevProps.content.saveContent != this.props.content.saveContent) {
-      this.loadEditorState()
-    }
-    // Save local state anytime that the Component is updated
-    if (this.props.content.saveContent != undefined) {
-      this.saveEditorState()
+
+    // handle of non-quiz slides
+    if (this.props.content != undefined && !this.props.isQuiz) {
+      if (/*this.props.content.saveContent != undefined &&*/ this.props.content.saveContent != prevProps.content.saveContent) {
+        // catch the load from the database and the changing of slides
+        this.loadEditorState()
+      }
+      else if (this.state.updated) {
+        // current component updated
+        this.saveEditorState()
+        this.setState({updated:false})
+      }
     }
 
-    // If component updated and the data is there then we switch to view mode else we switch to edit.
+    // If quiz component updated and the data is there then we switch to view mode else we switch to edit mode.
     if (prevProps.content.quizContent != this.props.content.quizContent) {
-      // Yes i understand this would be a good spot to use a ternary operator but we use that too much.
-      if ( this.props.content.quizContent != undefined) {
+      // Yes i understand this would be a good spot to use a ternary operator, but we use that too much. :P
+      if (this.props.content.quizContent != undefined) {
         this.setState({quizEditView: false})
       }
       else {
@@ -123,20 +134,23 @@ export default class EditView extends Component {
   }
 
   loadEditorState() {
-    // If there isn't any content then we make some
-    if (this.props.content.saveContent == undefined) {
-      let body = "New Slide"
-      this.setState({
-         editorState: createEditorStateWithText(body)
-       }, function() {
-         this.onEditChange(RichUtils.toggleBlockType(this.state.editorState, 'header-one'))
-         this.saveEditorState()
-       })
-    } else {
-      let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
-      this.setState({
-        editorState: EditorState.createWithContent(contentState)
-      })
+    // If we aren't loading a quiz
+    if (!this.props.isQuiz) {
+      // If there isn't any content then we make some
+      if (this.props.content.saveContent == undefined) {
+        let body = "New Slide"
+        this.setState({
+           editorState: createEditorStateWithText(body)
+         }, function() {
+           this.onEditChange(RichUtils.toggleBlockType(this.state.editorState, 'header-one'))
+           this.saveEditorState()
+         })
+      } else {
+        let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
+        this.setState({
+          editorState: EditorState.createWithContent(contentState)
+        })
+      }
     }
   }
 
@@ -187,8 +201,8 @@ export default class EditView extends Component {
       <QuizCreateForm quizContent={this.props.content.quizContent} save={this.saveQuizContent} toggle={this.toggleQuizEdit}/> :
       <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit}/>
 
-    let editRender = (this.props.content.isQuiz) ? (quizView) : (editor)
-    let toolbar = (this.props.content.isQuiz) ? undefined : (<Toolbar />)
+    let editRender = (this.props.isQuiz) ? (quizView) : (editor)
+    let toolbar = (this.props.isQuiz) ? undefined : (<Toolbar />)
     return (
       <div className="col-8" style={{minWidth: 700}}>
         <p></p>
@@ -207,6 +221,7 @@ export default class EditView extends Component {
 EditView.propTypes = {
   currentSlide: PropTypes.number,
   content: PropTypes.object,
+  isQuiz: PropTypes.bool,
   saveContentState: PropTypes.func,
   saveQuizContent: PropTypes.func,
 }

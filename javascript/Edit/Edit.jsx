@@ -14,7 +14,7 @@ export default class Edit extends Component {
       content: [
         {
           saveContent: undefined,
-          quizContent: null,
+          quizContent: undefined,
           isQuiz: false,
           id: 0
         },
@@ -36,6 +36,7 @@ export default class Edit extends Component {
   componentDidMount() {
     this.load()
   }
+
 
   save() {
     $.ajax({
@@ -83,13 +84,13 @@ export default class Edit extends Component {
   }
 
 
-  addNewSlide() {
-    // This function adds to the stack of slides held within state.content
+  addNewSlide(quiz = false) {
+    /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
     const newSlide = {
         saveContent: undefined,
-        quizContent: null,
-        isQuiz: false
+        quizContent: undefined,
+        isQuiz: quiz
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
@@ -101,23 +102,10 @@ export default class Edit extends Component {
 
 
   addNewQuiz() {
-    // Adds a new quiz slide
-    // This function is the same as above, however the values are changed for
-    // saveContent and quizContent. We could merge these methods in the future
-    const index = this.state.currentSlide + 1
-    const newSlide = {
-      saveContent: null,
-      quizContent: undefined,
-      isQuiz: true
-    }
-    let copy = [...this.state.content]
-    copy.splice(index, 0, newSlide)
-    this.setState({
-      content: copy,
-      currentSlide: index
-    })
+    // This method is useless, since we can change this at the call. However, previous code implemented this method seperately
+    // and we can simplify this at a later time.
+    this.addNewSlide(true)
   }
-
 
   deleteCurrentSlide() {
     let copy = [...this.state.content]
@@ -145,7 +133,11 @@ export default class Edit extends Component {
   }
 
   saveContentState(saveContent) {
-    this.state.content[this.state.currentSlide].saveContent = saveContent
+    if (saveContent != undefined) {
+      let c = [...this.state.content]
+      c[this.state.currentSlide].saveContent = saveContent
+      this.setState({content: c})
+    }
   }
 
   saveQuizContent(quizContent) {
@@ -154,8 +146,18 @@ export default class Edit extends Component {
     this.setState({content: c})
   }
 
+  quizConv(quizT) {
+    // When we load from the data base the isQuiz boolean is loaded in as a string
+    // We need to handle that and bring it back to a boolean
+    // There might be another simpler way around this somewhere else in the code.
+
+    if (quizT == undefined) return false // initial load
+    return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
+  }
+
 
   render() {
+    let isQuiz = this.quizConv(this.state.content[this.state.currentSlide].isQuiz)
     return (
       <div>
         <NavBar
@@ -176,6 +178,7 @@ export default class Edit extends Component {
           <EditView
             currentSlide={this.state.currentSlide}
             content={this.state.content[this.state.currentSlide]}
+            isQuiz={isQuiz}
             deleteElement={this.deleteFromStack}
             saveContentState={this.saveContentState}
             saveQuizContent={this.saveQuizContent}

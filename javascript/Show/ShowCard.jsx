@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Card, CardBody, CardTitle, CardImg, Button } from 'reactstrap'
 import './custom.css'
 
-import AppLogo from "../../img/App-State-logo-300x250.png"
+//import AppLogo from "../../img/{NAME}.png"
 
 export default class ShowCard extends Component {
   constructor(props) {
@@ -12,7 +12,7 @@ export default class ShowCard extends Component {
     this.state = {
         id: -1,
         title: null,
-        img: AppLogo,
+        img: null, // AppLogo
         active: 0,
         edit: false
     }

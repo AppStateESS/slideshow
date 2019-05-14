@@ -11,8 +11,8 @@ export default class MultipleChoiceBlock extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      id: this.props.id,
-      value: props.value,
+      id: props.id,
+      value: props.value, // This will need to be initialized in a componentMount method in the future
       //correct: true, // TODO: implement a way for the radio to be already checked on load.
     }
 

@@ -33,9 +33,9 @@ export default class QuizCreateForm extends Component {
       answerTypesVisible: true, // Responsible for the switch that shows the answer types
       addElementVisible: true, // when false then removeElement will show
       multipleChoices: [(
-        <MultipleChoice key={0} id={0} onChange={this.updateQuizContent.bind(this)} remove={this.removeAnswerChoice}/>
+        <MultipleChoice key={0} id={0} onChange={this.updateQuizContent.bind(this)} value={''} remove={this.removeAnswerChoice}/>
         ),(
-        <MultipleChoice key={1} id={1} onChange={this.updateQuizContent.bind(this)} remove={this.removeAnswerChoice}/>
+        <MultipleChoice key={1} id={1} onChange={this.updateQuizContent.bind(this)} value={''} remove={this.removeAnswerChoice}/>
         ),
       // More will be added on insert.
       ],
@@ -236,7 +236,7 @@ export default class QuizCreateForm extends Component {
     let choices = [...this.state.multipleChoices]
     let key = this.state.uniqueIdLength
     choices.splice(key, 0,
-      <MultipleChoice key={key} id={key} onChange={this.updateQuizContent} remove={this.removeAnswerChoice} />
+      <MultipleChoice key={key} id={key} value={''} onChange={this.updateQuizContent} remove={this.removeAnswerChoice} />
     )
 
     this.setState({

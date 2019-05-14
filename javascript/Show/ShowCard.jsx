@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Card, CardBody, CardTitle, CardImg, Button } from 'reactstrap'
 import './custom.css'
 
-//import AppLogo from "../../img/{NAME}.png"
+//import AppLogo from "../../img/{NAME}.png"s
 
 export default class ShowCard extends Component {
   constructor(props) {

@@ -150,8 +150,7 @@ export default class Edit extends Component {
     // When we load from the data base the isQuiz boolean is loaded in as a string
     // We need to handle that and bring it back to a boolean
     // There might be another simpler way around this somewhere else in the code.
-
-    if (quizT == undefined) return false // initial load
+    if (quizT == undefined || typeof(quizT) === 'object') return false // initial load || weird instance where we insert a slide
     return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
   }
 

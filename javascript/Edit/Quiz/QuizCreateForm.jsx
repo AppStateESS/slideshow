@@ -12,6 +12,7 @@ import {
 } from 'react-bootstrap'
 
 import AnswerTypeCards from './AnswerTypeCards.jsx'
+import QuestionTitle from './QuestionTitleBlock.jsx'
 import MultipleChoice from './MultipleChoiceBlock.jsx'
 import OpenAnswer from './OpenAnswerBlock.jsx'
 
@@ -27,10 +28,7 @@ export default class QuizCreateForm extends Component {
         questionType: null
       }, // Local state ("js object") for quiz data
       formContent: [(
-        <Form.Group key={'questionTitle'} >
-          <Form.Label>Question: </Form.Label>
-          <Form.Control id={'title-0'} placeholder="Question text" onChange={this.updateQuizContent.bind(this)}/>
-        </Form.Group>
+        <QuestionTitle key={'questionTitle'} id={0} onChange={this.updateQuizContent.bind(this)} />
       )], // The structure to recieve quiz data that will be saved.
       answerTypesVisible: true, // Responsible for the switch that shows the answer types
       addElementVisible: true, // when false then removeElement will show
@@ -85,10 +83,7 @@ export default class QuizCreateForm extends Component {
     /* Loads data from props and builds the initial form structure, if it exists */
 
     let qContent = this.state.quizContent
-    let formC = [(<Form.Group key={'questionTitle'} >
-      <Form.Label>Question: </Form.Label>
-      <Form.Control id={'title-0'} placeholder={qContent.questionTitle} onChange={this.updateQuizContent.bind(this)}/>
-    </Form.Group>)]
+    let formC = [(<QuestionTitle key={'questionTitle'} id={0} value={qContent.questionTitle} onChange={this.updateQuizContent}/>)]
 
     if (qContent.questionType == 'mc') {
         // Build multiple-choice block with data inserted
@@ -97,7 +92,7 @@ export default class QuizCreateForm extends Component {
         let i = 0
         for (var i = 0; i < qContent.answers.length; i++) {
           mChoices.splice(qContent.answers.length - 1, 0,
-            <MultipleChoice key={i} id={i} onChange={this.updateQuizContent} placeholder={qContent.answers[i]} remove={this.removeAnswerChoice}/>
+            <MultipleChoice key={i} id={i} onChange={this.updateQuizContent} value={qContent.answers[i]} remove={this.removeAnswerChoice}/>
           )
         }
         let mcBlock = (<span key={'multipleChoicesBlock'}>

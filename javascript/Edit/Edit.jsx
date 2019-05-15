@@ -84,7 +84,8 @@ export default class Edit extends Component {
   }
 
 
-  addNewSlide(quiz = false) {
+  addNewSlide(quiz) {
+    if (typeof(quiz) === 'object') quiz = false // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
     const newSlide = {
@@ -150,7 +151,7 @@ export default class Edit extends Component {
     // When we load from the data base the isQuiz boolean is loaded in as a string
     // We need to handle that and bring it back to a boolean
     // There might be another simpler way around this somewhere else in the code.
-    if (quizT == undefined || typeof(quizT) === 'object') return false // initial load || weird instance where we insert a slide
+    if (quizT == undefined) return false // initial load 
     return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
   }
 

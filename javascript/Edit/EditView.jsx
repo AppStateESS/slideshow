@@ -110,7 +110,7 @@ export default class EditView extends Component {
 
     // handle of non-quiz slides
     if (this.props.content != undefined && !this.props.isQuiz) {
-      if (/*this.props.content.saveContent != undefined &&*/ this.props.content.saveContent != prevProps.content.saveContent) {
+      if (this.props.currentSlide != prevProps.currentSlide || this.props.content.saveContent != prevProps.content.saveContent) {
         // catch the load from the database and the changing of slides
         this.loadEditorState()
       }

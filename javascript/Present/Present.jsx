@@ -8,6 +8,7 @@ export default class Present extends Component {
 
     this.state = {
       currentSlide: 0,
+      highestSlide: 0,
       content: [
         {
           saveContent: undefined
@@ -47,8 +48,13 @@ export default class Present extends Component {
   }
 
   changeSlide(slideNum) {
+    let highest = this.state.highestSlide
+    if (this.state.highestSlide < slideNum) {
+      highest = slideNum
+    }
     this.setState({
-      currentSlide: slideNum
+      currentSlide: slideNum,
+      highestSlide: highest
     })
   }
 
@@ -73,7 +79,7 @@ export default class Present extends Component {
           <button key={inc} className="btn btn-primary">{inc}</button>
         )
       }
-      else {
+      else if (inc <= this.state.highestSlide + 1 && inc >  this.state.currentSlide - 7) {
         return (
           <button key={inc} className="btn btn-secondary" onClick={this.changeSlide.bind(this,inc-1)}>{inc}</button>
         )
@@ -83,29 +89,23 @@ export default class Present extends Component {
       <div>
         <h1 style={{textDecorationLine: 'underline'}}>{this.state.slideName}</h1>
         <br></br>
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-7">
+        <div style={{justifyContent: 'center', display: 'flex'}}>
+          <div style={{maxWidth: 700, width: "95%"}}>
             <PresentView
               currentSlide={this.state.currentSlide}
               content={this.state.content[this.state.currentSlide]} />
           </div>
-          <div className="col"></div>
         </div>
-        <div className="row">
-          <div className="col"></div>
-          <div className="col">
-            <div className="btn-toolbar">
-              <div className="btn-group">
-                <button className="btn btn-secondary" onClick={this.prev}>Previous</button>
-                {slidesButtons}
-                <button className="btn btn-secondary" onClick={this.next}>Next</button>
-              </div>
+        <div style={{justifyContent: 'center', display: 'flex', marginBottom: '2rem'}}>
+          <div className="btn-toolbar">
+            <div className="btn-group">
+              <button className="btn btn-secondary" onClick={this.prev}>Previous</button>
+              {slidesButtons}
+              <button className="btn btn-secondary" onClick={this.next}>Next</button>
             </div>
           </div>
-          <div className="col"></div>
         </div>
-      </div>
+    </div>
     )
   }
 }

@@ -152,7 +152,7 @@ export default class NavBar extends Component {
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem value="Image" onClick={this.toggleImage}>Image</DropdownItem>
-            <DropdownItem value="Quiz">Quiz</DropdownItem>
+            <DropdownItem value="Quiz" onClick={this.props.insertQuiz}>Quiz Slide</DropdownItem>
             <DropdownItem divider />
             <DropdownItem onClick={this.props.insertSlide}>New Slide</DropdownItem>
           </DropdownMenu>

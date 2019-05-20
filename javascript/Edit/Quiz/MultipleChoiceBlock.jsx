@@ -58,6 +58,7 @@ export default class MultipleChoiceBlock extends Component {
         </Form.Group>
         <Form.Group id={'correct-' + this.props.id}>
           <Form.Check
+            custom
             type='radio'
             id={'check-' + this.props.id}
             name={'choices'}

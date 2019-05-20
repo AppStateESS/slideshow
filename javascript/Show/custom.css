@@ -13,3 +13,8 @@
   right: 5px;
   height: 5px;
 }
+
+.alert-delete {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}

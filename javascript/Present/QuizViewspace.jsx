@@ -31,7 +31,6 @@ export default class QuizViewspace extends Component {
   }
 
   validate(event) {
-    //console.log(event.target.id)
     let ids = event.target.id.split('-')
     if (ids[0] === 'select') {
       // MultipleChoice
@@ -47,11 +46,6 @@ export default class QuizViewspace extends Component {
 
   _toggleCorrect() {
     this.setState({correct: true, incorrect: false})
-    // Handle redirect to nextslide
-    //setTimeout(()=>{
-      //this.setState({correct: false, incorrect: false})
-      //this.props.next()
-    //}, 750)
   }
 
   _toggleIncorrect() {
@@ -103,10 +97,20 @@ export default class QuizViewspace extends Component {
       alert = <Alert key={this.state.currentSlide} variant="dark">Select the correct answer to continue</Alert>
     }
 
-    let answersComponent = this.buildAnswerComponent()
+    let answersComponent = undefined
+    let titleComponent = undefined
+    if (this.props.content.quizContent == undefined) {
+      titleComponent = "Fatal Error"
+      answersComponent = "Please contact an administrator to address this problem"
+      //this.validate(null) This could allow user to continue
+    }
+    else {
+     answersComponent = this.buildAnswerComponent()
+     titleComponent = this.props.content.quizContent.questionTitle
+    }
     return (
       <div>
-        <h3>{this.props.content.quizContent.questionTitle}:</h3>
+        <h3>{titleComponent}:</h3>
         {answersComponent}
         {alert}
       </div>)

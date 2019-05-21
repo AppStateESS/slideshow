@@ -6,6 +6,6 @@
  * and open the template in the editor.
  */
 
-define('SLIDESHOW_REACT_DEV', true);
+define('SLIDESHOW_REACT_DEV', false);
 
 define('SS_FRIENDLY_ERROR', true);

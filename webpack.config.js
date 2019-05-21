@@ -21,7 +21,7 @@ module.exports = {
       host: 'localhost',
       port: 3000,
       files: ['./javascript/dev/*.js'],
-      proxy: 'localhost/phpwebsite'
+      proxy: 'localhost:8080/slideshow'
     }),
   ],
   module: {

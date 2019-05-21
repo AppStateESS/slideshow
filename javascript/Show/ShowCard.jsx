@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import { Card, CardBody, CardTitle, CardImg, Button } from 'reactstrap'
+import { Card, CardBody, CardTitle, CardImg, Button, Alert } from 'reactstrap'
 import './custom.css'
 
-//import AppLogo from "../../img/{NAME}.png"s
+import AppLogo from "../../img/showimg.png"
 
 export default class ShowCard extends Component {
   constructor(props) {
@@ -12,9 +12,11 @@ export default class ShowCard extends Component {
     this.state = {
         id: -1,
         title: null,
-        img: null, // AppLogo
+        img: AppLogo, // AppLogo
         active: 0,
-        edit: false
+        edit: false,
+        alert: false,
+        closex: true
     }
 //      this.loadShow = this.loadShow.bind(this)
     this.view = this.view.bind(this)
@@ -25,6 +27,7 @@ export default class ShowCard extends Component {
     this.handleActivation = this.handleActivation.bind(this)
     this.editTransition = this.editTransition.bind(this)
     this.presentTransition = this.presentTransition.bind(this)
+    this.deleteAlert = this.deleteAlert.bind(this)
   }
 
   componentDidMount() {
@@ -101,6 +104,13 @@ export default class ShowCard extends Component {
   window.location.href = './slideshow/Show/Present/?id=' + this.state.id
  }
 
+ deleteAlert() {
+   this.setState({
+     alert: !this.state.alert,
+     closex: !this.state.closex
+   })
+ }
+
   render() {
     let cardTitle;
     if (this.state.edit) {
@@ -121,13 +131,23 @@ export default class ShowCard extends Component {
 
     let activeLabel = (this.state.active !== 0) ? "Active" : "Inactive"
     let activeBtnType = (this.state.active !== 0) ? "btn btn-outline-success" : "btn btn-outline-danger"
+
+    const delAlert = <div className="alert-delete">
+                       <Alert color="secondary" className="text-danger" isOpen={this.state.alert} toggle={this.deleteAlert}>
+                         <span style={{marginLeft: 30}}>Are you sure?</span>
+                         <Button style={{marginLeft: 20}} outline color="danger" onClick={this.deleteShow}>Delete</Button>
+                       </Alert>
+                     </div>
+    let activeX = (this.state.closex) ? (<a className="close card-text" aria-label="Close" onClick={this.deleteAlert}>
+                                          <span aria-hidden="true">&times;</span>
+                                         </a>) : undefined
+
     return (
       <div style={{paddingBottom: "25px"}}>
+        {delAlert}
         <Card>
           <div className="card-img-caption">
-            <a className="close card-text" aria-label="Close" onClick={this.deleteShow}>
-              <span aria-hidden="true">&times;</span>
-            </a>
+            {activeX}
 
             <img className="card-img-top" src={this.state.img}/>
           </div>
@@ -148,6 +168,9 @@ export default class ShowCard extends Component {
 
 }
 
-// ShowCard.propTypes = {
-//   id: PropTypes.number
-// }
+ShowCard.propTypes = {
+   //id: PropTypes.string,
+   title: PropTypes.string,
+   //active: PropTypes.number,
+   //load: PropTypes.function
+ }

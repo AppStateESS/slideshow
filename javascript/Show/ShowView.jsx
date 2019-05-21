@@ -113,7 +113,9 @@ export default class ShowView extends Component {
       <Card body className="text-center">
         <CardBody>
           <CardTitle>Create New Show</CardTitle>
-          <Button onClick={this.switchModal} color="secondary">+</Button>
+          <Button outline onClick={this.switchModal} color="primary">
+            <i className="fas fa-plus-circle"></i>
+          </Button>
         </CardBody>
       </Card>
     )

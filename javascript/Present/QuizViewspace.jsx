@@ -100,8 +100,13 @@ export default class QuizViewspace extends Component {
     let answersComponent = undefined
     let titleComponent = undefined
     if (this.props.content.quizContent == undefined) {
-      titleComponent = "Fatal Error"
-      answersComponent = "Please contact an administrator to address this problem"
+      titleComponent = "Error - Empty Quiz"
+      answersComponent = (<div>
+                            <p style={{color: 'red'}}>This quiz slide has not been filled with data</p>
+                            <p>If you are a student, contact the one responsible for making you take this</p>
+                            <p>If you are an admin, fill out this slide with data</p>
+                          </div>)
+      alert = undefined
       //this.validate(null) This could allow user to continue
     }
     else {

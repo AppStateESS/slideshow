@@ -34,6 +34,9 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
     public function getController(Request $request)
     {
         try {
+            if (!\Current_User::isLogged()) {
+              \Current_User::requireLogin();
+            }
             $controller = new Controller\BaseController($this, $request);
             return $controller;
         } catch (\Exception $e) {

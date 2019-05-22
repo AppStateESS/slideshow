@@ -1,0 +1,19 @@
+.card-img-caption {
+  border-top-left-radius: calc(.25rem - 1px);
+  border-top-right-radius: calc(.25rem - 1px);
+}
+
+.card-img-top {
+  z-index: 0;
+  max-width: 300px;
+  max-height: 250px;
+  min-width: 300px;
+  min-height: 250px;
+}
+
+.card-img-caption .card-text {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  height: 5px;
+}

@@ -19,6 +19,11 @@
 
    public function show()
    {
+       return $this->scriptView('view');
+   }
+
+   public function adminShow()
+   {
      // Removed this until fixed or implemented or deleted..idk
      //$this->createShowButton();
      return $this->scriptView('shows');

@@ -76,7 +76,9 @@ export default class QuizCreateForm extends Component {
       })
     }
     // save answers
-    this.props.save(nqContent)
+    this.props.saveQC(nqContent)
+    // save slide show
+    this.props.saveDB()
   }
 
   load() {
@@ -321,6 +323,7 @@ export default class QuizCreateForm extends Component {
 
 QuizCreateForm.propTypes = {
   quizContent: PropTypes.object,
-  save: PropTypes.func,
+  saveQC: PropTypes.func,
   toggle: PropTypes.func,
+  saveDB: PropTypes.func,
 }

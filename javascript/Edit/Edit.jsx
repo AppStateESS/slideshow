@@ -151,7 +151,7 @@ export default class Edit extends Component {
     // When we load from the data base the isQuiz boolean is loaded in as a string
     // We need to handle that and bring it back to a boolean
     // There might be another simpler way around this somewhere else in the code.
-    if (quizT == undefined) return false // initial load 
+    if (quizT == undefined) return false // initial load
     return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
   }
 
@@ -163,25 +163,28 @@ export default class Edit extends Component {
         <NavBar
           save={this.save}
           id={this.state.id}
-          insertSlide={this.addNewSlide}
-          deleteSlide={this.deleteCurrentSlide}
-          renameSlide={this.renameCurrentSlide}
-          addToStack ={this.addToStack}
-          currentSlide={this.state.currentSlide}
-          insertQuiz={this.addNewQuiz} />
+          insertSlide       ={this.addNewSlide}
+          deleteSlide       ={this.deleteCurrentSlide}
+          renameSlide       ={this.renameCurrentSlide}
+          addToStack        ={this.addToStack}
+          currentSlide      ={this.state.currentSlide}
+          insertQuiz        ={this.addNewQuiz}
+          saveDB            ={this.save} />
         <div className="row">
           <SlidesView
             slides          ={this.state.content}
             currentSlide    ={this.state.currentSlide}
             setCurrentSlide ={this.setCurrentSlide}
-            addNewSlide     ={this.addNewSlide}/>
+            addNewSlide     ={this.addNewSlide}
+            saveDB          ={this.save}/>
           <EditView
-            currentSlide={this.state.currentSlide}
-            content={this.state.content[this.state.currentSlide]}
-            isQuiz={isQuiz}
-            deleteElement={this.deleteFromStack}
+            currentSlide    ={this.state.currentSlide}
+            content         ={this.state.content[this.state.currentSlide]}
+            isQuiz          ={isQuiz}
+            deleteElement   ={this.deleteFromStack}
             saveContentState={this.saveContentState}
-            saveQuizContent={this.saveQuizContent}
+            saveQuizContent ={this.saveQuizContent}
+            saveDB          ={this.save}
             />
         </div>
       </div>

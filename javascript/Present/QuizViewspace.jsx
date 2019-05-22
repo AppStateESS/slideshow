@@ -87,7 +87,7 @@ export default class QuizViewspace extends Component {
     let alert = undefined
     if (this.state.correct) {
       alert = (<Alert key={this.state.currentSlide} variant="success">
-                Correct! <div className="spinner-border text-primary"></div>
+                <span>Correct! <i className="fas fa-check-circle" style={{color: "green"}}></i></span>
                </Alert>)
     }
     else if (this.state.incorrect) {

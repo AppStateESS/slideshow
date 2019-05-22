@@ -4,41 +4,17 @@ import PropTypes from 'prop-types'
 import {
   Button,
   ButtonGroup,
-  ButtonDropdown,
-  DropdownMenu,
-  DropdownToggle,
-  DropdownItem,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  InputGroup,
-  Input,
-  InputGroupAddon
-
-} from 'reactstrap'
+  ButtonToolbar,
+  Dropdown,
+  DropdownButton
+} from 'react-bootstrap'
 
 export default class NavBar extends Component {
   constructor() {
     super()
-    this.state = {
-      fileOpen: false,
-      editOpen: false,
-      insertOpen: false,
-      renameOpen: false,
-      imageOpen: false,
-      renameVal: ""
-    }
 
     this.returnToShowList = this.returnToShowList.bind(this)
-    this.toggleFile = this.toggleFile.bind(this)
-    this.toggleEdit = this.toggleEdit.bind(this)
-    this.toggleInsert = this.toggleInsert.bind(this)
-    this.toggleRename = this.toggleRename.bind(this)
-    this.toggleImage = this.toggleImage.bind(this)
-    this.handleRename = this.handleRename.bind(this)
-    this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
     this.handlePresent = this.handlePresent.bind(this)
-    this.handleImage = this.handleImage.bind(this)
   }
 
   returnToShowList() {
@@ -46,119 +22,31 @@ export default class NavBar extends Component {
     window.location.href = './slideshow/Show/list'
   }
 
-  toggleFile() {
-    this.setState({
-      fileOpen: !this.state.fileOpen
-    })
-  }
-
-  toggleEdit() {
-    this.setState({
-      editOpen: !this.state.editOpen
-    })
-  }
-
-  toggleInsert() {
-    this.setState({
-      insertOpen: !this.state.insertOpen
-    })
-  }
-
-  toggleRename() {
-    this.setState({
-      renameOpen: !this.state.renameOpen
-    })
-  }
-
-  toggleImage() {
-    this.setState({
-      imageOpen: !this.state.imageOpen
-    })
-  }
-
-  handleRename(event) {
-    this.setState({
-      renameVal: event.target.value
-    })
-  }
-
-  handleImage(event) {
-    this.setState({
-      imageUrl: event.target.value
-    })
-  }
-
-  renameCurrentSlide(newName) {
-    if (this.state.renameVal !== null) {
-      this.props.renameSlide(newName)
-      this.toggleRename()
-    }
-    else {
-      console.log("Error: null value")
-    }
-  }
-
   handlePresent() {
+    this.props.save()
     window.sessionStorage.setItem('id', this.props.id)
     window.location.href = './slideshow/Show/Present/?id=' + this.props.id
   }
 
-
   render() {
-    const imageModal = (
-      <Modal isOpen={this.state.imageOpen} toggle={this.toggleImage} fade={false} backdrop={true}>
-        <ModalHeader toggle={this.toggleImage}>Enter Image Url</ModalHeader>
-        <ModalBody>
-          <InputGroup>
-            <Input
-                    type="text"
-                    placeholder="Image Url"
-                    onChange={this.handleImage}
-                    value={this.state.imageUrl} />
-              <InputGroupAddon addonType="append">
-            <Button onClick={this.toggleImage} color="primary">Submit</Button>
-            </InputGroupAddon>
-          </InputGroup>
-        </ModalBody>
-      </Modal>
-    )
-
 
     return (
-      <div>
-      <ButtonGroup>
-        <Button onClick={this.returnToShowList} color="primary"><i className="fas fa-arrow-circle-left"></i> Show List</Button>
-        <ButtonDropdown isOpen={this.state.fileOpen} toggle={this.toggleFile}>
-          <DropdownToggle caret>
-            File
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem onClick={this.props.save}>Save</DropdownItem>
-            <DropdownItem onClick={this.handlePresent}>Present</DropdownItem>
-          </DropdownMenu>
-        </ButtonDropdown>
-        <ButtonDropdown isOpen={this.state.editOpen} toggle={this.toggleEdit}>
-          <DropdownToggle caret>
-            Edit
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem onClick={this.props.insertSlide}>Insert Slide</DropdownItem>
-            <DropdownItem onClick={this.props.deleteSlide}>Delete Slide</DropdownItem>
-          </DropdownMenu>
-        </ButtonDropdown>
-        <ButtonDropdown isOpen={this.state.insertOpen} toggle={this.toggleInsert}>
-          <DropdownToggle caret>
-            Insert
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem value="Image" onClick={this.toggleImage}>Image</DropdownItem>
-            <DropdownItem value="Quiz" onClick={this.props.insertQuiz}>Quiz Slide</DropdownItem>
-            <DropdownItem divider />
-            <DropdownItem onClick={this.props.insertSlide}>New Slide</DropdownItem>
-          </DropdownMenu>
-        </ButtonDropdown>
-      </ButtonGroup>
-      {imageModal}
+    <div>
+      <ButtonToolbar>
+        <ButtonGroup aria-label="Return Group">
+          <Button onClick={this.returnToShowList} color="primary"><i className="fas fa-arrow-circle-left"></i> Show List</Button>
+        </ButtonGroup>
+        <ButtonGroup style={{marginLeft: 10}} aria-label="Slide-present Group">
+          <Button variant="secondary" onClick={this.props.save}><i className="fas fa-save"></i></Button>
+            <DropdownButton as={ButtonGroup} title="Slide" variant="secondary">
+              <Dropdown.Item onClick={this.props.insertSlide}>Insert Slide</Dropdown.Item>
+              <Dropdown.Item onClick={this.props.insertQuiz}>Insert Quiz</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item style={{color: "red"}} onClick={this.props.deleteSlide}>Delete Slide</Dropdown.Item>
+           </DropdownButton>
+           <Button variant="secondary" onClick={this.handlePresent}>Present</Button>
+        </ButtonGroup>
+      </ButtonToolbar>
     </div>
     )
   }
@@ -169,6 +57,6 @@ NavBar.propTypes = {
   save: PropTypes.func,
   insertSlide: PropTypes.func,
   deleteSlide: PropTypes.func,
-  renameSlide: PropTypes.func,
-  currentSlide: PropTypes.number
+  currentSlide: PropTypes.number,
+  saveDB: PropTypes.func,
 }

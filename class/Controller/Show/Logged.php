@@ -55,4 +55,14 @@ class Logged extends Base
     return $this->view->present();
   }
 
+  protected function presentJsonCommand(Request $request)
+  {
+    $vars = $request->getRequestVars();
+    $id = $vars['id'];
+    return array(
+      'slides' => $this->factory->getSlides($id),
+      'title' => $this->factory->getShowName($id)
+    );
+  }
+
 }

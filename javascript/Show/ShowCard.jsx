@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Card, CardBody, CardTitle, CardImg, Button, Alert } from 'reactstrap'
 import './custom.css'
 
-import AppLogo from "../../img/showimg.png"
+import ShowLogo from "../../img/showimg.png"
 
 export default class ShowCard extends Component {
   constructor(props) {
@@ -12,14 +12,13 @@ export default class ShowCard extends Component {
     this.state = {
         id: -1,
         title: null,
-        img: AppLogo, // AppLogo
+        img: ShowLogo,
         active: 0,
         edit: false,
         alert: false,
         closex: true
     }
-//      this.loadShow = this.loadShow.bind(this)
-    this.view = this.view.bind(this)
+
     this.handleSave = this.handleSave.bind(this)
     this.deleteShow = this.deleteShow.bind(this)
     this.editTitle = this.editTitle.bind(this)
@@ -32,21 +31,13 @@ export default class ShowCard extends Component {
 
   componentDidMount() {
     this.setState({
-
-          title: this.props.title,
-          //img: this.props.img,
-          active: Number(this.props.active),
-          id: this.props.id
-
+      title: this.props.title,
+      active: Number(this.props.active),
+      id: this.props.id
     })
   }
 
- view() {
-
- }
-
  handleSave() {
-   // handles the update of the resource object
    $.ajax({
      url: './slideshow/Show/' + this.state.id,
      data: {title: this.state.title, active: this.state.active},
@@ -64,7 +55,6 @@ export default class ShowCard extends Component {
  }
 
  deleteShow() {
-   // Call by ajax - demo purposes only
    $.ajax({
      url: './slideshow/Show/' + this.state.id,
      type: 'delete',
@@ -100,8 +90,8 @@ export default class ShowCard extends Component {
  }
 
  presentTransition() {
-  window.sessionStorage.setItem('id', this.state.id)
-  window.location.href = './slideshow/Show/Present/?id=' + this.state.id
+   window.sessionStorage.setItem('id', this.state.id)
+   window.location.href = './slideshow/Show/Present/?id=' + this.state.id
  }
 
  deleteAlert() {
@@ -148,7 +138,6 @@ export default class ShowCard extends Component {
         <Card>
           <div className="card-img-caption">
             {activeX}
-
             <img className="card-img-top" src={this.state.img}/>
           </div>
           <CardBody>
@@ -169,8 +158,8 @@ export default class ShowCard extends Component {
 }
 
 ShowCard.propTypes = {
-   //id: PropTypes.string,
+   //id: PropTypes.number,
    title: PropTypes.string,
-   //active: PropTypes.number,
+   //active: PropTypes.string,
    //load: PropTypes.function
  }

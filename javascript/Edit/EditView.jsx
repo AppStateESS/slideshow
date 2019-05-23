@@ -198,7 +198,7 @@ export default class EditView extends Component {
     )
 
     let quizView = (this.state.quizEditView) ?
-      <QuizCreateForm quizContent={this.props.content.quizContent} save={this.saveQuizContent} toggle={this.toggleQuizEdit}/> :
+      <QuizCreateForm quizContent={this.props.content.quizContent} saveQC={this.saveQuizContent} saveDB={this.props.saveDB} toggle={this.toggleQuizEdit}/> :
       <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit}/>
 
     let editRender = (this.props.isQuiz) ? (quizView) : (editor)
@@ -224,4 +224,5 @@ EditView.propTypes = {
   isQuiz: PropTypes.bool,
   saveContentState: PropTypes.func,
   saveQuizContent: PropTypes.func,
+  saveDB: PropTypes.func,
 }

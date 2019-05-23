@@ -22,7 +22,7 @@ export default class ShowView extends Component {
     }
 
   componentDidMount() {
-    this.getData();
+    this.getData()
   }
 
   saveNewShow() {
@@ -33,7 +33,6 @@ export default class ShowView extends Component {
         type: 'post',
         dataType: 'json',
         success: function() {
-          // TODO: eventually I would like this to redirect to edit rather than alert.
           this.switchModal()
           this.getData()
         }.bind(this),
@@ -52,8 +51,8 @@ export default class ShowView extends Component {
   }
 
   updateTitle(event) {
-    let r = this.state.resource;
-    r.title = event.target.value;
+    let r = this.state.resource
+    r.title = event.target.value
     this.setState({
       resource: r
     })
@@ -71,28 +70,20 @@ export default class ShowView extends Component {
         this.setState({showData: data['listing']});
       }.bind(this),
       error: function(req, err) {
-
-                //alert("Failed to grab data.")
+        alert("Failed to grab data")
         console.error(req, err.toString());
       }.bind(this)
     });
   }
 
-    /* This should redirect the user to the edit page.
-    load() {
-      $.get({
-
-      })
-    }*/
-
-    message() {
-      alert("New SlideShow Created!")
-    }
+  message() {
+    alert("New SlideShow Created!")
+  }
 
   render() {
 
     const modal = (
-      <Modal isOpen={this.state.modalOpen} toggle={this.switchModal} fade={false} backdrop={true}>
+      <Modal isOpen={this.state.modalOpen} toggle={this.switchModal} backdrop={true}>
         <ModalHeader toggle={this.switchModal} >Enter a Title:</ModalHeader>
         <ModalBody>
           <InputGroup>
@@ -122,11 +113,6 @@ export default class ShowView extends Component {
 
     if (this.state.showData === null)
     {
-      // return (
-      //   <div>
-      //     <i className="fas fa-spinner fa-spin"></i>
-      //   </div>
-      // )
       return(<div></div>)
     } else {
       let cards = this.state.showData.map(function(show) {
@@ -140,7 +126,6 @@ export default class ShowView extends Component {
          )}.bind(this)
       );
 
-      //let cards = <ShowCard id={1} {cards}/>
       return (
         <div>
           <h2>Shows:</h2>

@@ -26,6 +26,8 @@ class slideshowUpdate
     switch (1) {
       case $this->compare('1.1.0'):
         $this->update('1.1.0');
+      case $this->compare('1.2.0'):
+        $this->update('1.2.0');
     }
   }
 
@@ -51,6 +53,17 @@ class slideshowUpdate
     $changes[] = 'content now saves to the database';
     $changes[] = 'content can now be loaded from the database';
     $this->addContent('1.1.0', $changes);
+  }
+
+  private function v1_2_0()
+  {
+      $db = \phpws2\Database::getDB();
+
+      $session = new \slideshow\Resource\SessionResource;
+      $session->createTable($db);
+
+      $changes[] = 'can now keep track of user progress through the quizzes they take';
+      $this->addContent('1.2.0', $changes);
   }
 
   private function addContent($version, array $changes)

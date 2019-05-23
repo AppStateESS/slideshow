@@ -11,14 +11,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * @author Matthew McNaney <mcnaney at gmail dot com>
+ * @author Tyler Craig <craigta1 at appstate dot edu>
  *
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace slideshow\Controller\Show;
+namespace slideshow\Controller\Session;
 
-class User extends Logged
+use Canopy\Request;
+use slideshow\Factory\SessionFactory;
+
+class Logged extends Base
 {
+    /**
+     * @var slideshow\Factory\SessionFactory
+     */
+    protected $factory;
+
+    protected function putCommand($request)
+    {
+        $this->factory->put($request);
+        return true;
+    }
+
+    protected function viewJsonCommand($request)
+    {
+        return $this->factory->get($request);
+    }
 
 }

@@ -9,6 +9,7 @@ export default class ShowView extends Component {
       this.state = {
         resource: Show,
         showData: null,
+        //showInactive: true // shows inactive shows when true
       }
 
       this.getData     = this.getData.bind(this)
@@ -43,7 +44,7 @@ export default class ShowView extends Component {
     let cards = undefined
     if (this.state.showData !== null) {
      cards = this.state.showData.map(function(show) {
-        if (show.active == 1) {
+        if (show.active == 1 /*|| this.state.showInactive */) {
           return(
             <ShowCard
                key={show.id}

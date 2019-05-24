@@ -134,7 +134,8 @@ export default class Present extends Component {
         }
       }.bind(this),
       error: function(req, err) {
-        alert("Failed to load session from db.")
+        //alert("Failed to load session from db.")
+        console.log("If you are an admin, disregard the error below:")
         console.error(req, err.toString())
       }.bind(this)
     })

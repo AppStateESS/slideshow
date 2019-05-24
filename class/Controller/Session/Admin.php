@@ -11,44 +11,37 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * @author Matthew McNaney <mcnaney at gmail dot com>
+ * @author Tyler Craig <craigta1 at appstate dot edu>
  *
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace slideshow\Controller\Show;
+namespace slideshow\Controller\Session;
 
 use Canopy\Request;
-use slideshow\Factory\ShowFactory as Factory;
-use slideshow\View\ShowView as View;
-use slideshow\Controller\RoleController;
+use slideshow\Factory\SessionFactory;
 
-class Base extends RoleController
+class Admin extends Base
 {
-
     /**
-     * @var slideshow\Factory\ShowFactory
+     * @var slideshow\Factory\SessionFactory
      */
     protected $factory;
 
-    /**
-     * @var slideshow\View\ShowView
-     */
-    protected $view;
-
-    protected function loadFactory()
+    /*
+    * This does nothing because if we are an admin we are demoing the show
+    */
+    protected function putCommand($request)
     {
-        $this->factory = new Factory;
+        return true;
     }
 
-    protected function loadView()
+    /*
+    * This does nothing because if we are an admin we are demoing the show
+    */
+    protected function getCommand($request)
     {
-        $this->view = new View;
-    }
-
-    protected function viewHtmlCommand(Request $request)
-    {
-        return 'Show.Base::viewHtmlCommand';
+        return true;
     }
 
 }

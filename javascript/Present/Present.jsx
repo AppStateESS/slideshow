@@ -25,6 +25,7 @@ export default class Present extends Component {
       finishFlag: false // true when user has completed the show
     }
     this.load = this.load.bind(this)
+    this.updateSession = this.updateSession.bind(this)
 
     this.prev = this._prev.bind(this)
     this.next = this._next.bind(this)
@@ -36,6 +37,7 @@ export default class Present extends Component {
 
   componentDidMount() {
     this.load()
+    this.loadSession()
   }
 
   componentDidUpdate() {
@@ -44,7 +46,7 @@ export default class Present extends Component {
       this.setState({
         quizNextFlag: false,
         nextDisable: false,
-        quizPassed: false
+        quizPassed: false,
       })
     }
     else if (this.state.nextFlag) {
@@ -53,6 +55,7 @@ export default class Present extends Component {
       // However, it works!!! Imma try my best to comment an explination for how this works - Tyler
 
       // slide has changed
+      this.updateSession()
       this.setState({nextDisable: true, prevDisable: true})
       let isQuiz = this.parseBool(this.state.content[this.state.currentSlide].isQuiz) // Converts boolean if isQuiz is a string
       let lastSlide = (this.state.currentSlide + 1 == this.state.content.length) // true if we are on last slide
@@ -69,6 +72,9 @@ export default class Present extends Component {
       }
       if (this.state.currentSlide > 0) { // we are on the first slide
         this.setState({prevDisable: false})
+      }
+      if (this.state.currentSlide < this.state.highestSlide) { // we have already completed this slide
+        this.setState({nextDisable: false})
       }
       this.setState({nextFlag: false}) // we have handled the slide change
     }
@@ -103,6 +109,56 @@ export default class Present extends Component {
     });
   }
 
+  loadSession() {
+    $.ajax({
+      url: './slideshow/Session/' + window.sessionStorage.getItem('id'),
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        //console.log(data)
+        if (this.state.content != undefined) {
+          let high = parseInt(data.highestSlide)
+          let curr = parseInt(data.highestSlide)
+          const finish = this.parseBool(data.completed)
+          if (curr >= this.state.content.length) {
+            curr = this.state.content.length - 1
+          }
+          this.setState({
+            highestSlide: high,
+            currentSlide: curr,
+            finishFlag: finish,
+            nextFlag: true,
+            quizNextFlag: true,
+            quizPassed: true
+          })
+        }
+      }.bind(this),
+      error: function(req, err) {
+        //alert("Failed to load session from db.")
+        console.log("If you are an admin, disregard the error below:")
+        console.error(req, err.toString())
+      }.bind(this)
+    })
+  }
+
+  updateSession() {
+    /* Updates the db that saves the users location within the slideshow */
+    $.ajax({
+      url: './slideshow/Session/' + window.sessionStorage.getItem('id'),
+      type: 'PUT',
+      data: {highestSlide: this.state.highestSlide, completed: this.state.finishFlag},
+      dataType: 'json',
+      success: function() {
+        //console.log("session updated successfully")
+      }.bind(this),
+      error: function(req, err) {
+        //console.log("Failed to updated user's session data:")
+        console.error(req, err.toString())
+        alert(req.responseText)
+      }.bind(this)
+    })
+  }
+
   changeSlide(slideNum) {
     let highest = this.state.highestSlide
     if (this.state.highestSlide < slideNum) {
@@ -129,13 +185,12 @@ export default class Present extends Component {
 
   validate() {
     /* this function is only called if the correct answer is chosen */
-    //if (this.state.content[this.state.currentSlide].correctAnswerIndex == answer) {
+
     let finish = this.state.finishFlag
     if (this.state.content.length == this.state.currentSlide + 1) {
       finish = true
     }
-    this.setState({quizPassed: true, finishFlag: finish})
-    //}
+    this.setState({quizPassed: true, finishFlag: finish}, () => this.updateSession())
   }
 
   returnToShowList() {

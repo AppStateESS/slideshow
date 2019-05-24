@@ -48,7 +48,7 @@ class Admin extends Base
     */
     protected function listHtmlCommand(Request $request)
     {
-        return $this->view->show();
+        return $this->view->adminShow();
     }
 
     /**

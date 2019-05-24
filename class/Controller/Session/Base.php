@@ -16,9 +16,28 @@
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace slideshow\Controller\Show;
+namespace slideshow\Controller\Session;
 
-class User extends Logged
+use Canopy\Request;
+use slideshow\Factory\SessionFactory as Factory;
+use slideshow\Controller\RoleController;
+
+class Base extends RoleController
 {
+
+    /**
+     * @var slideshow\Factory\SessionFactory
+     */
+    protected $factory;
+
+    protected function loadFactory()
+    {
+        $this->factory = new Factory;
+    }
+
+    protected function loadView()
+    {
+
+    }
 
 }

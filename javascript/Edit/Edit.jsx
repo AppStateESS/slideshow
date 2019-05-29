@@ -24,6 +24,7 @@ export default class Edit extends Component {
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
+    this.redirect = this.redirect.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
     this.addNewQuiz = this.addNewQuiz.bind(this)
@@ -76,6 +77,22 @@ export default class Edit extends Component {
     });
   }
 
+
+  redirect(url) {
+    $.ajax({
+      url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
+      data: {content: this.state.content},
+      type: 'put',
+      dataType: 'json',
+      success: function() {
+        window.location.href = url
+      }.bind(this),
+      error: function(req, err) {
+        alert("Failed to save show " + window.sessionStorage.getItem('id'))
+        console.error(req, err.toString());
+      }.bind(this)
+    });
+  }
 
   setCurrentSlide(val) {
     this.setState({
@@ -161,15 +178,15 @@ export default class Edit extends Component {
     return (
       <div>
         <NavBar
-          save={this.save}
-          id={this.state.id}
+          id                ={Number(this.state.id)}
           insertSlide       ={this.addNewSlide}
           deleteSlide       ={this.deleteCurrentSlide}
           renameSlide       ={this.renameCurrentSlide}
           addToStack        ={this.addToStack}
           currentSlide      ={this.state.currentSlide}
           insertQuiz        ={this.addNewQuiz}
-          saveDB            ={this.save} />
+          saveDB            ={this.save}
+          redirect          ={this.redirect}/>
         <div className="row">
           <SlidesView
             slides          ={this.state.content}

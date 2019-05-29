@@ -49,7 +49,7 @@ class SessionResource extends BaseAbstract
     public function __construct()
     {
         parent::__construct();
-        $this->userId = new\phpws2\Variable\IntegerVar(\Current_User::getId(), 'userId');
+        $this->userId = new \phpws2\Variable\IntegerVar(\Current_User::getId(), 'userId');
         $this->showId = new \phpws2\Variable\IntegerVar(0, 'showId');
         $this->highestSlide = new \phpws2\Variable\SmallInteger(0, 'highestSlide');
         $this->completed = new \phpws2\Variable\BooleanVar(false, 'completed');

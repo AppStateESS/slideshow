@@ -54,11 +54,22 @@ class ShowFactory extends Base
       // Update/PUT the values that are changed:
       // pullPutVarIfSet will return false if not set
       $title = $request->pullPutVarIfSet('title');
-      $active = $request->pullPutVarIfSet('active');
+      $active = $resource->active;
+
+      try {
+          $active = $request->pullPutVar('active');
+      }
+      catch (\phpws2\Exception\ValueNotSet $e) {
+          // if value not set then we ignnore
+      }
       $content = $request->pullPutVarIfSet('content');
       // if any of the vars are set to false we don't need to update them.
       if (gettype($title) == "string") {
         $resource->title = $title;
+      }
+      // TODO: fix request to pass boolean and not string 
+      if (gettype($active) == "string") {
+        $resource->active = $active;
       }
       $resource->active = $active;
       if (gettype($content) != "boolean") {

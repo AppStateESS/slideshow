@@ -9,6 +9,8 @@ import {
   DropdownButton
 } from 'react-bootstrap'
 
+import Settings from './Settings.jsx'
+
 export default class NavBar extends Component {
   constructor() {
     super()
@@ -46,6 +48,7 @@ export default class NavBar extends Component {
            </DropdownButton>
            <Button variant="secondary" onClick={this.handlePresent}>Present</Button>
         </ButtonGroup>
+          <Settings />
       </ButtonToolbar>
     </div>
     )

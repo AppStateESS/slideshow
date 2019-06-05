@@ -2,8 +2,19 @@
 import React, {Component} from 'react'
 import ShowCard from './ShowCard.jsx'
 import Show from '../Resources/Show.js'
-import { Card, CardBody, CardTitle, Row, Col, Button } from 'reactstrap'
-import { Modal, ModalHeader, ModalBody, Input, InputGroup, InputGroupAddon } from 'reactstrap'
+import {
+  Card,
+  CardDeck,
+  Jumbotron,
+  Button,
+  Col,
+  Row,
+  InputGroup,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  FormControl,
+  } from 'react-bootstrap'
 
 export default class ShowView extends Component {
   constructor() {
@@ -16,8 +27,7 @@ export default class ShowView extends Component {
 
       this.getData     = this.getData.bind(this)
       this.saveNewShow = this.saveNewShow.bind(this)
-      this.switchModal = this.switchModal.bind(this)
-      this.successMessage = this.message.bind(this)
+      this.toggleNewSlide = this.toggleNewSlide.bind(this)
       this.updateTitle = this.updateTitle.bind(this)
     }
 
@@ -33,7 +43,7 @@ export default class ShowView extends Component {
         type: 'post',
         dataType: 'json',
         success: function() {
-          this.switchModal()
+          this.toggleNewSlide()
           this.getData()
         }.bind(this),
         error: function(req, err) {
@@ -44,10 +54,8 @@ export default class ShowView extends Component {
     }
   }
 
-  switchModal() {
-    this.setState({
-      modalOpen: !this.state.modalOpen
-    })
+  toggleNewSlide() {
+    this.setState({modalOpen: !this.state.modalOpen})
   }
 
   updateTitle(event) {
@@ -76,39 +84,31 @@ export default class ShowView extends Component {
     });
   }
 
-  message() {
-    alert("New SlideShow Created!")
-  }
-
   render() {
 
     const modal = (
-      <Modal isOpen={this.state.modalOpen} toggle={this.switchModal} backdrop={true}>
-        <ModalHeader toggle={this.switchModal} >Enter a Title:</ModalHeader>
-        <ModalBody>
+      <Modal
+        show={this.state.modalOpen}
+        onHide={this.toggleNewSlide}
+        >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Enter a Title:
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
           <InputGroup>
-            <Input
-                    type="text"
-                    placeholder="New Show"
-                    onChange={this.updateTitle}
-                    value={this.state.resource.title} />
-              <InputGroupAddon addonType="append">
-            <Button onClick={this.saveNewShow} color="success">Save</Button>
-            </InputGroupAddon>
+            <FormControl
+              placeholder="New Show"
+              onChange={this.updateTitle}
+              value={this.state.resource.title}
+            />
+            <InputGroup.Append>
+              <Button onClick={this.saveNewShow} variant="success">Save</Button>
+            </InputGroup.Append>
           </InputGroup>
-        </ModalBody>
+        </Modal.Body>
       </Modal>
-    )
-
-    const newShow = (
-      <Card body className="text-center">
-        <CardBody>
-          <CardTitle>Create New Show</CardTitle>
-          <Button outline onClick={this.switchModal} color="primary">
-            <i className="fas fa-plus-circle"></i>
-          </Button>
-        </CardBody>
-      </Card>
     )
 
     if (this.state.showData === null)
@@ -129,13 +129,22 @@ export default class ShowView extends Component {
       return (
         <div>
           <h2>Shows:</h2>
-          <div className="jumbotron">
-            <div className="card-deck d-flex justify-content-center">
+          <Jumbotron>
+            <CardDeck className="card-deck d-flex justify-content-center">
               {cards}
-            </div>
+            </CardDeck>
             <hr />
-            <Col>{newShow}</Col>
-          </div>
+            <Col>
+              <Card body className="text-center">
+                <Card.Body>
+                  <Card.Title>Create New Show</Card.Title>
+                  <Button variant="outline-primary" onClick={this.toggleNewSlide} color="primary">
+                    <i className="fas fa-plus-circle"></i>
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Jumbotron>
           {modal}
         </div>
       )

@@ -27,7 +27,7 @@ export default class ShowCard extends Component {
 
   presentTransition() {
     window.sessionStorage.setItem('id', this.props.id)
-    window.location.href = './slideshow/Show/Present/?id=' + this.props.id
+    window.location.href = './slideshow/Slide/Present/'
   }
 
   getSessionInfo() {

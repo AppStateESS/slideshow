@@ -27,6 +27,7 @@ export default class ShowView extends Component {
 
   saveNewShow() {
     if (this.state.resource.title != null) {
+      // new show
       $.ajax({
         url: './slideshow/Show',
         data: this.state.resource,

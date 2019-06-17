@@ -29,16 +29,7 @@
      return $this->scriptView('shows');
    }
 
-   public function edit()
-   {
-      return $this->scriptView('edit');
-   }
-
-   public function present()
-   {
-     return $this->scriptView('present');
-   }
-
+   /* DEPRECATED
    private function createShowButton()
     {
         $nav = new NavBar();
@@ -46,5 +37,5 @@
 <button class="btn btn-success navbar-btn" id="createShow"><i class="fa fa-plus"></i> Create New SlideShow</button>
 EOF;
         $nav->addItem($create);
-    }
+    } */
  }

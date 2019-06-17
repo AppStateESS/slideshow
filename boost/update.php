@@ -28,6 +28,8 @@ class slideshowUpdate
         $this->update('1.1.0');
       case $this->compare('1.2.0'):
         $this->update('1.2.0');
+      case $this->compare('1.2.1'):
+        $this->update('1.2.1');
     }
   }
 
@@ -64,6 +66,19 @@ class slideshowUpdate
 
       $changes[] = 'can now keep track of user progress through the quizzes they take';
       $this->addContent('1.2.0', $changes);
+  }
+
+  private function v1_2_1()
+  {
+      $db = \phpws2\Database::getDB();
+
+      // TODO: Pull Show$content and save it here. or drop the table lol.
+
+      $slide = new \slideshow\Resource\SlideResource;
+      $slide->createTable($db);
+
+      $changes[] = 'Slide data is pulled out and saved seperately';
+      $this->addContent('1.2.1', $changes);
   }
 
   private function addContent($version, array $changes)

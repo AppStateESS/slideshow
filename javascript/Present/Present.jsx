@@ -49,21 +49,24 @@ export default class Present extends Component {
         quizPassed: false,
       })
     }
-    else if (this.state.nextFlag) {
+    else if (this.state.nextFlag && this.state.content != undefined) {
       // SO this section is a beast -> There is probably a way to structure this better logically.
-      // There are a log of logical components that are changing and so the structure might not be the cleanest
-      // However, it works!!! Imma try my best to comment an explination for how this works - Tyler
+      // There are a lot of logical components that are changing and so the structure might not be the cleanest
+      // However, it works!!! I tried my best to comment an explination for how this works - Tyler
 
       // slide has changed
       this.updateSession()
       this.setState({nextDisable: true, prevDisable: true})
+
       let isQuiz = this.parseBool(this.state.content[this.state.currentSlide].isQuiz) // Converts boolean if isQuiz is a string
-      let lastSlide = (this.state.currentSlide + 1 == this.state.content.length) // true if we are on last slide
+      //let lastSlide = (this.state.currentSlide + 1 == this.state.content.length) // true if we are on last slide
       if (isQuiz) {
         this.setState({quizNextFlag: true}) // we changed to a quiz slide, handle the rest after user selects answer
       }
       else if (this.state.currentSlide == this.state.highestSlide && !this.state.finishFlag) { // we are on the highest slide and haven't finished the show yet
         setTimeout(() => {
+          // Note: when this was declared above, an issue was created where it wasn't being loaded fast enough and it set the last slide to true
+          let lastSlide = this.state.currentSlide + 1 == this.state.content.length
           this.setState({nextDisable: false, finishFlag: (this.state.finishFlag || lastSlide)}) // on completion of timer, we unlock next and set finishFlag
         }, 2000)
       }
@@ -76,23 +79,45 @@ export default class Present extends Component {
       if (this.state.currentSlide < this.state.highestSlide) { // we have already completed this slide
         this.setState({nextDisable: false})
       }
+      // If we are on the last slide
+      if ((this.state.content.length == this.state.currentSlide + 1) && this.state.currentSlide != 0) {
+        this.setState({finishFlag: true}, () => this.updateSession())
+      }
       this.setState({nextFlag: false}) // we have handled the slide change
     }
   }
 
   load() {
     $.ajax({
-      url: './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
+      url: './slideshow/Slide/present/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
       dataType: 'json',
       success: function (data) {
         let loaded = data['slides']
         if (loaded != null) {
+          let showContent = []
+          for (let i = 0; i < loaded.length; i++) {
+            let saveC = undefined
+            let quizC = undefined
+            let isQ = this.parseBool(loaded[i].isQuiz)
+            if (!isQ) {
+              saveC = loaded[i].content
+            } else {
+              quizC = loaded[i].content
+            }
+            showContent.push({
+              isQuiz: isQ,
+              saveContent: saveC,
+              quizContent: quizC,
+              id: loaded[i].slideIndex // This may not be needed
+            })
+          }
           this.setState({
-            content: loaded,
+            content: showContent,
             slideName: data['title'],
-            quizNextFlag: this.parseBool(loaded[0].isQuiz) // First slide is a quiz
+            quizNextFlag: this.parseBool(showContent[0].isQuiz) // First slide is a quiz
           }, () => {
+            console.log(this.state.content)
             if (!this.state.quizNextFlag) {
               // First slide isn't a quiz we set timer on next
               setTimeout(() => {
@@ -116,7 +141,7 @@ export default class Present extends Component {
       dataType: 'json',
       success: function (data) {
         //console.log(data)
-        if (this.state.content != undefined) {
+        if (data.highestSlide != null) {
           let high = parseInt(data.highestSlide)
           let curr = parseInt(data.highestSlide)
           const finish = this.parseBool(data.completed)
@@ -130,12 +155,12 @@ export default class Present extends Component {
             nextFlag: true,
             quizNextFlag: true,
             quizPassed: true
-          })
+          }, () => {console.log("session loaded")})
         }
       }.bind(this),
       error: function(req, err) {
         //alert("Failed to load session from db.")
-        console.log("If you are an admin, disregard the error below:")
+        //console.log("If you are an admin, disregard the error below:")
         console.error(req, err.toString())
       }.bind(this)
     })
@@ -146,13 +171,14 @@ export default class Present extends Component {
     $.ajax({
       url: './slideshow/Session/' + window.sessionStorage.getItem('id'),
       type: 'PUT',
-      data: {highestSlide: this.state.highestSlide, completed: this.state.finishFlag},
+      data: {highestSlide: Number(this.state.highestSlide), completed: this.state.finishFlag},
       dataType: 'json',
       success: function() {
         //console.log("session updated successfully")
       }.bind(this),
       error: function(req, err) {
         //console.log("Failed to updated user's session data:")
+        //console.log(this.state.highestSlide)
         console.error(req, err.toString())
         alert(req.responseText)
       }.bind(this)
@@ -199,7 +225,10 @@ export default class Present extends Component {
 
   parseBool(bool) {
     if (bool == undefined) return false
-    return (typeof(bool) == "boolean") ? bool : JSON.parse(bool)
+    console.log("bool: " + typeof(bool) + " value: " + bool)
+    if (typeof(bool) === "string") return (Number(bool) != 0)
+    if (typeof(bool) === 'number') return (bool != 0)
+    return (typeof(bool) === "boolean") ? bool : JSON.parse(bool)
   }
 
   render() {

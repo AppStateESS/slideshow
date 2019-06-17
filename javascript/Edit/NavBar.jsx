@@ -19,13 +19,15 @@ export default class NavBar extends Component {
 
   returnToShowList() {
     this.props.save()
-    window.location.href = './slideshow/Show/list'
+    // This inteval fixes a bug on firefox where the browser loads faster than it can save
+    window.setInterval(()=> {window.location.href = './slideshow/Show/list'}, 100)
+
   }
 
   handlePresent() {
     this.props.save()
     window.sessionStorage.setItem('id', this.props.id)
-    window.location.href = './slideshow/Show/Present/?id=' + this.props.id
+    window.location.href = './slideshow/Slide/present/?id=' + this.props.id
   }
 
   render() {

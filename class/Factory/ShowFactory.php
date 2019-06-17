@@ -19,7 +19,8 @@
 
 namespace slideshow\Factory;
 
-use slideshow\Resource\ShowResource as Resource;
+use slideshow\Resource\ShowResource;
+use SlideShow\Factory\SlideFactory;
 use phpws2\Database;
 use Canopy\Request;
 
@@ -28,7 +29,7 @@ class ShowFactory extends Base
 
     protected function build()
     {
-        return new Resource;
+        return new ShowResource;
     }
 
     public function post(Request $request)
@@ -55,15 +56,12 @@ class ShowFactory extends Base
       // pullPutVarIfSet will return false if not set
       $title = $request->pullPutVarIfSet('title');
       $active = $request->pullPutVarIfSet('active');
-      $content = $request->pullPutVarIfSet('content');
       // if any of the vars are set to false we don't need to update them.
       if (gettype($title) == "string") {
         $resource->title = $title;
       }
+
       $resource->active = $active;
-      if (gettype($content) != "boolean") {
-        $resource->content = json_encode($content);
-      }
       // Save the updated resource to the Database
       $this->saveResource($resource);
       return $resource;
@@ -78,7 +76,6 @@ class ShowFactory extends Base
       $resource = $this->load($showId);
       $resource->title = $request->pullPatchVarIfSet('title');
       $resource->active = $request->pullPatchVarIfSet('active');
-      $resource->content = $request->pullPatchVarIfSet('content');
       $this->saveResource($resource);
       return $resource;
     }
@@ -88,17 +85,18 @@ class ShowFactory extends Base
     *
     * @param $show_id
     */
-    public static function getDetails($show_id) {
-      if (empty($show_id)) {
-        throw new \Exception("Invalid show id");
-      }
+    public static function getDetails($show_id)
+    {
+          if (empty($show_id)) {
+            throw new \Exception("Invalid show id");
+          }
 
-      $db = \phpws2\Database::getDB();
-      $tbl = $db->addTable('ss_show');
-      $tbl->addFieldConditional('id', $show_id);
-      $show = $db->selectOneRow();
+          $db = \phpws2\Database::getDB();
+          $tbl = $db->addTable('ss_show');
+          $tbl->addFieldConditional('id', $show_id);
+          $show = $db->selectOneRow();
 
-      return $show;
+          return $show;
     }
 
     public function getShows() {
@@ -119,25 +117,6 @@ class ShowFactory extends Base
         if (!is_dir($path)) {
             mkdir($path);
         }
-    }
-
-    /**
-     *
-     * Returns the data for the slideshow contained from the $content var.
-     * @var $showId the id for the slideshow
-     */
-    public function getSlides($showId)
-    {
-      if ($showId == null || $showId == -1) {
-        throw new \Exception("ShowId is not valid: $showId", 1);
-      }
-      $sql = "SELECT content FROM ss_show WHERE id=:showId;";
-      $db = Database::getDB();
-      $pdo = $db->getPDO();
-      $q = $pdo->prepare($sql);
-      $q->execute(array('showId'=>$showId));
-      $data = $q->fetchColumn(0);
-      return json_decode($data);
     }
 
     public function getShowName($showId)
@@ -172,14 +151,8 @@ class ShowFactory extends Base
         return $template->get();
     }
 
-    public function deleteSlides($showId)
-    {
-        $db = Database::getDB();
-    }
-
     public function delete($showId)
     {
-        $this->deleteSlides($showId);
         self::deleteResource($this->load($showId));
         return true;
     }

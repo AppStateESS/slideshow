@@ -14,7 +14,6 @@ export default class SlidesView extends Component {
   }
 
   handleSlide(event) {
-    this.props.saveDB()
     this.props.setCurrentSlide(event.target.value - 1)
   }
 
@@ -51,5 +50,4 @@ SlidesView.propTypes = {
   currentSlide: PropTypes.number,
   setCurrentSlide: PropTypes.func,
   addNewSlide: PropTypes.func,
-  saveDB: PropTypes.func,
 }

@@ -24,7 +24,8 @@ abstract class Base extends \phpws2\ResourceFactory
         $resource = $this->build();
         $resource->setId($id);
         if (!parent::loadByID($resource)) {
-            throw new ResourceNotFound($id);
+            // Make a new one if it doesn't exist
+            return $this->build();
         }
         return $resource;
     }

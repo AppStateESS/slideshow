@@ -19,7 +19,7 @@ export default class QuizView extends Component {
   componentDidMount() {
     if (this.props.quizContent != undefined) {
       this.setState({
-        quizContent: this.props.quizContent
+        quizContent: JSON.parse(this.props.quizContent)
       })
     }
   }
@@ -27,7 +27,7 @@ export default class QuizView extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.quizContent != prevProps.quizContent && this.props.quizContent != undefined) {
       this.setState({
-        quizContent: this.props.quizContent
+        quizContent: JSON.parse(this.props.quizContent)
       })
     }
   }
@@ -60,6 +60,6 @@ export default class QuizView extends Component {
 }
 
 QuizView.propTypes = {
-  quizContent: PropTypes.object,
+  quizContent: PropTypes.string,
   toggle: PropTypes.func
 }

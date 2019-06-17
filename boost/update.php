@@ -68,17 +68,21 @@ class slideshowUpdate
       $this->addContent('1.2.0', $changes);
   }
 
-  private function v1_2_1()
+  private function v1_3_0()
   {
       $db = \phpws2\Database::getDB();
 
-      // TODO: Pull Show$content and save it here. or drop the table lol.
+      // A fresh install is needed, so a drop will be completed lol
+      $db->buildTable('ss_show')->drop();
+
+      $show = new \slideshow\Resource\ShowResource;
+      $show->createTable($db);
 
       $slide = new \slideshow\Resource\SlideResource;
       $slide->createTable($db);
 
       $changes[] = 'Slide data is pulled out and saved seperately';
-      $this->addContent('1.2.1', $changes);
+      $this->addContent('1.3.0', $changes);
   }
 
   private function addContent($version, array $changes)

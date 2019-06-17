@@ -18,7 +18,7 @@ export default class NavBar extends Component {
   }
 
   returnToShowList() {
-    this.props.save()
+    this.props.saveDB()
     // This inteval fixes a bug on firefox where the browser loads faster than it can save
     window.setInterval(()=> {window.location.href = './slideshow/Show/list'}, 100)
 

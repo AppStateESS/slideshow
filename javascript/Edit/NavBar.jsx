@@ -25,7 +25,6 @@ export default class NavBar extends Component {
   }
 
   handlePresent() {
-    this.props.save()
     window.sessionStorage.setItem('id', this.props.id)
     window.location.href = './slideshow/Slide/present/?id=' + this.props.id
   }
@@ -39,7 +38,7 @@ export default class NavBar extends Component {
           <Button onClick={this.returnToShowList} color="primary"><i className="fas fa-arrow-circle-left"></i> Show List</Button>
         </ButtonGroup>
         <ButtonGroup style={{marginLeft: 10}} aria-label="Slide-present Group">
-          <Button variant="secondary" onClick={this.props.save}><i className="fas fa-save"></i></Button>
+          <Button variant="secondary" onClick={this.props.saveDB}><i className="fas fa-save"></i></Button>
             <DropdownButton as={ButtonGroup} title="Slide" variant="secondary">
               <Dropdown.Item onClick={this.props.insertSlide}>Insert Slide</Dropdown.Item>
               <Dropdown.Item onClick={this.props.insertQuiz}>Insert Quiz</Dropdown.Item>
@@ -56,9 +55,10 @@ export default class NavBar extends Component {
 }
 
 NavBar.propTypes = {
-  save: PropTypes.func,
   insertSlide: PropTypes.func,
   deleteSlide: PropTypes.func,
   currentSlide: PropTypes.number,
+  redirect: PropTypes.func,
   saveDB: PropTypes.func,
+  id: PropTypes.number,
 }

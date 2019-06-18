@@ -65,6 +65,15 @@ export default class ShowCard extends Component {
 
  deleteShow() {
    $.ajax({
+     url: './slideshow/Slide/' + this.state.id,
+     type: 'delete',
+     dataType: 'json',
+     error: (req, res) => {
+       console.log("Error Deleting Slides")
+       console.error(req, res.toString())
+     }
+   })
+   $.ajax({
      url: './slideshow/Show/' + this.state.id,
      type: 'delete',
      dataType: 'json',
@@ -95,12 +104,12 @@ export default class ShowCard extends Component {
 
  editTransition() {
    window.sessionStorage.setItem('id', this.state.id)
-   window.location.href = './slideshow/Show/Edit/?id=' + this.state.id
+   window.location.href = './slideshow/Slide/Edit/'
  }
 
  presentTransition() {
    window.sessionStorage.setItem('id', this.state.id)
-   window.location.href = './slideshow/Show/Present/?id=' + this.state.id
+   window.location.href = './slideshow/Slide/Present/'
  }
 
  deleteAlert() {

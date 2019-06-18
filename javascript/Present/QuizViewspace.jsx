@@ -31,10 +31,11 @@ export default class QuizViewspace extends Component {
   }
 
   validate(event) {
+    let qContent = JSON.parse(this.props.content.quizContent)
     let ids = event.target.id.split('-')
     if (ids[0] === 'select') {
       // MultipleChoice
-      if (ids[1] == this.props.content.quizContent.correctAnswerIndex) {
+      if (ids[1] == qContent.correctAnswerIndex) {
         this.props.validate()
         this.toggleCorrectAlert()
       }
@@ -53,13 +54,14 @@ export default class QuizViewspace extends Component {
   }
 
   buildAnswerComponent() {
-    if (this.props.content.quizContent != undefined) {
+    let qContent = JSON.parse(this.props.content.quizContent)
+    if (qContent != undefined) {
       let i = -1
-      let a = this.props.content.quizContent.answers.map((answer) => {
+      let a = qContent.answers.map((answer) => {
         i += 1
 
         // Shows a check if the answer has been correctly answered before
-        let c = this.props.content.quizContent.correctAnswerIndex
+        let c = qContent.correctAnswerIndex
         let ans = ((this.props.currentSlide < this.props.highestSlide) && (c == i)) ?
           (<span>{answer} <i className="fas fa-check-circle" style={{color: 'green'}}></i></span>) : answer
 
@@ -84,6 +86,7 @@ export default class QuizViewspace extends Component {
   }
 
   render() {
+    let qContent = JSON.parse(this.props.content.quizContent)
     let alert = undefined
     if (this.state.correct) {
       alert = (<Alert key={this.state.currentSlide} variant="success">
@@ -99,7 +102,7 @@ export default class QuizViewspace extends Component {
 
     let answersComponent = undefined
     let titleComponent = undefined
-    if (this.props.content.quizContent == undefined) {
+    if (qContent == undefined) {
       titleComponent = "Error - Empty Quiz"
       answersComponent = (<div>
                             <p style={{color: 'red'}}>This quiz slide has not been filled with data</p>
@@ -111,7 +114,7 @@ export default class QuizViewspace extends Component {
     }
     else {
      answersComponent = this.buildAnswerComponent()
-     titleComponent = this.props.content.quizContent.questionTitle
+     titleComponent = qContent.questionTitle
     }
     return (
       <div>

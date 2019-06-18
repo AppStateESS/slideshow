@@ -18,13 +18,10 @@
 
 namespace slideshow\Resource;
 
-class SessionResource extends BaseAbstract
+class SlideResource extends BaseAbstract
 {
-    /**
-    * User id
-    * @var phpws2\Variable\IntegerVar
-    */
-    protected $userId;
+
+    protected $table = 'ss_slide';
 
     /**
     * SlideShow id
@@ -33,26 +30,32 @@ class SessionResource extends BaseAbstract
     protected $showId;
 
     /**
-    * Users highest slide completed
+    * Slide index
+    * Note: think of this as a sequential id for the slides:
+    * If a slide at index 2 gets deleted, then slide at index 3 will not get decremented
     * @var phpws2\Variable\SmallInteger
     */
-    protected $highestSlide;
+    protected $slideIndex;
 
     /**
-    * True if user has completed the slideshow
+    * Slide Content
+    * @var phpws2\Variable\StringVar
+    */
+    protected $content;
+
+    /**
+    * Slide is a quiz
     * @var phpws2\Variable\BooleanVar
     */
-    protected $completed;
-
-    protected $table = 'ss_session';
+    protected $isQuiz;
 
     public function __construct()
     {
         parent::__construct();
-        $this->userId = new \phpws2\Variable\IntegerVar(\Current_User::getId(), 'userId');
         $this->showId = new \phpws2\Variable\IntegerVar(0, 'showId');
-        $this->highestSlide = new \phpws2\Variable\SmallInteger(0, 'highestSlide');
-        $this->completed = new \phpws2\Variable\BooleanVar(false, 'completed');
+        $this->slideIndex = new \phpws2\Variable\SmallInteger(0, 'slideIndex');
+        $this->content = new \phpws2\Variable\StringVar(null, 'content');
+        $this->isQuiz = new \phpws2\Variable\BooleanVar(0, 'isQuiz');
     }
 
 }

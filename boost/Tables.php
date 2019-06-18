@@ -34,4 +34,10 @@ class Tables
         $session = new \slideshow\Resource\SessionResource;
         return $session->createTable($this->db);
     }
+
+    public function createSlide()
+    {
+        $slide = new \slideshow\Resource\SlideResource;
+        return $slide->createTable($this->db);
+    }
 }

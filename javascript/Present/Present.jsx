@@ -117,7 +117,6 @@ export default class Present extends Component {
             slideName: data['title'],
             quizNextFlag: this.parseBool(showContent[0].isQuiz) // First slide is a quiz
           }, () => {
-            console.log(this.state.content)
             if (!this.state.quizNextFlag) {
               // First slide isn't a quiz we set timer on next
               setTimeout(() => {
@@ -140,7 +139,6 @@ export default class Present extends Component {
       type: 'GET',
       dataType: 'json',
       success: function (data) {
-        //console.log(data)
         if (data.highestSlide != null) {
           let high = parseInt(data.highestSlide)
           let curr = parseInt(data.highestSlide)
@@ -159,9 +157,8 @@ export default class Present extends Component {
         }
       }.bind(this),
       error: function(req, err) {
-        //alert("Failed to load session from db.")
-        //console.log("If you are an admin, disregard the error below:")
-        console.error(req, err.toString())
+        console.log("Failed to load session from db. This could be due to being logged in as an admin")
+        //console.error(req, err.toString())
       }.bind(this)
     })
   }
@@ -177,8 +174,7 @@ export default class Present extends Component {
         //console.log("session updated successfully")
       }.bind(this),
       error: function(req, err) {
-        //console.log("Failed to updated user's session data:")
-        //console.log(this.state.highestSlide)
+        console.log("Failed to updated user's session data:")
         console.error(req, err.toString())
         alert(req.responseText)
       }.bind(this)
@@ -225,7 +221,6 @@ export default class Present extends Component {
 
   parseBool(bool) {
     if (bool == undefined) return false
-    console.log("bool: " + typeof(bool) + " value: " + bool)
     if (typeof(bool) === "string") return (Number(bool) != 0)
     if (typeof(bool) === 'number') return (bool != 0)
     return (typeof(bool) === "boolean") ? bool : JSON.parse(bool)
@@ -246,9 +241,6 @@ export default class Present extends Component {
         )
       }
     }.bind(this));
-    /*console.log("curr: " + this.state.currentSlide)
-    console.log("len: " + this.state.content.length)
-    console.log(this.state.currentSlide + 1 == this.state.content.length)*/
     let nextButton = (this.state.finishFlag) ?
       <button key="finish" className="btn btn-secondary" onClick={this.returnToShowList} disabled={this.state.nextDisable}>Finish</button> :
       <button key="next" className="btn btn-secondary" onClick={this.next} disabled={this.state.nextDisable}>Next</button>

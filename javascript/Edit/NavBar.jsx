@@ -25,8 +25,14 @@ export default class NavBar extends Component {
   }
 
   handlePresent() {
-    window.sessionStorage.setItem('id', this.props.id)
-    window.location.href = './slideshow/Slide/present/?id=' + this.props.id
+    if (this.props.id == -1) {
+      alert("A problem has occurred with your browser's session. This is most likely caused by an attempt to present an empty show.")
+      //window.location.href = './slideshow/Show/list'
+    }
+    else {
+      window.sessionStorage.setItem('id', this.props.id)
+      window.location.href = './slideshow/Slide/Present/?id=' + this.props.id
+    }
   }
 
   render() {

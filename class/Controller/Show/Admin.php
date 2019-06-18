@@ -53,8 +53,7 @@ class Admin extends Base
 
     protected function postCommand(Request $request)
     {
-        $show = $this->factory->post($request);
-        return array('show'=>$show->getStringVars());
+        return $this->factory->post($request);
     }
 
     protected function patchCommand(Request $request)

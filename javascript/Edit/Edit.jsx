@@ -10,7 +10,7 @@ export default class Edit extends Component {
 
     this.state = {
       currentSlide: 0,
-      id: -1,
+      id: window.sessionStorage.getItem('id'),
       content: [
         {
           saveContent: undefined,

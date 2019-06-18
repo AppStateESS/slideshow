@@ -41,7 +41,7 @@ class ShowFactory extends Base
         //$show->content = [];
         $this->saveResource($show);
         //$this->createImageDirectory($show);
-        return $show;
+        return $show->id;
     }
 
     public function put(Request $request)

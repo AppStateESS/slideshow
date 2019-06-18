@@ -30,8 +30,9 @@ export default class NavBar extends Component {
       //window.location.href = './slideshow/Show/list'
     }
     else {
+      this.props.saveDB()
       window.sessionStorage.setItem('id', this.props.id)
-      window.location.href = './slideshow/Slide/Present/?id=' + this.props.id
+      window.setInterval(() => window.location.href = './slideshow/Slide/Present/?id=' + this.props.id, 100)
     }
   }
 
@@ -64,7 +65,6 @@ NavBar.propTypes = {
   insertSlide: PropTypes.func,
   deleteSlide: PropTypes.func,
   currentSlide: PropTypes.number,
-  redirect: PropTypes.func,
   saveDB: PropTypes.func,
   id: PropTypes.number,
 }

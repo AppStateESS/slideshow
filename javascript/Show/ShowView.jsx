@@ -35,7 +35,7 @@ export default class ShowView extends Component {
         dataType: 'json',
         success: function(showId) {
           window.sessionStorage.setItem('id', showId)
-          window.location.href = './slideshow/Slide/Edit'
+          window.setInterval(() => window.location.href = './slideshow/Slide/Edit', 200)
         }.bind(this),
         error: function(req, err) {
           alert("Failed to save data.")

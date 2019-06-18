@@ -16,21 +16,24 @@ export default class PresentView extends Component {
   }
 
   render() {
-    let viewspace = (this.parseQ(this.props.content.isQuiz)) ?
-      (<QuizViewspace
-        content={this.props.content}
-        currentSlide={this.props.currentSlide}
-        highestSlide={this.props.high}
-        next={this.props.nextSlide}
-        validate={this.props.validate} />) :
-      <Viewspace content={this.props.content} />
-    return (
-      <div className="mh-100">
-        <div className="jumbotron" style={{minHeight: 350}}>
-          {viewspace}
+    if (this.props.content != undefined) {
+      let viewspace = (this.parseQ(this.props.content.isQuiz)) ?
+        (<QuizViewspace
+          content={this.props.content}
+          currentSlide={this.props.currentSlide}
+          highestSlide={this.props.high}
+          next={this.props.nextSlide}
+          validate={this.props.validate} />) :
+        <Viewspace content={this.props.content} />
+      return (
+        <div className="mh-100">
+          <div className="jumbotron" style={{minHeight: 350}}>
+            {viewspace}
+          </div>
         </div>
-      </div>
-    )
+      )
+    }
+    return null
   }
 }
 

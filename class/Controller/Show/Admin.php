@@ -51,26 +51,9 @@ class Admin extends Base
         return $this->view->adminShow();
     }
 
-    /**
-    * Handles the request to render the edit page.
-    */
-    protected function editHtmlCommand(Request $request)
-    {
-      return $this->view->edit();
-    }
-
-    /**
-    * Handles the request to render the present page.
-    */
-    protected function presentHtmlCommand(Request $request)
-    {
-      return $this->view->present();
-    }
-
     protected function postCommand(Request $request)
     {
-        $show = $this->factory->post($request);
-        return array('show'=>$show->getStringVars());
+        return $this->factory->post($request);
     }
 
     protected function patchCommand(Request $request)
@@ -82,31 +65,6 @@ class Admin extends Base
     protected function listJsonCommand(Request $request)
     {
         return array('listing'=>$this->factory->listing(true));
-    }
-
-    protected function editJsonCommand(Request $request)
-    {
-      $vars = $request->getRequestVars();
-      $id = $vars['id'];
-      return array(
-        'slides'=> $this->factory->getSlides($id),
-        'id' => $id
-      );
-    }
-
-    protected function presentJsonCommand(Request $request)
-    {
-      $vars = $request->getRequestVars();
-      $id = $vars['id'];
-      return array(
-        'slides' => $this->factory->getSlides($id),
-        'title' => $this->factory->getShowName($id),
-      );
-    }
-
-    protected function viewHtmlCommand(Request $request)
-    {
-        return 'viewHtmlCommand empty';
     }
 
     protected function deleteCommand(Request $request)
@@ -126,7 +84,7 @@ class Admin extends Base
         return json_encode($shows);
     }
 
-    protected function getJsonView($data, \Canopy\Request $request)
+    protected function getJsonView($data, Request $request)
     {
       $vars = $request->getRequestVars();
       $command = '';

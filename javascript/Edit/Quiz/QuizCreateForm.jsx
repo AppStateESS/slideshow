@@ -57,7 +57,7 @@ export default class QuizCreateForm extends Component {
 
   componentDidMount() {
     if (this.props.quizContent != undefined) {
-      this.setState({quizContent: this.props.quizContent}, () => {
+      this.setState({quizContent: JSON.parse(this.props.quizContent)}, () => {
         this.load()
       })
     }
@@ -76,7 +76,7 @@ export default class QuizCreateForm extends Component {
       })
     }
     // save answers
-    this.props.saveQC(nqContent)
+    this.props.saveQC(JSON.stringify(nqContent))
     // save slide show
     this.props.saveDB()
   }
@@ -322,7 +322,7 @@ export default class QuizCreateForm extends Component {
 }
 
 QuizCreateForm.propTypes = {
-  quizContent: PropTypes.object,
+  quizContent: PropTypes.string,
   saveQC: PropTypes.func,
   toggle: PropTypes.func,
   saveDB: PropTypes.func,

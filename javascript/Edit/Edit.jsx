@@ -10,13 +10,13 @@ export default class Edit extends Component {
 
     this.state = {
       currentSlide: 0,
-      id: -1,
+      id: window.sessionStorage.getItem('id'),
       content: [
         {
           saveContent: undefined,
           quizContent: undefined,
           isQuiz: false,
-          id: 0
+          id: 0 // This is an indexable id for saving and delteing slides
         },
       ],
     }
@@ -24,7 +24,6 @@ export default class Edit extends Component {
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
-    this.redirect = this.redirect.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
     this.addNewQuiz = this.addNewQuiz.bind(this)
@@ -38,35 +37,57 @@ export default class Edit extends Component {
     this.load()
   }
 
-
   save() {
+    let c = this.state.content[this.state.currentSlide].isQuiz ?
+          /* if quiz */ this.state.content[this.state.currentSlide].quizContent :
+          /* else    */ this.state.content[this.state.currentSlide].saveContent
     $.ajax({
-      url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
-      data: {content: this.state.content},
+      url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
+      data: {
+        content: c,
+        index: this.state.content[this.state.currentSlide].id,
+        isQuiz: this.state.content[this.state.currentSlide].isQuiz
+      },
       type: 'put',
       dataType: 'json',
-      success: function() {
-        this.load();
-      }.bind(this),
-      error: function(req, err) {
+      error: (req, err) => {
         alert("Failed to save show " + window.sessionStorage.getItem('id'))
+        document.write(req.responseJSON.backtrace[0].args[1].xdebug_message)
         console.error(req, err.toString());
-      }.bind(this)
-    });
+      }
+    })
   }
 
 
   load() {
     $.ajax({
-      url: './slideshow/Show/edit/?id=' + window.sessionStorage.getItem('id'),
+      url: './slideshow/Slide/edit/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
       dataType: 'json',
       success: function (data) {
         let loaded = data['slides']
-        if (loaded != null) {
+        if (loaded[0] != undefined) {
+          let showContent = []
+          for (let i = 0; i < loaded.length; i++) {
+            let saveC = undefined
+            let quizC = undefined
+            let isQ = this.quizConv(loaded[i].isQuiz)
+            if (!isQ) {
+              saveC = loaded[i].content
+            } else {
+              quizC = loaded[i].content
+            }
+            showContent.push({
+              isQuiz: isQ,
+              saveContent: saveC,
+              quizContent: quizC,
+              id: loaded[i].slideIndex // This may not be needed
+            })
+          }
+
           this.setState({
-            content: loaded,
-            id: data['id']
+            content: showContent,
+            id: loaded[0].showId
           });
         }
       }.bind(this),
@@ -78,23 +99,8 @@ export default class Edit extends Component {
   }
 
 
-  redirect(url) {
-    $.ajax({
-      url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
-      data: {content: this.state.content},
-      type: 'put',
-      dataType: 'json',
-      success: function() {
-        window.location.href = url
-      }.bind(this),
-      error: function(req, err) {
-        alert("Failed to save show " + window.sessionStorage.getItem('id'))
-        console.error(req, err.toString());
-      }.bind(this)
-    });
-  }
-
   setCurrentSlide(val) {
+    this.save()
     this.setState({
       currentSlide: val
     })
@@ -105,16 +111,18 @@ export default class Edit extends Component {
     if (typeof(quiz) === 'object') quiz = false // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
+    const newId = Number(this.state.content[this.state.currentSlide].id) + 1
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
-        isQuiz: quiz
+        isQuiz: quiz,
+        id: newId
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
     this.setState({
+      currentSlide: index,
       content: copy,
-      currentSlide: index
     })
   }
 
@@ -139,6 +147,15 @@ export default class Edit extends Component {
     if (this.state.currentSlide == copy.length) {
       newIndex = this.state.currentSlide - 1
     }
+
+    $.ajax({
+      url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
+      type: 'patch',
+      data: {index: this.state.content[this.state.currentSlide].id},
+      error: (req, res) => {
+        console.error(req, res.toString());
+      }
+    })
 
     this.setState({
       content: copy,
@@ -165,10 +182,11 @@ export default class Edit extends Component {
   }
 
   quizConv(quizT) {
-    // When we load from the data base the isQuiz boolean is loaded in as a string
+    // When we load from the data base the isQuiz boolean
+    // is loaded in as a string or a number
     // We need to handle that and bring it back to a boolean
-    // There might be another simpler way around this somewhere else in the code.
     if (quizT == undefined) return false // initial load
+    if (typeof(quizT) === 'number') return (quizT != 0)
     return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
   }
 
@@ -185,15 +203,13 @@ export default class Edit extends Component {
           addToStack        ={this.addToStack}
           currentSlide      ={this.state.currentSlide}
           insertQuiz        ={this.addNewQuiz}
-          saveDB            ={this.save}
-          redirect          ={this.redirect}/>
+          saveDB            ={this.save}/>
         <div className="row">
           <SlidesView
             slides          ={this.state.content}
             currentSlide    ={this.state.currentSlide}
             setCurrentSlide ={this.setCurrentSlide}
-            addNewSlide     ={this.addNewSlide}
-            saveDB          ={this.save}/>
+            addNewSlide     ={this.addNewSlide}/>
           <EditView
             currentSlide    ={this.state.currentSlide}
             content         ={this.state.content[this.state.currentSlide]}

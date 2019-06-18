@@ -19,7 +19,7 @@ export default class Viewspace extends Component {
     }
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     if (prevProps.content.saveContent != this.props.content.saveContent) {
       this.loadEditorState()
     }

@@ -27,14 +27,15 @@ export default class ShowView extends Component {
 
   saveNewShow() {
     if (this.state.resource.title != null) {
+      // new show
       $.ajax({
         url: './slideshow/Show',
         data: this.state.resource,
         type: 'post',
         dataType: 'json',
-        success: function() {
-          this.switchModal()
-          this.getData()
+        success: function(showId) {
+          window.sessionStorage.setItem('id', showId)
+          window.setInterval(() => window.location.href = './slideshow/Slide/Edit', 200)
         }.bind(this),
         error: function(req, err) {
           alert("Failed to save data.")

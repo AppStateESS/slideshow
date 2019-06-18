@@ -11,29 +11,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * @author Matthew McNaney <mcnaney at gmail dot com>
+ * @author Tyler Craig <craigta1 at appstate dot edu>
  *
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace slideshow\Controller\Show;
+namespace slideshow\Controller\Slide;
 
 use Canopy\Request;
-use slideshow\Factory\ShowFactory as Factory;
-use slideshow\View\ShowView as View;
+use slideshow\Factory\SlideFactory as Factory;
+use slideshow\View\SlideView as View;
 use slideshow\Controller\RoleController;
 
 class Base extends RoleController
 {
 
     /**
-     * @var slideshow\Factory\ShowFactory
+     * @var slideshow\Factory\SlideFactory
      */
     protected $factory;
 
     /**
-     * @var slideshow\View\ShowView
-     */
+    * @var slideshow\View\SlideView
+    */
     protected $view;
 
     protected function loadFactory()
@@ -44,6 +44,27 @@ class Base extends RoleController
     protected function loadView()
     {
         $this->view = new View;
+    }
+
+    /**
+    * Renders the view for edit
+    */
+    protected function editHtmlCommand(Request $request)
+    {
+        return $this->view->edit();
+    }
+
+    /**
+    * Renders the view for present
+    */
+    protected function presentHtmlCommand(Request $request)
+    {
+        return $this->view->present();
+    }
+
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->get($request);
     }
 
 }

@@ -26,7 +26,7 @@ export default class PresentView extends Component {
       <Viewspace content={this.props.content} />
     return (
       <div className="mh-100">
-        <div className="jumbotron" style={{minHeight: 350}}>
+        <div className="jumbotron" style={{minHeight: 350, backgroundColor: this.props.content.backgroundColor}}>
           {viewspace}
         </div>
       </div>

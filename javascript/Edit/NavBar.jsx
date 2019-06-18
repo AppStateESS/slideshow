@@ -48,7 +48,8 @@ export default class NavBar extends Component {
            </DropdownButton>
            <Button variant="secondary" onClick={this.handlePresent}>Present</Button>
         </ButtonGroup>
-          <Settings />
+          <Settings
+            changeBackground={this.props.changeBackground}/>
       </ButtonToolbar>
     </div>
     )
@@ -63,4 +64,5 @@ NavBar.propTypes = {
   redirect: PropTypes.func,
   saveDB: PropTypes.func,
   id: PropTypes.number,
+  changeBackground: PropTypes.func
 }

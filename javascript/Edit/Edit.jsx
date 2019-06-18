@@ -16,7 +16,8 @@ export default class Edit extends Component {
           saveContent: undefined,
           quizContent: undefined,
           isQuiz: false,
-          id: 0
+          id: 0,
+          backgroundColor: '#E5E7E9'
         },
       ],
     }
@@ -32,6 +33,7 @@ export default class Edit extends Component {
     this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
     this.saveContentState = this.saveContentState.bind(this)
     this.saveQuizContent = this.saveQuizContent.bind(this)
+    this.changeBackground = this.changeBackground.bind(this)
   }
 
   componentDidMount() {
@@ -108,7 +110,8 @@ export default class Edit extends Component {
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
-        isQuiz: quiz
+        isQuiz: quiz,
+        backgroundColor: '#E5E7E9'
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
@@ -172,6 +175,12 @@ export default class Edit extends Component {
     return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
   }
 
+  changeBackground(newColor) {
+    let c = [...this.state.content]
+    c[this.state.currentSlide].backgroundColor = newColor
+    this.setState({content: c})
+  }
+
 
   render() {
     let isQuiz = this.quizConv(this.state.content[this.state.currentSlide].isQuiz)
@@ -186,7 +195,8 @@ export default class Edit extends Component {
           currentSlide      ={this.state.currentSlide}
           insertQuiz        ={this.addNewQuiz}
           saveDB            ={this.save}
-          redirect          ={this.redirect}/>
+          redirect          ={this.redirect}
+          changeBackground  ={this.changeBackground}/>
         <div className="row">
           <SlidesView
             slides          ={this.state.content}

@@ -76,6 +76,9 @@ class SlideFactory extends Base
         $showId = intval($vars['Slide']);
 
         $slideIndex = $request->pullPutVarIfSet('index');
+        $content = $request->pullPutVarIfSet('content');
+        $isQuiz = $request->pullPutVarIfSet('isQuiz');
+        $backgroundColor = $request->pullPutVarIfSet('backgroundColor');
 
         $resourceId = $this->getResourceId($showId, $slideIndex);
 
@@ -87,11 +90,21 @@ class SlideFactory extends Base
             $resource = $this->build();
         }
 
+        // Update the resource fields
         $resource->showId = $showId;
-        $resource->content = $request->pullPutVarIfSet('content');
-        $resource->slideIndex = $slideIndex;
-        $resource->isQuiz = $request->pullPutVarIfSet('isQuiz');
-        //$resource->backgorundColor = $request->pullPutVarIfSet('color');
+
+        if (gettype($slideIndex) != 'boolean') {
+            $resource->slideIndex = $slideIndex;
+        }
+        if (gettype($content) != 'boolean') {
+            $resource->content = $content;
+        }
+        if (gettype($isQuiz) == 'string') {
+            $resource->isQuiz = $isQuiz;
+        }
+        if (gettype($backgroundColor) != 'boolean') {
+            $resource->backgroundColor = $backgroundColor;
+        }
 
         $this->saveResource($resource);
         return $resource;

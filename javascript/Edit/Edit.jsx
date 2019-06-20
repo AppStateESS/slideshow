@@ -3,6 +3,11 @@ import React, { Component } from 'react'
 import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import SlidesView from './SlidesView.jsx'
+import {
+  Button,
+  InputGroup,
+  FormControl,
+} from 'react-bootstrap'
 
 export default class Edit extends Component {
   constructor() {
@@ -11,6 +16,8 @@ export default class Edit extends Component {
     this.state = {
       currentSlide: 0,
       id: window.sessionStorage.getItem('id'),
+      showTitle: 'Edit:',
+      edit: false,
       content: [
         {
           saveContent: undefined,
@@ -29,7 +36,10 @@ export default class Edit extends Component {
     this.addNewSlide = this.addNewSlide.bind(this)
     this.addNewQuiz = this.addNewQuiz.bind(this)
     this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this)
-    this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
+    this.updateTitle = this.updateTitle.bind(this)
+    this.updateTitleEdit = this.updateTitleEdit.bind(this)
+    this.editTitle = this.editTitle.bind(this)
+    this.saveTitle = this.saveTitle.bind(this)
     this.saveContentState = this.saveContentState.bind(this)
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.changeBackground = this.changeBackground.bind(this)
@@ -83,6 +93,7 @@ export default class Edit extends Component {
               isQuiz: isQ,
               saveContent: saveC,
               quizContent: quizC,
+              backgroundColor: loaded[i].backgroundColor,
               id: loaded[i].slideIndex // This may not be needed
             })
           }
@@ -166,8 +177,32 @@ export default class Edit extends Component {
     })
   }
 
-  renameCurrentSlide(value) {
-    alert("This has not yet been implemented")
+  updateTitle(value) {
+    this.setState({showTitle: value})
+  }
+
+  updateTitleEdit(event) {
+    this.setState({showTitle: event.target.value})
+  }
+
+  editTitle() {
+    this.setState({edit: true})
+  }
+
+  saveTitle() {
+    $.ajax({
+      url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
+      data: {title: this.state.showTitle},
+      type: 'put',
+      dataType: 'json',
+      success: function() {
+        this.setState({edit: false})
+      }.bind(this),
+      error: function(req, err) {
+        alert("Failed to save data.")
+        console.error(req, err.toString());
+      }.bind(this)
+    });
   }
 
   saveContentState(saveContent) {
@@ -194,6 +229,15 @@ export default class Edit extends Component {
   }
 
   changeBackground(newColor) {
+    $.ajax({
+      url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
+      data: {index: this.state.currentSlide, backgroundColor: newColor},
+      type: 'put',
+      error: (req, res) => {
+        console.error(req, res.toString())
+      }
+    })
+
     let c = [...this.state.content]
     c[this.state.currentSlide].backgroundColor = newColor
     this.setState({content: c})
@@ -202,8 +246,30 @@ export default class Edit extends Component {
 
   render() {
     let isQuiz = this.quizConv(this.state.content[this.state.currentSlide].isQuiz)
+    let cardTitle;
+    if (this.state.edit) {
+      cardTitle = <InputGroup>
+                    <FormControl
+                      style={{maxWidth: 350}}
+                      placeholder={this.state.showTitle}
+                      onChange={this.updateTitleEdit}
+                    />
+                    <InputGroup.Append>
+                      <Button variant="primary" onClick={this.saveTitle}>Save</Button>
+                    </InputGroup.Append>
+                  </InputGroup>
+    } else {
+      cardTitle = <div>
+                    {this.state.showTitle}
+                    <a onClick={this.editTitle} style={{paddingLeft: "10px", cursor: "pointer"}}>
+                      <i className="fas fa-edit fa-sm"></i>
+                    </a>
+                  </div>
+    }
+
     return (
       <div>
+      <h2><u>{cardTitle}</u></h2>
         <NavBar
           id                ={Number(this.state.id)}
           insertSlide       ={this.addNewSlide}
@@ -213,7 +279,8 @@ export default class Edit extends Component {
           currentSlide      ={this.state.currentSlide}
           insertQuiz        ={this.addNewQuiz}
           saveDB            ={this.save}
-          changeBackground  ={this.changeBackground}/>
+          changeBackground  ={this.changeBackground}
+          updateTitle       ={this.updateTitle}/>
         <div className="row">
           <SlidesView
             slides          ={this.state.content}

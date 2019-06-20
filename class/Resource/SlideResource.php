@@ -49,6 +49,12 @@ class SlideResource extends BaseAbstract
     */
     protected $isQuiz;
 
+    /**
+    * Slide backgroundColor
+    * @var phpws2\Variable\StringVar
+    */
+    protected $backgroundColor;
+
     public function __construct()
     {
         parent::__construct();
@@ -56,6 +62,7 @@ class SlideResource extends BaseAbstract
         $this->slideIndex = new \phpws2\Variable\SmallInteger(0, 'slideIndex');
         $this->content = new \phpws2\Variable\StringVar(null, 'content');
         $this->isQuiz = new \phpws2\Variable\BooleanVar(0, 'isQuiz');
+        $this->backgroundColor = new \phpws2\Variable\StringVar('#E5E7E9', 'backgroundColor');
     }
 
 }

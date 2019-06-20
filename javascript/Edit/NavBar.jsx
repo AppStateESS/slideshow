@@ -57,7 +57,9 @@ export default class NavBar extends Component {
            <Button variant="secondary" onClick={this.handlePresent}>Present</Button>
         </ButtonGroup>
           <Settings
-            changeBackground={this.props.changeBackground}/>
+            changeBackground ={this.props.changeBackground}
+            id               ={this.props.id}
+            updateTitle      ={this.props.updateTitle}/>
       </ButtonToolbar>
     </div>
     )

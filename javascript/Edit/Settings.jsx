@@ -20,15 +20,20 @@ export default class Settings extends Component {
     super()
     this.state = {
       settings: false,
-      background: 'blue',
-      slidetime: '2s',
+      background: '#E5E7E9',
+      slideTimer: '2s',
       dipslaySketchPicker: false
     }
 
     this.toggleSettings = this.toggleSettings.bind(this)
     this.handleColorChange = this.handleColorChange.bind(this)
+    this.load = this.load.bind(this)
     this.changeTime = this.changeTime.bind(this)
     this.handleSketchPicker = this.handleSketchPicker.bind(this)
+  }
+
+  componentDidMount() {
+    this.load()
   }
 
   toggleSettings() {
@@ -40,8 +45,37 @@ export default class Settings extends Component {
     this.props.changeBackground(color.hex)
   }
 
+  load() {
+    let time = -1
+    $.ajax({
+      url: './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
+      type: 'GET',
+      dataType:'json',
+      success: function (data) {
+        time = String(data[0].slideTimer) + 's'
+        this.setState({
+          slideTimer: time
+        })
+        this.props.updateTitle(data[0].title)
+      }.bind(this),
+      error: (req, res) => {
+        console.error(req, res.toString())
+      }
+    })
+  }
+
   changeTime(event) {
-    this.setState({slidetime: event.target.value})
+    // converts to number
+    this.setState({slideTimer: event.target.value})
+    const time = parseInt(event.target.value, 10)
+    $.ajax({
+      url: './slideshow/Show/' + this.props.id,
+      data: {slideTimer: time},
+      type: 'put',
+      error: (req, res) => {
+        console.error(req, res.toString())
+      }
+    })
   }
 
   handleSketchPicker() {
@@ -95,7 +129,7 @@ export default class Settings extends Component {
                   </OverlayTrigger>
                 </Col>
                 <Col>
-                  <Form.Control as="select" value={this.state.slidetime} onChange={this.changeTime}>
+                  <Form.Control as="select" value={this.state.slideTimer} onChange={this.changeTime}>
                     <option>0s</option>
                     <option>1s</option>
                     <option>2s</option>
@@ -113,7 +147,7 @@ export default class Settings extends Component {
               <Col sm={4}>
                 <CirclePicker
                   colors = {["#CD6155", "#EC7063", "#AF7AC5", "#A569BD", "#5499C7", "#5DADE2", "#48C9B0", "#45B39D",
-                   "#52BE80", "#58D68D", "#F4D03F", "#F5B041", "#FAD7A0", "#EB984E", "#DC7633", "#E5E7E9", "#CACFD2", "#AAB7B8"]}
+                   "#52BE80", "#58D68D", "#F4D03F", "#F5B041", "#FAD7A0", "#EB984E", "#DC7633", "#AAB7B8", "#CACFD2", "#E5E7E9"]}
                   onChangeComplete={this.handleColorChange}
                 />
                 </Col>
@@ -122,10 +156,10 @@ export default class Settings extends Component {
                   <OverlayTrigger
                   placement = 'right'
                   overlay={
-                    <Popover title="Custom Slide Background Color">
-                      Enter hex value or click anywhere on the color scale.
-                    </Popover>
-                  }>
+                      <Popover title="Custom Slide Background Color">
+                        Enter hex value or click anywhere on the color scale.
+                      </Popover>
+                      }>
                      <button
                      className="ColorPicker"
                      style={colorPickStyle}

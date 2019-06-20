@@ -33,6 +33,11 @@ class ShowResource extends BaseAbstract
      */
     protected $active;
 
+    /**
+     *
+     * @var \phpws2\Variable\SmallInteger
+     */
+    protected $slideTimer;
 
     protected $table = 'ss_show';
 
@@ -42,7 +47,7 @@ class ShowResource extends BaseAbstract
         $this->title = new \phpws2\Variable\StringVar(null, 'title');
         $this->title->setLimit('255');
         $this->active = new \phpws2\Variable\BooleanVar(0, 'active');
-        // TODO: slideshow timer
+        $this->slideTimer = new \phpws2\Variable\SmallInteger(2, 'slideTimer');
     }
 
     public function getImagePath()

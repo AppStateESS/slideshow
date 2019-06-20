@@ -124,7 +124,7 @@ export default class ShowCard extends Component {
     if (this.state.edit) {
       cardTitle = <InputGroup>
                     <FormControl
-                      placeholder={this.state.title}
+                      value={this.state.title}
                       onChange={this.updateTitle}
                     />
                     <InputGroup.Append>
@@ -132,7 +132,7 @@ export default class ShowCard extends Component {
                     </InputGroup.Append>
                   </InputGroup>
     } else {
-      cardTitle = <div>
+      cardTitle = <div style={{maxWidth: 250, textAlign: 'center'}}>
                     {this.state.title}
                     <a onClick={this.editTitle} style={{paddingLeft: "10px", cursor: "pointer"}}>
                       <i className="fas fa-edit fa-sm"></i>

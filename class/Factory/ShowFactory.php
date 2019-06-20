@@ -55,13 +55,22 @@ class ShowFactory extends Base
       // Update/PUT the values that are changed:
       // pullPutVarIfSet will return false if not set
       $title = $request->pullPutVarIfSet('title');
-      $active = $request->pullPutVarIfSet('active');
+      $active = $resource->active;
+      try {
+          $active = $request->pullPutVar('active');
+      }
+      catch (\phpws2\Exception\ValueNotSet $e) {
+          // putvar was not set for active
+      }
+
+      $slideTimer = intval($request->pullPutVarIfSet('slideTimer'));
       // if any of the vars are set to false we don't need to update them.
       if (gettype($title) == "string") {
         $resource->title = $title;
       }
 
       $resource->active = $active;
+      $resource->slideTimer = $slideTimer;
       // Save the updated resource to the Database
       $this->saveResource($resource);
       return $resource;
@@ -119,18 +128,20 @@ class ShowFactory extends Base
         }
     }
 
-    public function getShowName($showId)
+    public function getShowDetails($request)
     {
-      if ($showId == null || $showId == -1) {
+        // Pull the id from the request:
+        $vars = $request->getRequestVars();
+        $showId = intval($vars['id']);
+        if ($showId == null || $showId == -1) {
         throw new \Exception("ShowId is not valid: $showId", 1);
-      }
-      $sql = "SELECT title FROM ss_show WHERE id=:showId;";
-      $db = Database::getDB();
-      $pdo = $db->getPDO();
-      $q = $pdo->prepare($sql);
-      $q->execute(array('showId'=>$showId));
-      $title = $q->fetchColumn(0);
-      return $title;
+        }
+        $sql = "SELECT title, slideTimer FROM ss_show WHERE id=:showId;";
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        $q->execute(array('showId'=>$showId));
+        return $q->fetchAll();
     }
 
     public function listing($showAll = false)

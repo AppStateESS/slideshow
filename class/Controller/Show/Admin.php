@@ -84,6 +84,11 @@ class Admin extends Base
         return json_encode($shows);
     }
 
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->getShowDetails($request);
+    }
+
     protected function getJsonView($data, Request $request)
     {
       $vars = $request->getRequestVars();

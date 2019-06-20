@@ -30,6 +30,8 @@ class slideshowUpdate
         $this->update('1.2.0');
       case $this->compare('1.3.0'):
         $this->update('1.3.0');
+      case $this->compare('1.3.1'):
+        $this->update('1.3.1');
     }
   }
 
@@ -83,6 +85,24 @@ class slideshowUpdate
 
       $changes[] = 'Slide data is pulled out and saved seperately';
       $this->addContent('1.3.0', $changes);
+  }
+
+  private function v1_3_1()
+  {
+      $db = \phpws2\Database::getDB();
+
+      $tbl = $db->addTable('ss_show');
+      $dt = new \phpws2\Variable\SmallInteger($tbl, 'slideTimer');
+      $dt->setDefault(2);
+      $dt->add();
+
+
+      $tbl = $db->addTable('ss_slide');
+      $sql = "ALTER TABLE ss_slide ADD backgroundColor varchar(7) DEFAULT '#E5E7E9';";
+      $pdo = $db->getPDO();
+      $q = $pdo->prepare($sql);
+      $q->execute();
+
   }
 
   private function addContent($version, array $changes)

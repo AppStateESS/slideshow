@@ -20,7 +20,6 @@ export default class Settings extends Component {
     super()
     this.state = {
       settings: false,
-      background: '#E5E7E9',
       slideTimer: '2s',
       dipslaySketchPicker: false
     }
@@ -41,7 +40,6 @@ export default class Settings extends Component {
   }
 
   handleColorChange(color) {
-    this.setState({background: color.hex})
     this.props.changeBackground(color.hex)
   }
 
@@ -89,12 +87,12 @@ export default class Settings extends Component {
       {
         colorPick = <div className="SketchPicker">
                       <SketchPicker
-                      color={this.state.background}
+                      color={this.props.currentColor}
                       onChangeComplete={this.handleColorChange}
                       />
                     </div>
       }
-      let colorPickStyle = (this.state.hover) ? {borderColor: this.state.background} : {color: this.state.background}
+      let colorPickStyle = (this.state.hover) ? {borderColor: this.props.currentColor} : {color: this.props.currentColor}
     return (
 
       <ButtonGroup style={{marginLeft: 10}} aria-label="settings">
@@ -125,7 +123,7 @@ export default class Settings extends Component {
                     </Popover>
                   }
                   >
-                    <a><i className="far fa-question-circle"></i></a>
+                    <a style={{marginLeft: 10}}><i className="far fa-question-circle"></i></a>
                   </OverlayTrigger>
                 </Col>
                 <Col>
@@ -157,7 +155,7 @@ export default class Settings extends Component {
                   placement = 'right'
                   overlay={
                       <Popover title="Custom Slide Background Color">
-                        Enter hex value or click anywhere on the color scale.
+                        Click to enter custom color
                       </Popover>
                       }>
                      <button

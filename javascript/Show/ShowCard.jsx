@@ -171,7 +171,7 @@ export default class ShowCard extends Component {
               <OverlayTrigger placement="bottom"
                 overlay={
                   <Tooltip>
-                    Click to make active for students
+                    Activate for students
                   </Tooltip>
                   }>
               <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>

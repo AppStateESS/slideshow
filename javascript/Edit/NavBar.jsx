@@ -59,7 +59,8 @@ export default class NavBar extends Component {
           <Settings
             changeBackground ={this.props.changeBackground}
             id               ={this.props.id}
-            updateTitle      ={this.props.updateTitle}/>
+            updateTitle      ={this.props.updateTitle}
+            currentColor     ={this.props.currentColor}/>
       </ButtonToolbar>
     </div>
     )
@@ -73,5 +74,7 @@ NavBar.propTypes = {
   currentSlide: PropTypes.number,
   saveDB: PropTypes.func,
   id: PropTypes.number,
-  changeBackground: PropTypes.func
+  changeBackground: PropTypes.func,
+  currentColor: PropTypes.string,
+  updateTitle: PropTypes.func,
 }

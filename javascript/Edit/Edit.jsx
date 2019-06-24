@@ -251,7 +251,7 @@ export default class Edit extends Component {
       cardTitle = <InputGroup>
                     <FormControl
                       style={{maxWidth: 350}}
-                      placeholder={this.state.showTitle}
+                      value={this.state.showTitle}
                       onChange={this.updateTitleEdit}
                     />
                     <InputGroup.Append>
@@ -260,7 +260,9 @@ export default class Edit extends Component {
                   </InputGroup>
     } else {
       cardTitle = <div>
+                    <u>
                     {this.state.showTitle}
+                    </u>
                     <a onClick={this.editTitle} style={{paddingLeft: "10px", cursor: "pointer"}}>
                       <i className="fas fa-edit fa-sm"></i>
                     </a>
@@ -269,7 +271,7 @@ export default class Edit extends Component {
 
     return (
       <div>
-      <h2><u>{cardTitle}</u></h2>
+      <h2>{cardTitle}</h2>
         <NavBar
           id                ={Number(this.state.id)}
           insertSlide       ={this.addNewSlide}
@@ -280,7 +282,8 @@ export default class Edit extends Component {
           insertQuiz        ={this.addNewQuiz}
           saveDB            ={this.save}
           changeBackground  ={this.changeBackground}
-          updateTitle       ={this.updateTitle}/>
+          updateTitle       ={this.updateTitle}
+          currentColor      ={this.state.content[this.state.currentSlide].backgroundColor}/>
         <div className="row">
           <SlidesView
             slides          ={this.state.content}

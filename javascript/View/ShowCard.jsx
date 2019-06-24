@@ -67,7 +67,7 @@ export default class ShowCard extends Component {
         <OverlayTrigger placement="bottom"
           overlay={
             <Tooltip>
-              Slideshow Not Complete
+              Incomplete. Click to continue
             </Tooltip>
           }>
             <Button onClick={this.presentTransition} variant="warning">Continue</Button>
@@ -78,7 +78,7 @@ export default class ShowCard extends Component {
         <OverlayTrigger placement="bottom"
           overlay={
             <Tooltip>
-              Slides Completed. Click to Review
+              Completed. Click to review
             </Tooltip>
           }>
             <Button onClick={this.presentTransition} variant="success" >Review</Button>

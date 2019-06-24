@@ -1,6 +1,15 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import { Card, CardBody, CardTitle, CardImg, Button, Alert } from 'reactstrap'
+import {
+  Card,
+  Button,
+  Alert,
+  InputGroup,
+  FormControl,
+  Overlay,
+  OverlayTrigger,
+  Tooltip,
+} from 'react-bootstrap'
 import './custom.css'
 
 import ShowLogo from "../../img/showimg.png"
@@ -113,14 +122,17 @@ export default class ShowCard extends Component {
   render() {
     let cardTitle;
     if (this.state.edit) {
-      cardTitle = <div className="input-group">
-                    <input type="text" className="form-control" placeholder={this.state.title} onChange={this.updateTitle}/>
-                    <div className="input-group-append">
-                      <button type="button" className="btn btn-outline-primary" onClick={this.handleSave}>Save</button>
-                    </div>
-                  </div>
+      cardTitle = <InputGroup>
+                    <FormControl
+                      value={this.state.title}
+                      onChange={this.updateTitle}
+                    />
+                    <InputGroup.Append>
+                      <Button variant="primary" onClick={this.handleSave}>Save</Button>
+                    </InputGroup.Append>
+                  </InputGroup>
     } else {
-      cardTitle = <div>
+      cardTitle = <div style={{maxWidth: 250, textAlign: 'center'}}>
                     {this.state.title}
                     <a onClick={this.editTitle} style={{paddingLeft: "10px", cursor: "pointer"}}>
                       <i className="fas fa-edit fa-sm"></i>
@@ -132,9 +144,9 @@ export default class ShowCard extends Component {
     let activeBtnType = (this.state.active !== 0) ? "btn btn-outline-success" : "btn btn-outline-danger"
 
     const delAlert = <div className="alert-delete">
-                       <Alert color="secondary" className="text-danger" isOpen={this.state.alert} toggle={this.deleteAlert}>
+                       <Alert variant="danger" className="text-danger" show={this.state.alert} onClose={this.deleteAlert} dismissible>
                          <span style={{marginLeft: 30}}>Are you sure?</span>
-                         <Button style={{marginLeft: 20}} outline color="danger" onClick={this.deleteShow}>Delete</Button>
+                         <Button style={{marginLeft: 20}} variant="outline-danger" onClick={this.deleteShow}>Delete</Button>
                        </Alert>
                      </div>
     let activeX = (this.state.closex) ? (<a className="close card-text" aria-label="Close" onClick={this.deleteAlert}>
@@ -149,16 +161,23 @@ export default class ShowCard extends Component {
             {activeX}
             <img className="card-img-top" src={this.state.img}/>
           </div>
-          <CardBody>
-            <CardTitle className="d-flex justify-content-center">
+          <Card.Body>
+            <Card.Title className="d-flex justify-content-center">
               {cardTitle}
-            </CardTitle>
+            </Card.Title>
             <div className="d-flex justify-content-around">
-              <Button onClick={this.presentTransition} color="primary">Present</Button>
-              <Button onClick={this.editTransition} color="secondary">Edit</Button>
+              <Button onClick={this.presentTransition} variant="primary">Present</Button>
+              <Button onClick={this.editTransition} variant="secondary">Edit</Button>
+              <OverlayTrigger placement="bottom"
+                overlay={
+                  <Tooltip>
+                    Activate for students
+                  </Tooltip>
+                  }>
               <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>
+              </OverlayTrigger>
             </div>
-          </CardBody>
+          </Card.Body>
         </Card>
       </div>
     )

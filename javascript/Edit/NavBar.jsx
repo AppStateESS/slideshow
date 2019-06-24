@@ -9,6 +9,8 @@ import {
   DropdownButton
 } from 'react-bootstrap'
 
+import Settings from './Settings.jsx'
+
 export default class NavBar extends Component {
   constructor() {
     super()
@@ -54,6 +56,11 @@ export default class NavBar extends Component {
            </DropdownButton>
            <Button variant="secondary" onClick={this.handlePresent}>Present</Button>
         </ButtonGroup>
+          <Settings
+            changeBackground ={this.props.changeBackground}
+            id               ={this.props.id}
+            updateTitle      ={this.props.updateTitle}
+            currentColor     ={this.props.currentColor}/>
       </ButtonToolbar>
     </div>
     )
@@ -67,4 +74,7 @@ NavBar.propTypes = {
   currentSlide: PropTypes.number,
   saveDB: PropTypes.func,
   id: PropTypes.number,
+  changeBackground: PropTypes.func,
+  currentColor: PropTypes.string,
+  updateTitle: PropTypes.func,
 }

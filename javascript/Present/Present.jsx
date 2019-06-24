@@ -12,10 +12,12 @@ export default class Present extends Component {
       content: [
         {
           saveContent: undefined,
-          quizContent: undefined
+          quizContent: undefined,
+          backgroundcolor: '#E5E7E9'
         }
       ],
       slideName: "Present: ",
+      slideTimer: 0,
       // Flags:
       prevDisable: true, // Disables prev button
       nextDisable: true, // Disables next button
@@ -29,7 +31,7 @@ export default class Present extends Component {
 
     this.prev = this._prev.bind(this)
     this.next = this._next.bind(this)
-
+    
     this.validate = this.validate.bind(this)
     this.returnToShowList = this.returnToShowList.bind(this)
     this.parseBool = this.parseBool.bind(this)
@@ -40,7 +42,7 @@ export default class Present extends Component {
     this.loadSession()
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     if (this.state.quizNextFlag && (this.state.quizPassed || this.state.finishFlag)) {
       // Correct answer chosen
       this.setState({
@@ -68,7 +70,7 @@ export default class Present extends Component {
           // Note: when this was declared above, an issue was created where it wasn't being loaded fast enough and it set the last slide to true
           let lastSlide = this.state.currentSlide + 1 == this.state.content.length
           this.setState({nextDisable: false, finishFlag: (this.state.finishFlag || lastSlide)}) // on completion of timer, we unlock next and set finishFlag
-        }, 2000)
+        }, this.state.slideTimer)
       }
       else if (this.state.currentSlide < this.state.highestSlide || this.state.finishFlag) { // we are on an already completed slide
         this.setState({nextDisable: false})
@@ -88,6 +90,22 @@ export default class Present extends Component {
   }
 
   load() {
+    let time = -1
+    $.ajax({
+      url: './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        time = Number(data[0].slideTimer) * 1000
+        this.setState({
+          title: data[0].title,
+          slideTimer: time
+        })
+      }.bind(this),
+      error: (req, res) => {
+        console.error(req, res.toString())
+      }
+    })
     $.ajax({
       url: './slideshow/Slide/present/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
@@ -109,6 +127,7 @@ export default class Present extends Component {
               isQuiz: isQ,
               saveContent: saveC,
               quizContent: quizC,
+              backgroundColor: loaded[i].backgroundColor,
               id: loaded[i].slideIndex // This may not be needed
             })
           }
@@ -121,7 +140,7 @@ export default class Present extends Component {
               // First slide isn't a quiz we set timer on next
               setTimeout(() => {
                 this.setState({nextDisable: false})
-              }, 2000)
+              }, time)
             }
           });
         }
@@ -153,7 +172,7 @@ export default class Present extends Component {
             nextFlag: true,
             quizNextFlag: true,
             quizPassed: true
-          }, () => {console.log("session loaded")})
+          })
         }
       }.bind(this),
       error: function(req, err) {
@@ -247,7 +266,7 @@ export default class Present extends Component {
 
     return(
       <div>
-        <h1 style={{textDecorationLine: 'underline'}}>{this.state.slideName}</h1>
+        <h1 style={{textDecorationLine: 'underline'}}>{this.state.title}</h1>
         <br></br>
         <div style={{justifyContent: 'center', display: 'flex'}}>
           <div style={{maxWidth: 700, width: "95%"}}>

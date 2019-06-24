@@ -7,3 +7,30 @@
     flex: 0 0 3.33333%;
     max-width: 3.33333%;
 }
+
+.settings-options {
+  font-size: 20px;
+}
+
+.ColorPicker {
+  margin-top: 35px;
+  margin-left: 23px;
+  border-radius: 20px;
+  height: 40px;
+  width: 40px;
+  background-color: transparent;
+  border: 1px solid transparent;
+}
+
+.ColorPicker:hover {
+  border: 5px solid;
+}
+
+.SketchPicker {
+  padding: 0rem;
+}
+
+.modal-backdrop
+{
+    opacity:0 !important;
+}

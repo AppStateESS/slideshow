@@ -3,6 +3,11 @@ import React, { Component } from 'react'
 import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import SlidesView from './SlidesView.jsx'
+import {
+  Button,
+  InputGroup,
+  FormControl,
+} from 'react-bootstrap'
 
 export default class Edit extends Component {
   constructor() {
@@ -11,12 +16,15 @@ export default class Edit extends Component {
     this.state = {
       currentSlide: 0,
       id: window.sessionStorage.getItem('id'),
+      showTitle: 'Edit:',
+      edit: false,
       content: [
         {
           saveContent: undefined,
           quizContent: undefined,
           isQuiz: false,
-          id: 0 // This is an indexable id for saving and delteing slides
+          id: 0,
+          backgroundColor: '#E5E7E9'
         },
       ],
     }
@@ -28,9 +36,13 @@ export default class Edit extends Component {
     this.addNewSlide = this.addNewSlide.bind(this)
     this.addNewQuiz = this.addNewQuiz.bind(this)
     this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this)
-    this.renameCurrentSlide = this.renameCurrentSlide.bind(this)
+    this.updateTitle = this.updateTitle.bind(this)
+    this.updateTitleEdit = this.updateTitleEdit.bind(this)
+    this.editTitle = this.editTitle.bind(this)
+    this.saveTitle = this.saveTitle.bind(this)
     this.saveContentState = this.saveContentState.bind(this)
     this.saveQuizContent = this.saveQuizContent.bind(this)
+    this.changeBackground = this.changeBackground.bind(this)
   }
 
   componentDidMount() {
@@ -81,6 +93,7 @@ export default class Edit extends Component {
               isQuiz: isQ,
               saveContent: saveC,
               quizContent: quizC,
+              backgroundColor: loaded[i].backgroundColor,
               id: loaded[i].slideIndex // This may not be needed
             })
           }
@@ -116,6 +129,7 @@ export default class Edit extends Component {
         saveContent: undefined,
         quizContent: undefined,
         isQuiz: quiz,
+        backgroundColor: '#E5E7E9',
         id: newId
     }
     let copy = [...this.state.content]
@@ -163,8 +177,32 @@ export default class Edit extends Component {
     })
   }
 
-  renameCurrentSlide(value) {
-    alert("This has not yet been implemented")
+  updateTitle(value) {
+    this.setState({showTitle: value})
+  }
+
+  updateTitleEdit(event) {
+    this.setState({showTitle: event.target.value})
+  }
+
+  editTitle() {
+    this.setState({edit: true})
+  }
+
+  saveTitle() {
+    $.ajax({
+      url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
+      data: {title: this.state.showTitle},
+      type: 'put',
+      dataType: 'json',
+      success: function() {
+        this.setState({edit: false})
+      }.bind(this),
+      error: function(req, err) {
+        alert("Failed to save data.")
+        console.error(req, err.toString());
+      }.bind(this)
+    });
   }
 
   saveContentState(saveContent) {
@@ -190,11 +228,50 @@ export default class Edit extends Component {
     return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
   }
 
+  changeBackground(newColor) {
+    $.ajax({
+      url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
+      data: {index: this.state.currentSlide, backgroundColor: newColor},
+      type: 'put',
+      error: (req, res) => {
+        console.error(req, res.toString())
+      }
+    })
+
+    let c = [...this.state.content]
+    c[this.state.currentSlide].backgroundColor = newColor
+    this.setState({content: c})
+  }
+
 
   render() {
     let isQuiz = this.quizConv(this.state.content[this.state.currentSlide].isQuiz)
+    let cardTitle;
+    if (this.state.edit) {
+      cardTitle = <InputGroup>
+                    <FormControl
+                      style={{maxWidth: 350}}
+                      value={this.state.showTitle}
+                      onChange={this.updateTitleEdit}
+                    />
+                    <InputGroup.Append>
+                      <Button variant="primary" onClick={this.saveTitle}>Save</Button>
+                    </InputGroup.Append>
+                  </InputGroup>
+    } else {
+      cardTitle = <div>
+                    <u>
+                    {this.state.showTitle}
+                    </u>
+                    <a onClick={this.editTitle} style={{paddingLeft: "10px", cursor: "pointer"}}>
+                      <i className="fas fa-edit fa-sm"></i>
+                    </a>
+                  </div>
+    }
+
     return (
       <div>
+      <h2>{cardTitle}</h2>
         <NavBar
           id                ={Number(this.state.id)}
           insertSlide       ={this.addNewSlide}
@@ -203,7 +280,10 @@ export default class Edit extends Component {
           addToStack        ={this.addToStack}
           currentSlide      ={this.state.currentSlide}
           insertQuiz        ={this.addNewQuiz}
-          saveDB            ={this.save}/>
+          saveDB            ={this.save}
+          changeBackground  ={this.changeBackground}
+          updateTitle       ={this.updateTitle}
+          currentColor      ={this.state.content[this.state.currentSlide].backgroundColor}/>
         <div className="row">
           <SlidesView
             slides          ={this.state.content}

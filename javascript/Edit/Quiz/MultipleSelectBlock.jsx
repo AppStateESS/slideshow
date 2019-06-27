@@ -1,39 +1,19 @@
-'use strict'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Form,
-  Row,
-  Col
 } from 'react-bootstrap'
 
-export default class MultipleChoiceBlock extends Component {
+export default class MultipleSelectBlock extends Component {
   constructor(props) {
     super(props)
     this.state = {
       id: props.id,
-      value: props.value, // This will need to be initialized in a componentMount method in the future
-      //correct: true, // TODO: implement a way for the radio to be already checked on load.
+      value: props.value
     }
-
     this.delete = this.delete.bind(this)
     this.onChangeValue = this.onChangeValue.bind(this)
   }
-
-  componentDidMount() {
-    /* Not used - for placeholder if we want one
-    let place = this.props.value
-    if (place == null) {
-      place = "Answer text"
-    }
-
-    //let checkCorrect = (this.props.correct() == this.props.id)
-    this.setState({
-      value: place,
-      //correct: checkCorrect,
-    })*/
-  }
-
 
   delete() {
     this.props.remove(this.props.id)
@@ -59,11 +39,12 @@ export default class MultipleChoiceBlock extends Component {
         <Form.Group id={'correct-' + this.props.id}>
           <Form.Check
             custom
-            type='radio'
-            id={'check-' + this.props.id}
+            type='checkbox'
+            id={'select-' + this.props.id}
             name={'choices'}
             label='Correct Answer'
             onChange={this.props.onChange}
+            checked={this.props.checked}
           />
         </Form.Group>
         <Form.Group>
@@ -76,8 +57,7 @@ export default class MultipleChoiceBlock extends Component {
   }
 }
 
-MultipleChoiceBlock.propTypes = {
+MultipleSelectBlock.propTypes = {
   id: PropTypes.number,
   onChange: PropTypes.func,
-  placeholder: PropTypes.string,
 }

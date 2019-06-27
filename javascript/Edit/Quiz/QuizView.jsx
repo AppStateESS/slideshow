@@ -8,8 +8,30 @@ import {
 export default class QuizView extends Component {
   constructor(props) {
     super(props)
-
+    this.state = {
+      quizContent: {
+        questionTitle: 'No data Loaded',
+        answers: ['this might be an error']
+      }
+    }
   }
+
+  componentDidMount() {
+    if (this.props.quizContent != undefined) {
+      this.setState({
+        quizContent: JSON.parse(this.props.quizContent)
+      })
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.quizContent != prevProps.quizContent && this.props.quizContent != undefined) {
+      this.setState({
+        quizContent: JSON.parse(this.props.quizContent)
+      })
+    }
+  }
+
   render() {
     let questions = undefined
     if (this.props.quizContent != undefined) {
@@ -41,6 +63,6 @@ export default class QuizView extends Component {
 }
 
 QuizView.propTypes = {
-  quizContent: PropTypes.object,
+  quizContent: PropTypes.string,
   toggle: PropTypes.func
 }

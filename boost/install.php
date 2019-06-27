@@ -15,11 +15,13 @@ function slideshow_install(&$content)
 
     $show;
     $session;
+    $slide;
     try {
         $tables = new slideshow\Tables;
 
         $show = $tables->createShow();
         $session = $tables->createSession();
+        $slide = $tables->createSlide();
 
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
@@ -27,7 +29,8 @@ function slideshow_install(&$content)
 
         $show->drop(true);
         $session->drop(true);
-
+        $slide->drop(true);
+        
         throw $e;
     }
     $db->commit();

@@ -19,7 +19,8 @@
 
 namespace slideshow\Factory;
 
-use slideshow\Resource\ShowResource as Resource;
+use slideshow\Resource\ShowResource;
+use SlideShow\Factory\SlideFactory;
 use phpws2\Database;
 use Canopy\Request;
 
@@ -28,7 +29,7 @@ class ShowFactory extends Base
 
     protected function build()
     {
-        return new Resource;
+        return new ShowResource;
     }
 
     public function post(Request $request)
@@ -40,7 +41,7 @@ class ShowFactory extends Base
         //$show->content = [];
         $this->saveResource($show);
         //$this->createImageDirectory($show);
-        return $show;
+        return $show->id;
     }
 
     public function put(Request $request)
@@ -55,26 +56,21 @@ class ShowFactory extends Base
       // pullPutVarIfSet will return false if not set
       $title = $request->pullPutVarIfSet('title');
       $active = $resource->active;
-
       try {
           $active = $request->pullPutVar('active');
       }
       catch (\phpws2\Exception\ValueNotSet $e) {
-          // if value not set then we ignnore
+          // putvar was not set for active
       }
-      $content = $request->pullPutVarIfSet('content');
+
+      $slideTimer = intval($request->pullPutVarIfSet('slideTimer'));
       // if any of the vars are set to false we don't need to update them.
       if (gettype($title) == "string") {
         $resource->title = $title;
       }
-      // TODO: fix request to pass boolean and not string 
-      if (gettype($active) == "string") {
-        $resource->active = $active;
-      }
+
       $resource->active = $active;
-      if (gettype($content) != "boolean") {
-        $resource->content = json_encode($content);
-      }
+      $resource->slideTimer = $slideTimer;
       // Save the updated resource to the Database
       $this->saveResource($resource);
       return $resource;
@@ -89,7 +85,6 @@ class ShowFactory extends Base
       $resource = $this->load($showId);
       $resource->title = $request->pullPatchVarIfSet('title');
       $resource->active = $request->pullPatchVarIfSet('active');
-      $resource->content = $request->pullPatchVarIfSet('content');
       $this->saveResource($resource);
       return $resource;
     }
@@ -99,17 +94,18 @@ class ShowFactory extends Base
     *
     * @param $show_id
     */
-    public static function getDetails($show_id) {
-      if (empty($show_id)) {
-        throw new \Exception("Invalid show id");
-      }
+    public static function getDetails($show_id)
+    {
+          if (empty($show_id)) {
+            throw new \Exception("Invalid show id");
+          }
 
-      $db = \phpws2\Database::getDB();
-      $tbl = $db->addTable('ss_show');
-      $tbl->addFieldConditional('id', $show_id);
-      $show = $db->selectOneRow();
+          $db = \phpws2\Database::getDB();
+          $tbl = $db->addTable('ss_show');
+          $tbl->addFieldConditional('id', $show_id);
+          $show = $db->selectOneRow();
 
-      return $show;
+          return $show;
     }
 
     public function getShows() {
@@ -132,37 +128,20 @@ class ShowFactory extends Base
         }
     }
 
-    /**
-     *
-     * Returns the data for the slideshow contained from the $content var.
-     * @var $showId the id for the slideshow
-     */
-    public function getSlides($showId)
+    public function getShowDetails($request)
     {
-      if ($showId == null || $showId == -1) {
+        // Pull the id from the request:
+        $vars = $request->getRequestVars();
+        $showId = intval($vars['id']);
+        if ($showId == null || $showId == -1) {
         throw new \Exception("ShowId is not valid: $showId", 1);
-      }
-      $sql = "SELECT content FROM ss_show WHERE id=:showId;";
-      $db = Database::getDB();
-      $pdo = $db->getPDO();
-      $q = $pdo->prepare($sql);
-      $q->execute(array('showId'=>$showId));
-      $data = $q->fetchColumn(0);
-      return json_decode($data);
-    }
-
-    public function getShowName($showId)
-    {
-      if ($showId == null || $showId == -1) {
-        throw new \Exception("ShowId is not valid: $showId", 1);
-      }
-      $sql = "SELECT title FROM ss_show WHERE id=:showId;";
-      $db = Database::getDB();
-      $pdo = $db->getPDO();
-      $q = $pdo->prepare($sql);
-      $q->execute(array('showId'=>$showId));
-      $title = $q->fetchColumn(0);
-      return $title;
+        }
+        $sql = "SELECT title, slideTimer FROM ss_show WHERE id=:showId;";
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        $q->execute(array('showId'=>$showId));
+        return $q->fetchAll();
     }
 
     public function listing($showAll = false)
@@ -183,14 +162,8 @@ class ShowFactory extends Base
         return $template->get();
     }
 
-    public function deleteSlides($showId)
-    {
-        $db = Database::getDB();
-    }
-
     public function delete($showId)
     {
-        $this->deleteSlides($showId);
         self::deleteResource($this->load($showId));
         return true;
     }

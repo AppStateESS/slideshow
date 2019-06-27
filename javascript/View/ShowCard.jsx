@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import { Card, CardBody, CardTitle, CardImg, Button, Alert } from 'reactstrap'
+import { Card, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import './custom.css'
 
 import AppLogo from "../../img/showimg.png"
@@ -27,7 +27,7 @@ export default class ShowCard extends Component {
 
   presentTransition() {
     window.sessionStorage.setItem('id', this.props.id)
-    window.location.href = './slideshow/Show/Present/?id=' + this.props.id
+    window.location.href = './slideshow/Slide/Present/'
   }
 
   getSessionInfo() {
@@ -60,13 +60,29 @@ export default class ShowCard extends Component {
     let present = undefined
     switch (this.state.sessionFlag) {
       case 0:
-        present = <Button onClick={this.presentTransition} color="primary">Begin</Button>
+        present = <Button onClick={this.presentTransition} variant="primary">Begin</Button>
         break;
       case 1:
-        present = <Button onClick={this.presentTransition} color="warning">Continue</Button>
+        present =
+        <OverlayTrigger placement="bottom"
+          overlay={
+            <Tooltip>
+              Incomplete. Click to continue
+            </Tooltip>
+          }>
+            <Button onClick={this.presentTransition} variant="warning">Continue</Button>
+          </OverlayTrigger>
         break;
       case 2:
-        present = <Button onClick={this.presentTransition} color="success" >Review</Button>
+        present =
+        <OverlayTrigger placement="bottom"
+          overlay={
+            <Tooltip>
+              Completed. Click to review
+            </Tooltip>
+          }>
+            <Button onClick={this.presentTransition} variant="success" >Review</Button>
+        </OverlayTrigger>
         break;
     }
 
@@ -76,14 +92,14 @@ export default class ShowCard extends Component {
           <div className="card-img-caption">
             <img className="card-img-top" src={this.state.img}/>
           </div>
-          <CardBody>
-            <CardTitle className="d-flex justify-content-center">
+          <Card.Body>
+            <Card.Title className="d-flex justify-content-center">
               {this.props.title}
-            </CardTitle>
+            </Card.Title>
             <div className="d-flex justify-content-around">
               {present}
             </div>
-          </CardBody>
+          </Card.Body>
         </Card>
       </div>
     )

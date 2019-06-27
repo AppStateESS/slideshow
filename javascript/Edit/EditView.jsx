@@ -208,7 +208,7 @@ export default class EditView extends Component {
         <p></p>
         {toolbar}
         <span><br /></span>
-        <div className="jumbotron" style={{ minHeight: 350 }}>
+        <div className="jumbotron" style={{minHeight: 350, backgroundColor: this.props.content.backgroundColor}}>
           {editRender}
         </div>
       </div>

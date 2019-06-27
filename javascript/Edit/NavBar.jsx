@@ -9,6 +9,8 @@ import {
   DropdownButton
 } from 'react-bootstrap'
 
+import Settings from './Settings.jsx'
+
 export default class NavBar extends Component {
   constructor() {
     super()
@@ -18,14 +20,22 @@ export default class NavBar extends Component {
   }
 
   returnToShowList() {
-    const url = './slideshow/Show/list'
-    this.props.redirect(url)
+    this.props.saveDB()
+    // This inteval fixes a bug on firefox where the browser loads faster than it can save
+    window.setInterval(()=> {window.location.href = './slideshow/Show/list'}, 100)
+
   }
 
   handlePresent() {
-    window.sessionStorage.setItem('id', this.props.id)
-    const url = './slideshow/Show/Present/?id=' + this.props.id
-    this.props.redirect(url)
+    if (this.props.id == -1) {
+      alert("A problem has occurred with your browser's session. This is most likely caused by an attempt to present an empty show.")
+      //window.location.href = './slideshow/Show/list'
+    }
+    else {
+      this.props.saveDB()
+      window.sessionStorage.setItem('id', this.props.id)
+      window.setInterval(() => window.location.href = './slideshow/Slide/Present/?id=' + this.props.id, 100)
+    }
   }
 
   render() {
@@ -46,6 +56,11 @@ export default class NavBar extends Component {
            </DropdownButton>
            <Button variant="secondary" onClick={this.handlePresent}>Present</Button>
         </ButtonGroup>
+          <Settings
+            changeBackground ={this.props.changeBackground}
+            id               ={this.props.id}
+            updateTitle      ={this.props.updateTitle}
+            currentColor     ={this.props.currentColor}/>
       </ButtonToolbar>
     </div>
     )
@@ -57,7 +72,9 @@ NavBar.propTypes = {
   insertSlide: PropTypes.func,
   deleteSlide: PropTypes.func,
   currentSlide: PropTypes.number,
-  redirect: PropTypes.func,
   saveDB: PropTypes.func,
   id: PropTypes.number,
+  changeBackground: PropTypes.func,
+  currentColor: PropTypes.string,
+  updateTitle: PropTypes.func,
 }

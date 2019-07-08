@@ -19,7 +19,9 @@
 namespace slideshow\Controller\Session;
 
 use Canopy\Request;
+use Canopy\PHPWS_User;
 use slideshow\Factory\SessionFactory;
+use slideshow\View\SessionView;
 
 class Admin extends Base
 {
@@ -27,6 +29,11 @@ class Admin extends Base
      * @var slideshow\Factory\SessionFactory
      */
     protected $factory;
+
+    /**
+     * @var slideshow\View\SessionView
+     */
+    protected $view;
 
     /*
     * This does nothing because if we are an admin we are demoing the show
@@ -42,6 +49,17 @@ class Admin extends Base
     protected function getCommand($request)
     {
         return true;
+    }
+
+    protected function tableHtmlCommand($request)
+    {
+        return $this->view->sessionTable();
+    }
+
+    protected function viewJsonCommand($request)
+    {
+        $sessionData = $this->factory->getAll($request);
+        return $sessionData;
     }
 
 }

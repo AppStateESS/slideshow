@@ -35,6 +35,7 @@ export default class ShowCard extends Component {
     this.handleActivation = this.handleActivation.bind(this)
     this.editTransition = this.editTransition.bind(this)
     this.presentTransition = this.presentTransition.bind(this)
+    this.sessionTransition = this.sessionTransition.bind(this)
     this.deleteAlert = this.deleteAlert.bind(this)
   }
 
@@ -112,6 +113,13 @@ export default class ShowCard extends Component {
    window.location.href = './slideshow/Slide/Present/'
  }
 
+ sessionTransition() {
+   console.log('success')
+   window.sessionStorage.setItem('id', this.state.id)
+   window.sessionStorage.setItem('title', this.state.title)
+   window.location.href = './slideshow/Session/table'
+ }
+
  deleteAlert() {
    this.setState({
      alert: !this.state.alert,
@@ -153,11 +161,23 @@ export default class ShowCard extends Component {
                                           <span aria-hidden="true">&times;</span>
                                          </a>) : undefined
 
+    let session = <OverlayTrigger placement="top"
+                   overlay={
+                    <Tooltip>
+                      View user progress
+                    </Tooltip>
+                   }>
+                   <span onClick={this.sessionTransition}>
+                        <a className="fas fa-users"></a>
+                   </span>
+                 </OverlayTrigger>
+
     return (
       <div style={{paddingBottom: "25px"}}>
         {delAlert}
         <Card>
           <div className="card-img-caption">
+            <div className="card-user">{session}</div>
             {activeX}
             <img className="card-img-top" src={this.state.img}/>
           </div>

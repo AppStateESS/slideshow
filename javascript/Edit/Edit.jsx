@@ -155,7 +155,7 @@ export default class Edit extends Component {
     // Current slide is the first slide and there are no other slides
     if (this.state.currentSlide === 0 && this.state.content.length == 1) {
       // set the array to an empty slide
-      copy = [{saveContent: undefined}]
+      copy = [{saveContent: undefined, backgroundColor: '#E5E7E9'}]
     }
     // If we are deleting the last slide
     if (this.state.currentSlide == copy.length) {

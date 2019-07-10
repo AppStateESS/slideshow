@@ -23,7 +23,7 @@ export default class Edit extends Component {
           saveContent: undefined,
           quizContent: undefined,
           isQuiz: false,
-          id: 0,
+          slideIndex: 0,
           backgroundColor: '#E5E7E9'
         },
       ],
@@ -49,6 +49,13 @@ export default class Edit extends Component {
     this.load()
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state != prevState) {
+      console.log(this.state.content)
+    }
+
+  }
+
   save() {
     let c = this.state.content[this.state.currentSlide].isQuiz ?
           /* if quiz */ this.state.content[this.state.currentSlide].quizContent :
@@ -57,7 +64,8 @@ export default class Edit extends Component {
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       data: {
         content: c,
-        index: this.state.content[this.state.currentSlide].id,
+        id: this.state.content[this.state.currentSlide].id,
+        index: this.state.content[this.state.currentSlide].slideIndex,
         isQuiz: this.state.content[this.state.currentSlide].isQuiz
       },
       type: 'put',
@@ -77,8 +85,12 @@ export default class Edit extends Component {
       type: 'GET',
       dataType: 'json',
       success: function (data) {
+        console.log(data['slides'])
         let loaded = data['slides']
         if (loaded[0] != undefined) {
+          console.log(loaded)
+          window.sessionStorage.setItem('slideIndex', loaded[0].slideIndex)
+          window.sessionStorage.setItem('imgUrl', loaded[0].media)
           let showContent = []
           for (let i = 0; i < loaded.length; i++) {
             let saveC = undefined
@@ -94,7 +106,8 @@ export default class Edit extends Component {
               saveContent: saveC,
               quizContent: quizC,
               backgroundColor: loaded[i].backgroundColor,
-              id: loaded[i].slideIndex // This may not be needed
+              slideIndex: Number(loaded[i].slideIndex),
+              media: loaded[i].media
             })
           }
 
@@ -114,6 +127,7 @@ export default class Edit extends Component {
 
   setCurrentSlide(val) {
     this.save()
+    window.sessionStorage.setItem('slideIndex', val)
     this.setState({
       currentSlide: val
     })
@@ -124,20 +138,21 @@ export default class Edit extends Component {
     if (typeof(quiz) === 'object') quiz = false // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
-    const newId = Number(this.state.content[this.state.currentSlide].id) + 1
+    const newId = Number(this.state.content[this.state.currentSlide].slideIndex) + 1
+    console.log(index + ":" + newId)
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
         isQuiz: quiz,
         backgroundColor: '#E5E7E9',
-        id: newId
+        slideIndex: newId
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
     this.setState({
-      currentSlide: index,
+      //currentSlide: index,
       content: copy,
-    })
+    }, () => this.setCurrentSlide(index))
   }
 
 
@@ -164,8 +179,8 @@ export default class Edit extends Component {
 
     $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
-      type: 'patch',
-      data: {index: this.state.content[this.state.currentSlide].id},
+      type: 'delete',
+      data: {index: this.state.content[this.state.currentSlide].slideIndex, type: 'slide'},
       error: (req, res) => {
         console.error(req, res.toString());
       }
@@ -174,7 +189,7 @@ export default class Edit extends Component {
     this.setState({
       content: copy,
       currentSlide: newIndex
-    })
+    }, /*() => this.setCurrentSlide(newIndex)*/)
   }
 
   updateTitle(value) {

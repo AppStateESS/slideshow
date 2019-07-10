@@ -12,7 +12,6 @@ import QuizView from './Quiz/QuizView.jsx'
 import {
   ItalicButton,
   BoldButton,
-  UnderlineButton,
   CodeButton,
   HeadlineOneButton,
   HeadlineTwoButton,
@@ -44,7 +43,6 @@ const staticToolbar = createToolbarPlugin({
     Separator,
     BoldButton,
     ItalicButton,
-    UnderlineButton,
     CodeButton,
     Separator,
     HeadlineOneButton,
@@ -202,6 +200,11 @@ export default class EditView extends Component {
       <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit}/>
 
     let editRender = (this.props.isQuiz) ? (quizView) : (editor)
+    //let imgUrl = window.sessionStorage.getItem('imgUrl')
+    let imgUrl = this.props.content.media
+    let imgRender = (imgUrl != null) ?
+                            <div className="col"><img src={imgUrl} alt={imgUrl}></img></div>
+                            : undefined
     let toolbar = (this.props.isQuiz) ? undefined : (<Toolbar />)
     return (
       <div className="col-8" style={{minWidth: 700}}>
@@ -209,7 +212,12 @@ export default class EditView extends Component {
         {toolbar}
         <span><br /></span>
         <div className="jumbotron" style={{minHeight: 350, backgroundColor: this.props.content.backgroundColor}}>
-          {editRender}
+          <div className="row">
+              <div className="col">
+                {editRender}
+              </div>
+              {imgRender}
+            </div>
         </div>
       </div>
     )

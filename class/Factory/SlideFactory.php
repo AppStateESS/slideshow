@@ -3,7 +3,7 @@
 /*
 * The MIT License
 *
-* Copyright 2018 Tyler Craig <craigta1@appstate.edu>.
+* Copyright 2019 Tyler Craig <craigta1@appstate.edu>.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,8 @@ use slideshow\Resource\SlideResource;
 use phpws2\Database;
 use Canopy\Request;
 
+define('SLIDESHOW_MEDIA_DIRECTORY', 'images/slideshow/');
+
 class SlideFactory extends Base
 {
 
@@ -47,7 +49,6 @@ class SlideFactory extends Base
 
         return array(
             'slides' => $slides
-            // Backgorund color and other data here
         );
     }
 
@@ -80,11 +81,12 @@ class SlideFactory extends Base
         $isQuiz = $request->pullPutVarIfSet('isQuiz');
         $backgroundColor = $request->pullPutVarIfSet('backgroundColor');
 
-        $resourceId = $this->getResourceId($showId, $slideIndex);
 
+        $slideId = $this->getSlideId($showId, $slideIndex);
+        //var_dump('showId: ' . $showId . ' slideIndex: ' . $slideIndex . ' slideId: ' . $slideId . "\n");
         $resource = null;
-        if (!empty($resourceId)) {
-            $resource = $this->load($resourceId);
+        if (!empty($slideId)) {
+            $resource = $this->load($slideId);
         }
         else {
             $resource = $this->build();
@@ -110,26 +112,50 @@ class SlideFactory extends Base
         return $resource;
     }
 
+    public function postImage(Request $request)
+    {
+        $vars = $request->getRequestVars();
+        $showId = $vars['id'];
+        $slideIndex = $vars['index'];
+        //var_dump($vars);
+        // Begining to think that I don't need these bc I will validate on the js end
+        //$mediaHeight = $request->pullPostVar('height');
+        //$mediaWidth = $request->pullPostVar('width');
+
+        //$mediaTitle = $request->pullPostVar('title');
+
+        $resourceId = $this->getSlideId($showId, $slideIndex);
+
+        $resource = $this->load($resourceId);
+
+        $path = $this->upload($_FILES['media'], $resourceId);
+        if ($path != null) {
+            $resource->media = $path;
+        }
+        $this->saveResource($resource);
+        return $path;
+    }
+
     /**
-    * The patch request is reserved for the deletion of slides
+    * This function handles the deletion of slides
     * @return boolean true if slide was deleted
     */
-    public function patch(Request $request)
+    public function deleteSlide(Request $request)
     {
         // pull showId from $request
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
 
-        $slideIndex = $request->pullPatchVarIfSet('index');
-
+        $slideIndex = $request->pullDeleteVar('index');
+        //var_dump($slideIndex);
         // Build SlideResource from id and index
-        $resourceId = $this->getResourceId($showId, $slideIndex);
+        $resourceId = $this->getSlideId($showId, $slideIndex);
         $resource = $this->load($resourceId);
 
         return ($this->deleteResource($resource) != 0);
     }
 
-    public function delete(Request $request)
+    public function deleteAll(Request $request)
     {
         // Remove all slides comes from Showlist
         $vars = $request->getRequestVars();
@@ -140,6 +166,11 @@ class SlideFactory extends Base
         $pdo = $db->getPDO();
         $q = $pdo->prepare($sql);
         return $q->execute(array('showId'=>$showId));
+    }
+
+    public function deleteImage(Request $request)
+    {
+        // TODO
     }
 
     /**
@@ -158,7 +189,7 @@ class SlideFactory extends Base
         return $slides;
     }
 
-    private function getResourceId($showId, $slideIndex)
+    private function getSlideId($showId, $slideIndex)
     {
         $db = Database::getDB();
         $sql = 'SELECT id FROM ss_slide WHERE showId=:showId AND slideIndex=:slideIndex;';
@@ -166,6 +197,29 @@ class SlideFactory extends Base
         $q = $pdo->prepare($sql);
         $q->execute(array('showId'=>$showId, 'slideIndex'=>$slideIndex));
         return $q->fetchColumn();
+    }
+
+    private function upload(array $file, $slideId)
+    {
+        $target = SLIDESHOW_MEDIA_DIRECTORY . '/' . $slideId . '/';
+        $dir = PHPWS_HOME_DIR . $target;
+        $dest = $dir . basename($file['name']);
+
+        if (!is_dir($dir))
+        {
+            mkdir($dir, 0755, true);
+        }
+        if (move_uploaded_file($file['tmp_name'], $dest)) {
+            //echo("Upload success");
+            //var_dump("I think I did this");
+            return './' . $target .  basename($file['name']);
+        }
+        else {
+            echo("not uploaded and error occured");
+            var_dump($file);
+            var_dump($target);
+        }
+        return null;
     }
 
 }

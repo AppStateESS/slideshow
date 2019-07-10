@@ -133,7 +133,7 @@ class ShowFactory extends Base
         // Pull the id from the request:
         $vars = $request->getRequestVars();
         $showId = intval($vars['id']);
-        if ($showId == null || $showId == -1) {
+        if ($showId === null || $showId == -1) {
         throw new \Exception("ShowId is not valid: $showId", 1);
         }
         $sql = "SELECT title, slideTimer FROM ss_show WHERE id=:showId;";

@@ -52,17 +52,22 @@ class Admin extends Base
      return $this->factory->put($request);
  }
 
- /**
- * Deletes a table from ss_slide -> happens on a delete
- */
- protected function jsonPatchCommand(Request $request)
- {
-     return $this->factory->patch($request);
- }
-
  protected function deleteCommand(Request $request)
  {
-     return $this->factory->delete($request);
+     switch ($request->pullDeleteVar('type')) {
+         case 'all':
+             return $this->factory->deleteAll($request);
+         case 'slide':
+            return $this->factory->deleteSlide($request);
+        case 'image':
+            return $this->factory->deleteImage($request);
+         default:
+             return;
+     }
  }
 
+ protected function imagePostCommand(Request $request)
+ {
+     return $this->factory->postImage($request);
+ }
 }

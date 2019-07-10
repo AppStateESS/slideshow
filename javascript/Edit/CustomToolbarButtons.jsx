@@ -1,23 +1,106 @@
 'use strict'
 import React, { Component } from 'react'
+
+import {
+  Modal
+} from 'react-bootstrap'
+
 import './buttonStyle.css'
+import 'react-dropzone-uploader/dist/styles.css'
 
 import { EditorState, AtomicBlckUtils} from 'draft-js'
+
+import Dropzone from 'react-dropzone-uploader'
 
 export default class CustomToolbarButtons extends Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      mediaView: false,
+      imageUrl: ''
+    }
+
+    this.insertMedia = this.insertMedia.bind(this)
+    this.mediaModal = this.mediaModal.bind(this)
+    this.mediaCancel = this.mediaCancel.bind(this)
   }
 
-  insertImage() {
-    console.log(this.props)
-    alert("Insert Image:\n\nnot yet implemented")
+  componentDidMount() {
+    //console.log(this.props)
+  }
+
+  insertMedia(fileWithMeta) {
+    let showId = Number(window.sessionStorage.getItem('id'))
+    // Handle AJAX
+    let fMeta = fileWithMeta[0]
+    let slideIndex = Number(window.sessionStorage.getItem('slideIndex'));
+    if (slideIndex == null) {
+      slideIndex = 0
+    }
+    let formData = new FormData()
+    formData.append('title', fMeta.meta.name)
+    formData.append('media', fMeta.file)
+    formData.append('index', slideIndex)
+    formData.append('id', showId)
+    formData.append('height', fMeta.meta.height)
+    formData.append('width', fMeta.meta.width)
+    $.ajax({
+      url: './slideshow/Slide/image/' + window.sessionStorage.getItem('id'),
+      type: 'post',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: (imageUrl) => {
+        // im thinking of putting the path of the image in window sessionStorage
+        this.setState({imageUrl: JSON.parse(imageUrl)})
+        window.sessionStorage.setItem('imgUrl', JSON.parse(imageUrl))
+        this.props.setEditorState(EditorState.redo(this.props.getEditorState()))
+      }
+    })
+    this.setState({mediaView: false})
+  }
+
+  mediaModal() {
+    this.setState({mediaView: true})
+  }
+
+  mediaCancel() {
+    this.setState({mediaView: false})
   }
 
   render() {
+
+    let mediaModal = (
+      <Modal show={this.state.mediaView} onHide={this.mediaCancel}>
+        <Modal.Header closeButton>
+          <h5>Insert Media</h5>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="card">
+            <div className="card-header text-center" >
+              Upload
+            </div>
+            <Dropzone
+              accept="image/jpeg,image/png"
+              maxFiles={1}
+              multiple={false}
+              minSizeBytes={1024}
+              maxSizeBytes={18388608}
+              onSubmit={this.insertMedia}
+              submitButtonContent={'Insert'}
+              inputContent={''}
+              classNames={{submitButton: 'btn btn-secondary btn-block drop', dropzone: 'drop'}}
+            />
+          </div>
+        </Modal.Body>
+      </Modal>
+    )
+
     return (
       <span>
-        <button className="toolbar" onClick={this.insertImage.bind(this)}><i className="fas fa-images"></i></button>
+        {mediaModal}
+        <button className="toolbar" onClick={this.mediaModal}><i className="fas fa-images"></i></button>
       </span>
     )
   }

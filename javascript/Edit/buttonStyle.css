@@ -13,3 +13,10 @@ button.toolbar {
 i {
   fill: #888;
 }
+
+.drop
+{
+  width: 90%;
+  margin-left:auto;
+  margin-right:auto;
+}

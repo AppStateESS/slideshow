@@ -68,6 +68,7 @@ export default class ShowCard extends Component {
      url: './slideshow/Slide/' + this.state.id,
      type: 'delete',
      dataType: 'json',
+     data: {type: 'all'},
      error: (req, res) => {
        console.log("Error Deleting Slides")
        console.error(req, res.toString())

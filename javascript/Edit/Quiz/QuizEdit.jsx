@@ -5,8 +5,6 @@ import {
 	Button
 } from 'react-bootstrap'
 
-// TODO: TAB SPACING!!!!
-
 import AnswerTypeCards from './AnswerTypeCards.jsx'
 import QuestionTitle from './QuestionTitleBlock.jsx'
 import MultipleChoice from './MultipleChoiceBlock.jsx'
@@ -25,7 +23,7 @@ export default class QuizEdit extends Component {
 				correctAnswers: [],
 				questionType: null
 			},
-			view: 'showTypes'
+			view: ''
 		}
 		this.save = this.save.bind(this)
 		this.remove = this.remove.bind(this)
@@ -43,7 +41,6 @@ export default class QuizEdit extends Component {
 			let view = 'showTypes'
 			let cAnswers = this.props.quizContent.correctAnswers
 			if (this.props.quizContent != null) {
-				//console.log(this.props.quizContent)
 				view = this.props.quizContent.questionType
 				if (view == 'choice') {
 					cAnswers = []
@@ -55,13 +52,29 @@ export default class QuizEdit extends Component {
 				correctAnswers: cAnswers
 			})
 		}
+		else {
+			this.setState({view: 'showTypes'})
+		}
 	}
 
-	//FIX PROBLEM WHEN NO CORRECT ANSWERS ARE SELECTED ON 'select'
+	componentDidUpdate(prevProps, prevState) {
+		// This dumps the choices that have been previously chosen when switching to choice 
+		if (this.state.view === 'choice' && prevState.view === 'showTypes') {
+			let qContent = Object.assign({}, this.state.quizContent)
+			qContent.correctAnswers = []
+			this.setState({quizContent: qContent})
+		}
+	}
+
 	save() {
 		let nqContent = Object.assign({}, this.state.quizContent)
 
 		if (this.state.view == 'choice') {
+			if (this.state.quizContent.correctAnswers == undefined || this.state.quizContent.correctAnswers === []
+				|| nqContent.correctAnswers == false) {
+				alert('Please select a correct answer')
+				return
+			}
 			// remove null values
 			// reference array
 			let qContent = Object.assign({}, this.state.quizContent)
@@ -137,7 +150,7 @@ export default class QuizEdit extends Component {
 				index = newQuizContent.correctAnswers.length - 1
 			}
 			if (newQuizContent.correctAnswers.includes(ids[1])) {
-				let i = newQuizContent.correctAnswers.findIndex(test => { return test == ids[1] })
+				let i = newQuizContent.correctAnswers.findIndex(index => { return index == ids[1] })
 				newQuizContent.correctAnswers.splice(i, 1)
 			}
 			else {
@@ -160,7 +173,7 @@ export default class QuizEdit extends Component {
 		})
 	}
 
-	addAnswer(event) {
+	addAnswer() {
 		let qContent = Object.assign({}, this.state.quizContent)
 		qContent.answers.push(' ')
 		this.setState({
@@ -172,7 +185,11 @@ export default class QuizEdit extends Component {
 		let i = -1
 		let choices = this.state.quizContent.answers.map((choice) => {
 			i++
-			return <MultipleChoice key={i} id={i} onChange={this.updateQuizContent} remove={this.remove} value={choice} />
+			let checked = false
+			if (this.state.quizContent.correctAnswers != undefined) {
+				checked = this.state.quizContent.correctAnswers.includes(i.toString())
+			}
+			return <MultipleChoice key={i} id={i} onChange={this.updateQuizContent} remove={this.remove} value={choice} checked={checked} />
 		})
 		choices.push(<Button key={'add'} variant="primary" onClick={this.addAnswer} style={{ marginBottom: '2rem' }}><i className="fas fa-plus-circle"></i> Add Another Answer</Button>)
 		return choices
@@ -191,13 +208,8 @@ export default class QuizEdit extends Component {
 		let i = -1
 		let choices = this.state.quizContent.answers.map((choice) => {
 			i++
-			let checked = this.state.quizContent.correctAnswers
-			if (checked == undefined) {
-				checked = false
-			} else {
-				checked = this.state.quizContent.correctAnswers.includes(i.toString())
-			}
-			return <MultipleSelect checked={checked} key={i} id={i} onChange={this.updateQuizContent} remove={this.remove} value={choice} />
+			let checked = (this.state.quizContent.correctAnswers.includes(i.toString()))
+			return <MultipleSelect key={i} id={i} onChange={this.updateQuizContent} remove={this.remove} value={choice} checked={checked} />
 		})
 		choices.push(<Button key={'add'} variant="primary" onClick={this.addAnswer} style={{ marginBottom: '2rem' }}><i className="fas fa-plus-circle"></i> Add Another Answer</Button>)
 		return choices
@@ -209,7 +221,6 @@ export default class QuizEdit extends Component {
 		) : null
 
 		let showAddElement = this.state.addElementVisible ?
-			//<Button key="1" variant="primary" onClick={this.toggleAnswerTypes} block><i className="fas fa-plus-circle"></i> Insert Quiz Element</Button> :
 			undefined :
 			<span>
 				<Button id='showTypes' key="2" variant="secondary" onClick={this.switchView} block><i className="fas fa-undo"></i> Change Answer Type</Button>
@@ -226,11 +237,11 @@ export default class QuizEdit extends Component {
 		else if (this.state.view === 'select') {
 			quizBuild = this.buildMultipleSelectBlock()
 		}
-		let test = this.state.quizContent.questionTitle
+		let title = this.state.quizContent.questionTitle
 		return (
 			<Form>
 				<h3>New Quiz:</h3>
-				<QuestionTitle value={test} onChange={this.updateQuizContent} id={0} />
+				<QuestionTitle value={title} onChange={this.updateQuizContent} id={0} />
 				{quizBuild}
 				{answerTypeBlock}
 				{showAddElement}

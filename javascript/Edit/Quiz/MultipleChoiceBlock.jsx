@@ -64,6 +64,7 @@ export default class MultipleChoiceBlock extends Component {
             name={'choices'}
             label='Correct Answer'
             onChange={this.props.onChange}
+            checked={this.props.checked}
           />
         </Form.Group>
         <Form.Group>

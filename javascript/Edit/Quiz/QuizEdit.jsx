@@ -27,7 +27,6 @@ export default class QuizEdit extends Component {
 		}
 		this.save = this.save.bind(this)
 		this.remove = this.remove.bind(this)
-		this.removeAnswers = this.removeAnswers.bind(this)
 		this.updateQuizContent = this.updateQuizContent.bind(this)
 		this.switchView = this.switchView.bind(this)
 		this.addAnswer = this.addAnswer.bind(this)
@@ -109,18 +108,12 @@ export default class QuizEdit extends Component {
 		/* Removes a multiple choice option */
 		let qContent = Object.assign({}, this.state.quizContent)
 		qContent.answers.splice(index, 1)
+		if (qContent.correctAnswers.includes(index.toString())) {
+			qContent.correctAnswers.splice(qContent.correctAnswers.indexOf(index.toString()), 1)
+		}
 		this.setState({
 			quizContent: qContent
 		})
-	}
-
-	removeAnswers(e) {
-		var array = [...this.state.correctAnswers]; // make a separate copy of the array
-		var index = array.indexOf(e.target.value)
-		if (index !== -1) {
-			array.splice(index, 1);
-			this.setState({ correctAnswers: array });
-		}
 	}
 
 	updateQuizContent(event) {

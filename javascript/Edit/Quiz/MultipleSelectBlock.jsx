@@ -7,24 +7,12 @@ import {
 export default class MultipleSelectBlock extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      id: props.id,
-      value: props.value
-    }
+    
     this.delete = this.delete.bind(this)
-    this.onChangeValue = this.onChangeValue.bind(this)
   }
 
   delete() {
     this.props.remove(this.props.id)
-  }
-
-
-  onChangeValue(event) {
-    this.setState({
-      value: event.target.value
-    })
-    this.props.onChange(event)
   }
 
   render() {
@@ -32,8 +20,9 @@ export default class MultipleSelectBlock extends Component {
       <Form.Row key={'row-' + this.props.id} id={this.props.id}>
         <Form.Group controlId={'text-' + this.props.id} style={{ width: '30rem', marginRight: '1rem' }}>
           <Form.Control
-            value={this.state.value}
-            onChange={this.onChangeValue}
+            key={'text-' + this.props.id}
+            value={this.props.value}
+            onChange={this.props.onChange}
           />
         </Form.Group>
         <Form.Group id={'correct-' + this.props.id}>

@@ -10,28 +10,8 @@ import {
 export default class MultipleChoiceBlock extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      id: props.id,
-      value: props.value, // This will need to be initialized in a componentMount method in the future
-      //correct: true, // TODO: implement a way for the radio to be already checked on load.
-    }
 
     this.delete = this.delete.bind(this)
-    this.onChangeValue = this.onChangeValue.bind(this)
-  }
-
-  componentDidMount() {
-    /* Not used - for placeholder if we want one
-    let place = this.props.value
-    if (place == null) {
-      place = "Answer text"
-    }
-
-    //let checkCorrect = (this.props.correct() == this.props.id)
-    this.setState({
-      value: place,
-      //correct: checkCorrect,
-    })*/
   }
 
 
@@ -40,20 +20,14 @@ export default class MultipleChoiceBlock extends Component {
   }
 
 
-  onChangeValue(event) {
-    this.setState({
-      value: event.target.value
-    })
-    this.props.onChange(event)
-  }
-
   render() {
     return (
       <Form.Row key={'row-' + this.props.id} id={this.props.id}>
         <Form.Group controlId={'text-' + this.props.id} style={{ width: '30rem', marginRight: '1rem' }}>
           <Form.Control
-            value={this.state.value}
-            onChange={this.onChangeValue}
+            key={'text-' + this.props.id}
+            value={this.props.value}
+            onChange={this.props.onChange}
           />
         </Form.Group>
         <Form.Group id={'correct-' + this.props.id}>

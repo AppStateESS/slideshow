@@ -26,7 +26,7 @@ export default class AnswerTypeCards extends Component {
               </Card.Text>
             </Card.Body>
             <Card.Footer>
-              <Button id={'choice'} onClick={this.props.switchView}>Insert</Button>
+              <Button id={'choice'} onClick={this.props.switchView}>Select</Button>
             </Card.Footer>
           </Card>
           <Card bg="secondary" text="white" style={{ width: '12rem', marginRight: '1rem' }}>
@@ -37,7 +37,7 @@ export default class AnswerTypeCards extends Component {
               </Card.Text>
             </Card.Body>
             <Card.Footer>
-              <Button id={'open'} onClick={this.props.switchView}>Insert</Button>
+              <Button id={'open'} onClick={this.props.switchView}>Select</Button>
             </Card.Footer>
           </Card>
           <Card bg="secondary" text="white" style={{ width: '12rem' }}>
@@ -48,7 +48,7 @@ export default class AnswerTypeCards extends Component {
               </Card.Text>
             </Card.Body>
             <Card.Footer>
-              <Button id={'select'} onClick={this.props.switchView}>Insert</Button>
+              <Button id={'select'} onClick={this.props.switchView}>Select</Button>
             </Card.Footer>
           </Card>
         </Row>

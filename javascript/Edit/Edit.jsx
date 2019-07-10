@@ -47,6 +47,7 @@ export default class Edit extends Component {
 
   componentDidMount() {
     this.load()
+    console.log(this.state.content)
   }
 
   save() {
@@ -87,11 +88,8 @@ export default class Edit extends Component {
             if (!isQ) {
               saveC = loaded[i].content
             } else {
-              if (quizC != undefined) {
+              if (loaded[i].content != undefined) {
                 quizC = JSON.parse(loaded[i].content)
-                // Parse out the subarrays
-                quizC.answers = JSON.parse(quizC.answers)
-                quizC.correctAnswers = JSON.parse(quizC.correctAnswers)
               }
             }
             showContent.push({

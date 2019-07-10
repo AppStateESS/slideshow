@@ -41,17 +41,18 @@ export default class QuizEdit extends Component {
 	componentDidMount() {
 		if (this.props.quizContent != undefined) {
 			let view = 'showTypes'
-			let test = this.props.quizContent.correctAnswers
-			if (this.props.quizContent != undefined) {
+			let cAnswers = this.props.quizContent.correctAnswers
+			if (this.props.quizContent != null) {
+				//console.log(this.props.quizContent)
 				view = this.props.quizContent.questionType
 				if (view == 'choice') {
-					test = []
+					cAnswers = []
 				}
 			}
 			this.setState({
 				quizContent: this.props.quizContent,
 				view: view,
-				correctAnswers: test
+				correctAnswers: cAnswers
 			})
 		}
 	}

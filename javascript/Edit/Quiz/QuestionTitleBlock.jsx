@@ -15,9 +15,13 @@ export default class QuestionTitleBlock extends Component {
     this.onChange = this.onChange.bind(this)
   }
 
+  componentDidMount() {
+    this.setState({ title: this.props.value })
+  }
+
   componentDidUpdate(prevProps) {
-    if (prevProps.value == undefined && this.props.value != undefined) {
-      this.setState({title: this.props.value})
+    if (prevProps.value != this.props.value && this.props.value != undefined) {
+      this.setState({ title: this.props.value })
     }
   }
 
@@ -30,10 +34,10 @@ export default class QuestionTitleBlock extends Component {
 
   render() {
     return (
-    <Form.Group key={'questionTitle'} >
-      <Form.Label>Question: </Form.Label>
-      <Form.Control id={'title-' + this.props.id} value={this.state.title} onChange={this.onChange}/>
-    </Form.Group>
+      <Form.Group key={'questionTitle'} >
+        <Form.Label>Question: </Form.Label>
+        <Form.Control id={'title-' + this.props.id} value={this.state.title} onChange={this.onChange} />
+      </Form.Group>
     )
   }
 }

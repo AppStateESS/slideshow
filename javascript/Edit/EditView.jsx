@@ -1,11 +1,11 @@
 'use strict'
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import Editor, { createEditorStateWithText, createWithContent, composeDecorators } from 'draft-js-plugins-editor'
-import {EditorState, ContentState, getDefaultKeyBinding, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
+import { EditorState, ContentState, getDefaultKeyBinding, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw } from 'draft-js'
 
-import QuizCreateForm from './Quiz/QuizCreateForm.jsx'
+import QuizEdit from './Quiz/QuizEdit.jsx'
 import QuizView from './Quiz/QuizView.jsx'
 
 // Toolbar imports
@@ -87,7 +87,7 @@ export default class EditView extends Component {
 
     this.saveEditorState = this.saveEditorState.bind(this)
 
-    this.onEditChange = (editorState) =>  {
+    this.onEditChange = (editorState) => {
       this.setState({
         editorState,
         updated: true
@@ -117,7 +117,7 @@ export default class EditView extends Component {
       else if (this.state.updated) {
         // current component updated
         this.saveEditorState()
-        this.setState({updated:false})
+        this.setState({ updated: false })
       }
     }
 
@@ -125,10 +125,10 @@ export default class EditView extends Component {
     if (prevProps.content.quizContent != this.props.content.quizContent) {
       // Yes i understand this would be a good spot to use a ternary operator, but we use that too much. :P
       if (this.props.content.quizContent != undefined) {
-        this.setState({quizEditView: false})
+        this.setState({ quizEditView: false })
       }
       else {
-        this.setState({quizEditView: true})
+        this.setState({ quizEditView: true })
       }
     }
   }
@@ -140,11 +140,11 @@ export default class EditView extends Component {
       if (this.props.content.saveContent == undefined) {
         let body = "New Slide"
         this.setState({
-           editorState: createEditorStateWithText(body)
-         }, function() {
-           this.onEditChange(RichUtils.toggleBlockType(this.state.editorState, 'header-one'))
-           this.saveEditorState()
-         })
+          editorState: createEditorStateWithText(body)
+        }, function () {
+          this.onEditChange(RichUtils.toggleBlockType(this.state.editorState, 'header-one'))
+          this.saveEditorState()
+        })
       } else {
         let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
         this.setState({
@@ -184,7 +184,7 @@ export default class EditView extends Component {
     }
 
     let editor = (
-      <div className="cust-col-11" style={this.state.hasFocus ? editorStyle : {padding: '5px'}}>
+      <div className="cust-col-11" style={this.state.hasFocus ? editorStyle : { padding: '5px' }}>
         <Editor
           editorState={this.state.editorState}
           onChange={this.onEditChange}
@@ -198,13 +198,13 @@ export default class EditView extends Component {
     )
 
     let quizView = (this.state.quizEditView) ?
-      <QuizCreateForm quizContent={this.props.content.quizContent} saveQC={this.saveQuizContent} saveDB={this.props.saveDB} toggle={this.toggleQuizEdit}/> :
-      <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit}/>
+      <QuizEdit quizContent={this.props.content.quizContent} saveQC={this.saveQuizContent} saveDB={this.props.saveDB} toggle={this.toggleQuizEdit} /> :
+      <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit} />
 
     let editRender = (this.props.isQuiz) ? (quizView) : (editor)
     let toolbar = (this.props.isQuiz) ? undefined : (<Toolbar />)
     return (
-      <div className="col-8" style={{minWidth: 700}}>
+      <div className="col-8" style={{ minWidth: 700 }}>
         <p></p>
         {toolbar}
         <span><br /></span>
@@ -214,7 +214,6 @@ export default class EditView extends Component {
       </div>
     )
   }
-
 }
 
 

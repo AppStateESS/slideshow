@@ -51,7 +51,7 @@ export default class Edit extends Component {
 
   save() {
     let c = this.state.content[this.state.currentSlide].isQuiz ?
-          /* if quiz */ this.state.content[this.state.currentSlide].quizContent :
+          /* if quiz */ JSON.stringify(this.state.content[this.state.currentSlide].quizContent) :
           /* else    */ this.state.content[this.state.currentSlide].saveContent
     $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
@@ -87,7 +87,9 @@ export default class Edit extends Component {
             if (!isQ) {
               saveC = loaded[i].content
             } else {
-              quizC = loaded[i].content
+              if (loaded[i].content != undefined) {
+                quizC = JSON.parse(loaded[i].content)
+              }
             }
             showContent.push({
               isQuiz: isQ,

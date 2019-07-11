@@ -47,7 +47,6 @@ export default class Edit extends Component {
 
   componentDidMount() {
     this.load()
-    console.log(this.state.content)
   }
 
   save() {

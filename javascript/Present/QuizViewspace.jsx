@@ -16,41 +16,27 @@ export default class QuizViewspace extends Component {
       answers: undefined,
       correct: false,
       incorrect: false,
+      partiallyCorrect: false,
       view: 'showTypes',
       checked: [],
-      partiallyCorrect: false
     }
 
     this.validate = this.validate.bind(this)
     this.buildAnswerComponent = this.buildAnswerComponent.bind(this)
     this.toggleCorrect = this._toggleCorrect.bind(this)
     this.toggleIncorrect = this._toggleIncorrect.bind(this)
+    this.togglePartiallyCorrect = this._togglePartiallyCorrect.bind(this)
     this.compareArrays = this.compareArrays.bind(this)
-    this.togglePartiallyCorrect = this.togglePartiallyCorrect.bind(this)
     this.comparePartiallyCorrect = this.comparePartiallyCorrect.bind(this)
   }
 
-  componentDidMount() {
-    if (this.props.quizContent != undefined) {
-      let view = 'showTypes'
-      if (this.props.content.quizContent != undefined) {
-        view = this.props.content.quizContent.questionType
-      }
-      this.setState({
-        view: view
-      })
-    }
-  }
-
-
   componentDidUpdate(prevProps) {
     if (this.props.currentSlide != prevProps.currentSlide) {
-      this.setState({ correct: false, incorrect: false })
+      this.setState({ correct: false, incorrect: false, partiallyCorrect: false, checked: [] })
     }
   }
 
   validate(event) {
-    let qContent = JSON.parse(this.props.content.quizContent)
     let ids = event.target.id.split('-')
     if (ids[0] === 'check') {
       // MultipleChoice
@@ -96,19 +82,18 @@ export default class QuizViewspace extends Component {
     this.setState({ incorrect: true, correct: false, partiallyCorrect: false })
   }
 
-  togglePartiallyCorrect() {
+  _togglePartiallyCorrect() {
     this.setState({ partiallyCorrect: true, correct: false, incorrect: false })
   }
 
   buildAnswerComponent() {
-    let qContent = JSON.parse(this.props.content.quizContent)
-    if (qContent != undefined) {
+    if (this.props.content.quizContent != undefined) {
       let i = -1
-      let a = qContent.answers.map((answer) => {
+      let a = this.props.content.quizContent.answers.map((answer) => {
         i += 1
 
         // Shows a check if the answer has been correctly answered before
-        let c = qContent.correctAnswerIndex
+        let c = this.props.content.quizContent.correctAnswerIndex
         let ans = ((this.props.currentSlide < this.props.highestSlide) && (c == i)) ?
           (<span>{answer} <i className="fas fa-check-circle" style={{ color: 'green' }}></i></span>) : answer
 
@@ -186,22 +171,21 @@ export default class QuizViewspace extends Component {
   }
 
   render() {
-    let qContent = JSON.parse(this.props.content.quizContent)
     let alert = undefined
 
     if (this.state.correct) {
       alert = (<Alert key={'correct'} variant="success">
-        <span>Correct! <i className="fas fa-check-circle" style={{ color: "green" }}></i></span>
+        <span><i className="fas fa-check-circle" style={{ color: "green" }}></i> Correct!</span>
       </Alert>)
     }
     else if (this.state.incorrect) {
       alert = (<Alert key={'incorrect'} variant="danger">
-        <span>Please try again <i className="fas fa-times-circle"></i></span>
+        <span><i className="fas fa-times-circle"></i> Please try again</span>
       </Alert>)
     }
     else if (this.state.partiallyCorrect) {
       alert = (<Alert key={'partial'} variant="warning">
-        <span>You are partially correct <i className="fas fa-exclamation-circle"></i></span>
+        <span><i className="fas fa-exclamation-circle"></i> You are partially correct</span>
       </Alert>)
     }
     else if (this.props.currentSlide == this.props.highestSlide) {
@@ -209,7 +193,7 @@ export default class QuizViewspace extends Component {
     }
     let answersComponent = undefined
     let titleComponent = undefined
-    if (qContent == undefined) {
+    if (this.props.content.quizContent == undefined) {
       titleComponent = "Error - Empty Quiz"
       answersComponent = (<div>
         <p style={{ color: 'red' }}>This quiz slide has not been filled with data</p>
@@ -239,5 +223,6 @@ export default class QuizViewspace extends Component {
 QuizViewspace.propTypes = {
   content: PropTypes.object,
   currentSlide: PropTypes.number,
-  highestSlide: PropTypes.number
+  highestSlide: PropTypes.number,
+  validate: PropTypes.func
 }

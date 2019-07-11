@@ -49,4 +49,6 @@ export default class MultipleSelectBlock extends Component {
 MultipleSelectBlock.propTypes = {
   id: PropTypes.number,
   onChange: PropTypes.func,
+  value: PropTypes.string,
+  checked: PropTypes.bool
 }

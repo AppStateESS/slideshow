@@ -55,4 +55,5 @@ MultipleChoiceBlock.propTypes = {
   id: PropTypes.number,
   onChange: PropTypes.func,
   placeholder: PropTypes.string,
+  checked: PropTypes.bool
 }

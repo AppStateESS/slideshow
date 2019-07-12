@@ -51,22 +51,16 @@ export default class Edit extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state != prevState) {
-      console.log(this.state.content)
+      //console.log(this.state.content)
     }
 
   }
 
   save() {
-    let c = this.state.content[this.state.currentSlide].isQuiz ?
-          /* if quiz */ this.state.content[this.state.currentSlide].quizContent :
-          /* else    */ this.state.content[this.state.currentSlide].saveContent
     $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       data: {
-        content: c,
-        id: this.state.content[this.state.currentSlide].id,
-        index: this.state.content[this.state.currentSlide].slideIndex,
-        isQuiz: this.state.content[this.state.currentSlide].isQuiz
+        slides: [...this.state.content]
       },
       type: 'put',
       dataType: 'json',
@@ -85,10 +79,8 @@ export default class Edit extends Component {
       type: 'GET',
       dataType: 'json',
       success: function (data) {
-        console.log(data['slides'])
         let loaded = data['slides']
         if (loaded[0] != undefined) {
-          console.log(loaded)
           window.sessionStorage.setItem('slideIndex', loaded[0].slideIndex)
           window.sessionStorage.setItem('imgUrl', loaded[0].media)
           let showContent = []
@@ -135,11 +127,10 @@ export default class Edit extends Component {
 
 
   addNewSlide(quiz) {
-    if (typeof(quiz) === 'object') quiz = false // an event is bindinded on some calls which causes errors
+    if (typeof(quiz) != 'boolean') quiz = false // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
     const newId = Number(this.state.content[this.state.currentSlide].slideIndex) + 1
-    console.log(index + ":" + newId)
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
@@ -239,8 +230,8 @@ export default class Edit extends Component {
     // is loaded in as a string or a number
     // We need to handle that and bring it back to a boolean
     if (quizT == undefined) return false // initial load
-    if (typeof(quizT) === 'number') return (quizT != 0)
-    return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
+    if (typeof(JSON.parse(quizT)) === 'number') return (JSON.parse(quizT) != 0)
+    return (typeof(JSON.parse(quizT)) === "boolean") ? quizT : JSON.parse(quizT)
   }
 
   changeBackground(newColor) {

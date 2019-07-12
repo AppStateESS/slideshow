@@ -76,40 +76,41 @@ class SlideFactory extends Base
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
 
-        $slideIndex = $request->pullPutVarIfSet('index');
-        $content = $request->pullPutVarIfSet('content');
-        $isQuiz = $request->pullPutVarIfSet('isQuiz');
-        $backgroundColor = $request->pullPutVarIfSet('backgroundColor');
+        $slides = $request->pullPutVar('slides');
 
+        $slideIndex = 0;
+        foreach ($slides as $slide) {
+            $slideId = $this->getSlideId($showId, $slideIndex);
+            $resource;
+            if (empty($slideId)) {
+                $resource = $this->build();
+            }
+            else {
+                $resource = $this->load($slideId);
+            }
 
-        $slideId = $this->getSlideId($showId, $slideIndex);
-        //var_dump('showId: ' . $showId . ' slideIndex: ' . $slideIndex . ' slideId: ' . $slideId . "\n");
-        $resource = null;
-        if (!empty($slideId)) {
-            $resource = $this->load($slideId);
-        }
-        else {
-            $resource = $this->build();
-        }
-
-        // Update the resource fields
-        $resource->showId = $showId;
-
-        if (gettype($slideIndex) != 'boolean') {
+            $resource->showId = $showId;
             $resource->slideIndex = $slideIndex;
-        }
-        if (gettype($content) != 'boolean') {
-            $resource->content = $content;
-        }
-        if (gettype($isQuiz) == 'string') {
+            $isQuiz = $slide['isQuiz'] == 'true' ? true : false;
             $resource->isQuiz = $isQuiz;
+            if ($isQuiz) {
+                if (!empty($slide['quizContent'])) {
+                    $resource->content = $slide['quizContent'];
+                }
+            }
+            else {
+                if (!empty($slide['saveContent'])) {
+                    $resource->content = $slide['saveContent'];
+                }
+            }
+            $resource->backgroundColor = $slide['backgroundColor'];
+            if (!empty($slide['media'])) {    
+                $resource->media = $slide['media'];
+            }
+            $this->saveResource($resource);
+            $slideIndex++;
         }
-        if (gettype($backgroundColor) != 'boolean') {
-            $resource->backgroundColor = $backgroundColor;
-        }
-
-        $this->saveResource($resource);
-        return $resource;
+        return true;
     }
 
     public function postImage(Request $request)

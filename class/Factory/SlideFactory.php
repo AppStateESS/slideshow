@@ -54,10 +54,6 @@ class SlideFactory extends Base
 
     public function post(Request $request)
     {
-        /*$vars = $request->getRequestVars();
-        $showId = intval($vars['Show']);
-        */
-
         $resource = $this->build();
 
         $resource->showId = $request->pullPostVarIfSet('id');
@@ -72,6 +68,9 @@ class SlideFactory extends Base
     */
     public function put(Request $request)
     {
+        // Array to return of all the slideIds
+        $ids = array();
+        
         // pull showId from $request
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
@@ -80,17 +79,17 @@ class SlideFactory extends Base
 
         $slideIndex = 0;
         foreach ($slides as $slide) {
-            $slideId = $this->getSlideId($showId, $slideIndex);
             $resource;
-            if (empty($slideId)) {
+            if (empty($slide['slideId'])) {
                 $resource = $this->build();
             }
             else {
-                $resource = $this->load($slideId);
+                $resource = $this->load(intval($slide['slideId']));
             }
 
             $resource->showId = $showId;
             $resource->slideIndex = $slideIndex;
+            $resource->content = "";
             $isQuiz = $slide['isQuiz'] == 'true' ? true : false;
             $resource->isQuiz = $isQuiz;
             if ($isQuiz) {
@@ -104,28 +103,20 @@ class SlideFactory extends Base
                 }
             }
             $resource->backgroundColor = $slide['backgroundColor'];
+            $resource->media = "";
             if (!empty($slide['media'])) {    
                 $resource->media = $slide['media'];
             }
             $this->saveResource($resource);
+            array_push($ids, $resource->id);
             $slideIndex++;
         }
-        return true;
+        return $ids;
     }
 
     public function postImage(Request $request)
     {
-        $vars = $request->getRequestVars();
-        $showId = $vars['id'];
-        $slideIndex = $vars['index'];
-        //var_dump($vars);
-        // Begining to think that I don't need these bc I will validate on the js end
-        //$mediaHeight = $request->pullPostVar('height');
-        //$mediaWidth = $request->pullPostVar('width');
-
-        //$mediaTitle = $request->pullPostVar('title');
-
-        $resourceId = $this->getSlideId($showId, $slideIndex);
+        $resourceId = $request->pullPostVar('slideId');
 
         $resource = $this->load($resourceId);
 
@@ -143,24 +134,34 @@ class SlideFactory extends Base
     */
     public function deleteSlide(Request $request)
     {
-        // pull showId from $request
-        $vars = $request->getRequestVars();
-        $showId = intval($vars['Slide']);
-
-        $slideIndex = $request->pullDeleteVar('index');
-        //var_dump($slideIndex);
-        // Build SlideResource from id and index
-        $resourceId = $this->getSlideId($showId, $slideIndex);
+        $resourceId = $request->pullDeleteVar('slideId');
         $resource = $this->load($resourceId);
+
+        // If there is media associated with an image then we remove it
+        if (!empty($resource->media)) {
+            try {
+                $this->deleteImage($request);
+            }
+            catch (\Exception $e) {
+                echo("A fatal error has occured: " . $e);
+            }
+        }
 
         return ($this->deleteResource($resource) != 0);
     }
 
+    /**
+     * Removes all slides associated with a specfic slideId that is within the request
+     * @param \Canopy\Request request data
+     * @return boolean true if deletion was successful
+     */
     public function deleteAll(Request $request)
     {
         // Remove all slides comes from Showlist
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
+
+        $this->deleteAllImages($request);
 
         $sql = 'DELETE from ss_slide WHERE showId=:showId;';
         $db = Database::getDB();
@@ -169,9 +170,45 @@ class SlideFactory extends Base
         return $q->execute(array('showId'=>$showId));
     }
 
+    /**
+     * Deletes an image given a deletion request with slideId
+     * @return boolean true if deletion was successful
+     */
     public function deleteImage(Request $request)
     {
-        // TODO
+        $resourceId = $request->pullDeleteVar('slideId');
+        $resource = $this->load($resourceId);
+
+        if ($this->removeUpload($resourceId, $resource->media)) {
+            $resource->media = "";
+            $this->saveResource($resource);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Deletes all images within a specific slideshow given a deletion request with slideId
+     * @return boolean true if deletion was successful
+     */
+    public function deleteAllImages(Request $request) {
+        
+        $vars = $request->getRequestVars();
+        $showId = intval($vars['Slide']);
+
+        $sql = 'SELECT id, media from ss_slide WHERE showId=:showId;';
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        $q->execute(array('showId'=>$showId));
+        if (!$q) return false;
+        $paths = $q->fetchAll();
+        $flag = false;
+        foreach ($paths as $path) {
+            $flag = $this->removeUpload($path['id'], $path['media']);
+            if (!$flag) return false; // An error occured
+        }
+        return true;
     }
 
     /**
@@ -190,6 +227,10 @@ class SlideFactory extends Base
         return $slides;
     }
 
+    /**
+     * Obtains the resource id for a slide from a showId and slideIndex. I would like to deprecate this method soon.
+     * @return int resourceId for a given slide
+     */
     private function getSlideId($showId, $slideIndex)
     {
         $db = Database::getDB();
@@ -202,17 +243,20 @@ class SlideFactory extends Base
 
     private function upload(array $file, $slideId)
     {
-        $target = SLIDESHOW_MEDIA_DIRECTORY . '/' . $slideId . '/';
+        $target = SLIDESHOW_MEDIA_DIRECTORY . $slideId . '/';
         $dir = PHPWS_HOME_DIR . $target;
         $dest = $dir . basename($file['name']);
 
-        if (!is_dir($dir))
+        if (is_dir($dir))
         {
-            mkdir($dir, 0755, true);
+            // This means there is alredy an image stored at this location so we need to remove it
+            // I do this by removing the entire directory
+            system('rm -rf ' . escapeshellarg($dir), $ret);
+            if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
         }
+        mkdir($dir, 0755, true);
+
         if (move_uploaded_file($file['tmp_name'], $dest)) {
-            //echo("Upload success");
-            //var_dump("I think I did this");
             return './' . $target .  basename($file['name']);
         }
         else {
@@ -221,6 +265,24 @@ class SlideFactory extends Base
             var_dump($target);
         }
         return null;
+    }
+
+    private function removeUpload($slideId, $path) {
+        if (empty($path)) {
+            return false;
+        }
+        try {
+            unlink($path);
+            $dir = SLIDESHOW_MEDIA_DIRECTORY . $slideId . '/';
+            rmdir($dir);
+            return true;
+        }
+        catch (\Exception $e) {
+            echo("A fatal error has occured: " . $e);
+            // uncomment to show stacktrace as an array
+            // var_dump($e);
+        }
+        return false;
     }
 
 }

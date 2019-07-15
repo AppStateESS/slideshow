@@ -32,19 +32,16 @@ export default class CustomToolbarButtons extends Component {
 
   insertMedia(fileWithMeta) {
     let showId = Number(window.sessionStorage.getItem('id'))
+    let slideId = Number(window.sessionStorage.getItem('slideId'));
     // Handle AJAX
     let fMeta = fileWithMeta[0]
-    let slideIndex = Number(window.sessionStorage.getItem('slideIndex'));
-    if (slideIndex == null) {
-      slideIndex = 0
-    }
     let formData = new FormData()
-    formData.append('title', fMeta.meta.name)
+    //formData.append('title', fMeta.meta.name)
     formData.append('media', fMeta.file)
-    formData.append('index', slideIndex)
+    formData.append('slideId', slideId)
     formData.append('id', showId)
-    formData.append('height', fMeta.meta.height)
-    formData.append('width', fMeta.meta.width)
+    //formData.append('height', fMeta.meta.height)
+    //formData.append('width', fMeta.meta.width)
     $.ajax({
       url: './slideshow/Slide/image/' + window.sessionStorage.getItem('id'),
       type: 'post',
@@ -52,10 +49,9 @@ export default class CustomToolbarButtons extends Component {
       processData: false,
       contentType: false,
       success: (imageUrl) => {
-        // im thinking of putting the path of the image in window sessionStorage
-        this.setState({imageUrl: JSON.parse(imageUrl)})
         window.sessionStorage.setItem('imgUrl', JSON.parse(imageUrl))
-        this.props.setEditorState(EditorState.redo(this.props.getEditorState()))
+        // This caused editView to rerender
+        this.props.setEditorState(EditorState.moveFocusToEnd(this.props.getEditorState()))
       }
     })
     this.setState({mediaView: false})

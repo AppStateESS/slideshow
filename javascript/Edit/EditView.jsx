@@ -261,7 +261,7 @@ export default class EditView extends Component {
 
     let editRender = (this.props.isQuiz) ? (quizView) : (editor)
     let imgRender = (this.state.imgUrl) ?
-                            <ImageC src={this.state.imgUrl} remove={this.props.removeMedia} height={'100%'} width={'100%'}/>
+                            <ImageC src={this.state.imgUrl} remove={this.props.removeMedia} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
                             : undefined
     let toolbar = (this.props.isQuiz) ? undefined : (<Toolbar />)
     return (

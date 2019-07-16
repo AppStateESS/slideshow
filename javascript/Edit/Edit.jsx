@@ -93,7 +93,7 @@ export default class Edit extends Component {
       success: function (data) {
         let loaded = data['slides']
         if (loaded[0] != undefined) {
-          window.sessionStorage.setItem('slideId', loaded[0].id)
+          window.sessionStorage.setItem('slideIndex', loaded[0].slideIndex)
           window.sessionStorage.setItem('imgUrl', loaded[0].media)
           let showContent = []
           for (let i = 0; i < loaded.length; i++) {
@@ -132,10 +132,8 @@ export default class Edit extends Component {
 
   setCurrentSlide(val) {
     this.save() 
-    if (this.state.content[val].slideId != undefined) {
-      window.sessionStorage.setItem('slideId', this.state.content[val].slideId)
-    }
-    
+    window.sessionStorage.setItem('slideIndex', val)
+     
     this.setState({
       currentSlide: val
     })

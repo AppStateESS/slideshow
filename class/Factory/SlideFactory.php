@@ -116,8 +116,13 @@ class SlideFactory extends Base
 
     public function postImage(Request $request)
     {
-        $resourceId = $request->pullPostVar('slideId');
+        // pull showId and slideIndex from $request
+        $showId = intval($request->pullPostVar('id'));
+        $slideIndex = intval($request->pullPostVar('slideIndex'));
+        //var_dump($slideIndex);
 
+        $resourceId = $this->getSlideId($showId, $slideIndex);
+        //var_dump($showId);
         $resource = $this->load($resourceId);
 
         $path = $this->upload($_FILES['media'], $resourceId);

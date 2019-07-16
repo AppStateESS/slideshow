@@ -32,13 +32,13 @@ export default class CustomToolbarButtons extends Component {
 
   insertMedia(fileWithMeta) {
     let showId = Number(window.sessionStorage.getItem('id'))
-    let slideId = Number(window.sessionStorage.getItem('slideId'));
+    let slideIndex = Number(window.sessionStorage.getItem('slideIndex'));
     // Handle AJAX
     let fMeta = fileWithMeta[0]
     let formData = new FormData()
     //formData.append('title', fMeta.meta.name)
     formData.append('media', fMeta.file)
-    formData.append('slideId', slideId)
+    formData.append('slideIndex', slideIndex)
     formData.append('id', showId)
     //formData.append('height', fMeta.meta.height)
     //formData.append('width', fMeta.meta.width)

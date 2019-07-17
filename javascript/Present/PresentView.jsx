@@ -22,7 +22,6 @@ export default class PresentView extends Component {
           content={this.props.content}
           currentSlide={this.props.currentSlide}
           highestSlide={this.props.high}
-          next={this.props.nextSlide}
           validate={this.props.validate} />) :
         <Viewspace content={this.props.content} />
       return (
@@ -41,5 +40,5 @@ PresentView.propTypes = {
   content: PropTypes.object,
   currentSlide: PropTypes.number,
   high: PropTypes.number,
-  //nextSlide: PropTypes.function,
+  validate: PropTypes.func
 }

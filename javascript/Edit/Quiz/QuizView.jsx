@@ -1,5 +1,5 @@
 'use strict'
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Button
@@ -8,18 +8,18 @@ import {
 export default class QuizView extends Component {
   constructor(props) {
     super(props)
-    this.state = {
+    /*this.state = {
       quizContent: {
         questionTitle: 'No data Loaded',
         answers: ['this might be an error']
       }
-    }
+    }*/
   }
 
-  componentDidMount() {
+  /*componentDidMount() {
     if (this.props.quizContent != undefined) {
       this.setState({
-        quizContent: JSON.parse(this.props.quizContent)
+        quizContent: this.props.quizContent
       })
     }
   }
@@ -27,31 +27,34 @@ export default class QuizView extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.quizContent != prevProps.quizContent && this.props.quizContent != undefined) {
       this.setState({
-        quizContent: JSON.parse(this.props.quizContent)
+        quizContent: this.props.quizContent
       })
     }
-  }
+  }*/
 
   render() {
     let questions = undefined
-    if (this.state.quizContent.answers != undefined) {
-      questions = this.state.quizContent.answers.map((question, i) => {
-        let check = (<i className="fas fa-times-circle" style={{color: 'red'}}></i>)
-        if (this.state.quizContent.correctAnswerIndex == i) {
-        check = (<i className="fas fa-check-circle" style={{color: 'green'}}></i>)
+    if (this.props.quizContent != undefined) {
+      questions = this.props.quizContent.answers.map(function (question, i) {
+        let check = (<i className="fas fa-times-circle" style={{ color: 'red' }}></i>)
+        if (this.props.quizContent.correctAnswers != undefined) {
+          if ((this.props.quizContent.correctAnswers).includes(i.toString())) {
+            check = (<i className="fas fa-check-circle" style={{ color: 'green' }}></i>)
+          }
         }
         return (
           <div key={question}>
             <p>{check} {question}</p>
           </div>
         )
-      })
+      }.bind(this))
     }
     // TODO: rework this to be more pretty
     // Also need to handle open answers
+    let title = (this.props.quizContent == undefined) ? 'No data loaded' : this.props.quizContent.questionTitle
     return (
       <span>
-        <h1>{this.state.quizContent.questionTitle}</h1>
+        <h1>{title}</h1>
         {questions}
         <Button variant="outline-primary" onClick={this.props.toggle} block><i className="fas fa-edit"></i> Edit Quiz Slide</Button>
       </span>
@@ -60,6 +63,6 @@ export default class QuizView extends Component {
 }
 
 QuizView.propTypes = {
-  quizContent: PropTypes.string,
+  quizContent: PropTypes.object,
   toggle: PropTypes.func
 }

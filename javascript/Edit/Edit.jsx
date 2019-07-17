@@ -111,7 +111,9 @@ export default class Edit extends Component {
             if (!isQ) {
               saveC = loaded[i].content
             } else {
-              quizC = loaded[i].content
+              if (loaded[i].content != undefined) {
+                quizC = JSON.parse(loaded[i].content)
+              }
             }
             showContent.push({
               isQuiz: isQ,

@@ -16,9 +16,9 @@ export default class AnswerTypeCards extends Component {
 
   render() {
     return (
-      <div style={{padding: 10}}>
-        <Row style={{padding: 10, justifyContent: 'center'}} >
-          <Card bg="secondary" text="white" style={{width: '12rem', marginRight: '1rem'}}>
+      <div style={{ padding: 10 }}>
+        <Row style={{ padding: 10, justifyContent: 'center' }} >
+          <Card bg="secondary" text="white" style={{ width: '12rem', marginRight: '1rem' }}>
             <Card.Header>Multiple Choice</Card.Header>
             <Card.Body>
               <Card.Text>
@@ -26,10 +26,10 @@ export default class AnswerTypeCards extends Component {
               </Card.Text>
             </Card.Body>
             <Card.Footer>
-              <Button onClick={this.props.multipleChoice}>Insert</Button>
+              <Button id={'choice'} onClick={this.props.switchView}>Select</Button>
             </Card.Footer>
           </Card>
-          <Card bg="secondary" text="white" style={{width: '12rem', marginRight: '1rem'}}>
+          <Card bg="secondary" text="white" style={{ width: '12rem', marginRight: '1rem' }}>
             <Card.Header>Open Answer</Card.Header>
             <Card.Body>
               <Card.Text>
@@ -37,10 +37,10 @@ export default class AnswerTypeCards extends Component {
               </Card.Text>
             </Card.Body>
             <Card.Footer>
-              <Button onClick={this.props.openAnswer}>Insert</Button>
+              <Button id={'open'} onClick={this.props.switchView}>Select</Button>
             </Card.Footer>
           </Card>
-          <Card bg="secondary" text="white" style={{width: '12rem'}}>
+          <Card bg="secondary" text="white" style={{ width: '12rem' }}>
             <Card.Header>Multiple-Select Choice</Card.Header>
             <Card.Body>
               <Card.Text>
@@ -48,7 +48,7 @@ export default class AnswerTypeCards extends Component {
               </Card.Text>
             </Card.Body>
             <Card.Footer>
-              <Button>Insert</Button>
+              <Button id={'select'} onClick={this.props.switchView}>Select</Button>
             </Card.Footer>
           </Card>
         </Row>
@@ -59,5 +59,6 @@ export default class AnswerTypeCards extends Component {
 
 AnswerTypeCards.propTypes = {
   openAnswer: PropTypes.func,
-  multipleChoice: PropTypes.func
+  multipleChoice: PropTypes.func,
+  multipleSelect: PropTypes.func
 }

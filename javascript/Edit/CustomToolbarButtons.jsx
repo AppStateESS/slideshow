@@ -70,7 +70,7 @@ export default class CustomToolbarButtons extends Component {
     let mediaModal = (
       <Modal show={this.state.mediaView} onHide={this.mediaCancel}>
         <Modal.Header closeButton>
-          <h5>Insert Media</h5>
+          <h5>Insert Image</h5>
         </Modal.Header>
         <Modal.Body>
           <div className="card">

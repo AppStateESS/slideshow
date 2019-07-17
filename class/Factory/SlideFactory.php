@@ -105,7 +105,7 @@ class SlideFactory extends Base
             $resource->backgroundColor = $slide['backgroundColor'];
             $resource->media = "";
             if (!empty($slide['media'])) {    
-                $resource->media = $slide['media'];
+                $resource->media = json_encode($slide['media']);
             }
             $this->saveResource($resource);
             array_push($ids, $resource->id);
@@ -127,7 +127,8 @@ class SlideFactory extends Base
 
         $path = $this->upload($_FILES['media'], $resourceId);
         if ($path != null) {
-            $resource->media = $path;
+            $media = array('imgUrl' => $path, 'align' => 'right');
+            $resource->media = json_encode($media);
         }
         $this->saveResource($resource);
         return $path;

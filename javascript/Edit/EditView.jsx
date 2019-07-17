@@ -84,7 +84,8 @@ export default class EditView extends Component {
       editorState: EditorState.createEmpty(),
       quizEditView: true,
       updated: false,
-      imgUrl: props.content.media
+      imgUrl: props.content.media.imgUrl,
+      mediaAlign: ''
     }
 
     this.saveEditorState = this.saveEditorState.bind(this)
@@ -104,6 +105,7 @@ export default class EditView extends Component {
 
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.toggleQuizEdit = this.toggleQuizEdit.bind(this)
+    this.alignMedia = this.alignMedia.bind(this)
   }
 
   componentDidMount() {
@@ -116,8 +118,9 @@ export default class EditView extends Component {
     if (this.props.content != undefined && !this.props.isQuiz) {
       if (this.props.currentSlide != prevProps.currentSlide || this.props.content.saveContent != prevProps.content.saveContent) {
         // catch the load from the database and the changing of slides
-        //console.log(window.sessionStorage.setItem('imgUrl', null))
-        this.setState({imgUrl: this.props.content.media})
+        if (this.props.content.media != undefined) {
+          this.setState({imgUrl: this.props.content.media.imgUrl, mediaAlign: this.props.content.media.align})
+        }
         this.loadEditorState()
       }
       else if (this.state.updated) {
@@ -139,14 +142,20 @@ export default class EditView extends Component {
       }
     }
 
-    if (this.state.imgUrl != this.props.content.media) {
-      this.setState({imgUrl: this.props.content.media})
+    let newImgUrl = (this.props.content.media == undefined) ? "" : this.props.content.media.imgUrl
+    let newAlign = (this.props.content.media == undefined) ? "" : this.props.content.media.align
+    if (this.state.imgUrl != newImgUrl) {
+      this.setState({imgUrl: newImgUrl, mediaAlign: newAlign})
     }
+    
     if (prevState.imgUrl == this.state.imgUrl) {
       let newImg = window.sessionStorage.getItem('imgUrl')
+      let align = window.sessionStorage.getItem('align')
       if (newImg != null && newImg.length > 0) {
-        this.props.saveMedia(newImg)
-        this.setState({imgUrl: newImg}, () => window.sessionStorage.setItem('imgUrl', ''))
+        // This is a preventative for a wierd bug where the alignment of the first slide becomes overwritten.
+        align = (align != null && align.length > 0) ? align : 'right'
+        this.props.saveMedia(newImg, align)
+        this.setState({imgUrl: newImg, mediaAlign: align}, () => window.sessionStorage.setItem('imgUrl', ''))
       }
     }
   }
@@ -206,6 +215,12 @@ export default class EditView extends Component {
     })
   }
 
+  alignMedia() {
+    let align =  (this.state.mediaAlign === 'right') ? 'left' : 'right'
+    this.setState({mediaAlign: align})
+    this.props.saveMedia(this.state.imgUrl, align)
+  }
+
   _functions(e) {
     // User presses L key
     if (e.keyCode == 76 && hasCommandModifier(e)) {
@@ -260,8 +275,8 @@ export default class EditView extends Component {
       <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit}/>
 
     let editRender = (this.props.isQuiz) ? (quizView) : (editor)
-    let imgRender = (this.state.imgUrl) ?
-                            <ImageC src={this.state.imgUrl} remove={this.props.removeMedia} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
+    let imgRender = (this.state.imgUrl != undefined) ?
+                            <ImageC key={this.state.imgUrl} src={this.state.imgUrl} remove={this.props.removeMedia} align={this.alignMedia} mediaAlign={this.state.mediaAlign} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
                             : undefined
     let toolbar = (this.props.isQuiz) ? undefined : (<Toolbar />)
     return (
@@ -271,10 +286,11 @@ export default class EditView extends Component {
         <span><br /></span>
         <div className="jumbotron" style={{minHeight: 350, backgroundColor: this.props.content.backgroundColor}}>
           <div className="row">
-              <div className="col">
-                {editRender}
-              </div>
-              {imgRender}
+            {(this.state.mediaAlign === 'left') ? imgRender : undefined}
+            <div className="col">
+              {editRender}
+            </div>
+            {(this.state.mediaAlign === 'right') ? imgRender : undefined}
             </div>
         </div>
       </div>

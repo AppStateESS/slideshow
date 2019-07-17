@@ -24,7 +24,7 @@ export default class Edit extends Component {
           quizContent: undefined,
           isQuiz: false,
           backgroundColor: '#E5E7E9',
-          media: '',
+          media: {imgUrl: '', align: ''},
           slideId: 0
         },
       ],
@@ -93,8 +93,14 @@ export default class Edit extends Component {
       success: function (data) {
         let loaded = data['slides']
         if (loaded[0] != undefined) {
+          let media = JSON.parse(loaded[0].media || "{}") 
           window.sessionStorage.setItem('slideIndex', loaded[0].slideIndex)
-          window.sessionStorage.setItem('imgUrl', loaded[0].media)
+          if (media != undefined) {
+            // If an image is on the first slide there is a weird case where we don't have that data
+            // there is probably a better work around.
+            window.sessionStorage.setItem('imgUrl', media.imgUrl)
+            window.sessionStorage.setItem('align', media.align)
+          }
           let showContent = []
           for (let i = 0; i < loaded.length; i++) {
             let saveC = undefined
@@ -112,7 +118,7 @@ export default class Edit extends Component {
               backgroundColor: loaded[i].backgroundColor,
 
               slideId: Number(loaded[i].id),
-              media: loaded[i].media
+              media: JSON.parse(loaded[i].media || '{}')
             })
           }
 
@@ -133,7 +139,7 @@ export default class Edit extends Component {
   setCurrentSlide(val) {
     this.save() 
     window.sessionStorage.setItem('slideIndex', val)
-     
+
     this.setState({
       currentSlide: val
     })
@@ -237,9 +243,9 @@ export default class Edit extends Component {
     this.setState({content: c})
   }
 
-  saveMedia(media) {
+  saveMedia(imgUrl, align) {
     let c = [...this.state.content]
-    c[this.state.currentSlide].media = media
+    c[this.state.currentSlide].media = {imgUrl: imgUrl, align: align}
     this.setState({content: c}, () => this.save())
   }
 

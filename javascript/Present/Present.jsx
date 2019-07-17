@@ -128,7 +128,7 @@ export default class Present extends Component {
               saveContent: saveC,
               quizContent: quizC,
               backgroundColor: loaded[i].backgroundColor,
-              id: loaded[i].slideIndex // This may not be needed
+              media: JSON.parse(loaded[i].media || '{}')
             })
           }
           this.setState({

@@ -3,7 +3,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import Editor, { createEditorStateWithText, createWithContent, composeDecorators } from 'draft-js-plugins-editor'
-import { EditorState, ContentState, getDefaultKeyBinding, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw } from 'draft-js'
+import {EditorState, ContentState, getDefaultKeyBinding, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
+const {hasCommandModifier} = KeyBindingUtil
 
 import QuizEdit from './Quiz/QuizEdit.jsx'
 import QuizView from './Quiz/QuizView.jsx'
@@ -12,7 +13,6 @@ import QuizView from './Quiz/QuizView.jsx'
 import {
   ItalicButton,
   BoldButton,
-  UnderlineButton,
   CodeButton,
   HeadlineOneButton,
   HeadlineTwoButton,
@@ -21,7 +21,7 @@ import {
   OrderedListButton,
 } from 'draft-js-buttons'
 
-import CustomButtons from './CustomToolbarButtons.jsx'
+import Media from './MediaToolbarAddon.jsx'
 import UndoRedo from './UndoRedoButtons.jsx'
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
@@ -44,7 +44,6 @@ const staticToolbar = createToolbarPlugin({
     Separator,
     BoldButton,
     ItalicButton,
-    UnderlineButton,
     CodeButton,
     Separator,
     HeadlineOneButton,
@@ -53,7 +52,7 @@ const staticToolbar = createToolbarPlugin({
     UnorderedListButton,
     OrderedListButton,
     Separator,
-    CustomButtons
+    Media
   ]
 })
 
@@ -75,6 +74,8 @@ const plugins = [
   imagePlugin
 ]
 
+import ImageC from '../AddOn/ImageColumn.jsx'
+
 export default class EditView extends Component {
 
   constructor(props) {
@@ -82,7 +83,9 @@ export default class EditView extends Component {
     this.state = {
       editorState: EditorState.createEmpty(),
       quizEditView: true,
-      updated: false
+      updated: false,
+      imgUrl: props.content.media.imgUrl,
+      mediaAlign: ''
     }
 
     this.saveEditorState = this.saveEditorState.bind(this)
@@ -97,21 +100,27 @@ export default class EditView extends Component {
 
 
     this.loadEditorState = this.loadEditorState.bind(this)
+    this.functions = this._functions.bind(this)
+    this.handleKeyCommand = this._handleKeyCommand.bind(this)
 
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.toggleQuizEdit = this.toggleQuizEdit.bind(this)
+    this.alignMedia = this.alignMedia.bind(this)
   }
 
   componentDidMount() {
     this.loadEditorState()
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
 
     // handle of non-quiz slides
     if (this.props.content != undefined && !this.props.isQuiz) {
       if (this.props.currentSlide != prevProps.currentSlide || this.props.content.saveContent != prevProps.content.saveContent) {
         // catch the load from the database and the changing of slides
+        if (this.props.content.media != undefined) {
+          this.setState({imgUrl: this.props.content.media.imgUrl, mediaAlign: this.props.content.media.align})
+        }
         this.loadEditorState()
       }
       else if (this.state.updated) {
@@ -131,6 +140,23 @@ export default class EditView extends Component {
         this.setState({ quizEditView: true })
       }
     }
+
+    let newImgUrl = (this.props.content.media == undefined) ? "" : this.props.content.media.imgUrl
+    let newAlign = (this.props.content.media == undefined) ? "" : this.props.content.media.align
+    if (this.state.imgUrl != newImgUrl) {
+      this.setState({imgUrl: newImgUrl, mediaAlign: newAlign})
+    }
+    
+    if (prevState.imgUrl == this.state.imgUrl) {
+      let newImg = window.sessionStorage.getItem('imgUrl')
+      let align = window.sessionStorage.getItem('align')
+      if (newImg != null && newImg.length > 0) {
+        // This is a preventative for a wierd bug where the alignment of the first slide becomes overwritten.
+        align = (align != null && align.length > 0) ? align : 'right'
+        this.props.saveMedia(newImg, align)
+        this.setState({imgUrl: newImg, mediaAlign: align}, () => window.sessionStorage.setItem('imgUrl', ''))
+      }
+    }
   }
 
   loadEditorState() {
@@ -146,10 +172,23 @@ export default class EditView extends Component {
           this.saveEditorState()
         })
       } else {
-        let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
-        this.setState({
-          editorState: EditorState.createWithContent(contentState)
-        })
+        if (this.props.content.saveContent.length > 0) {
+          let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
+          this.setState({
+            editorState: EditorState.createWithContent(contentState)
+          })
+        }
+        else {
+          alert("An error has occured. Your data may have been corrupted. This slide will be reset.")
+          let body = "New Slide"
+          this.setState({
+            editorState: createEditorStateWithText(body)
+          }, function() {
+            this.onEditChange(RichUtils.toggleBlockType(this.state.editorState, 'header-one'))
+            this.saveEditorState()
+            //this.props.saveDB()
+          })
+        }
       }
     }
   }
@@ -175,6 +214,39 @@ export default class EditView extends Component {
     })
   }
 
+  alignMedia() {
+    let align =  (this.state.mediaAlign === 'right') ? 'left' : 'right'
+    this.setState({mediaAlign: align})
+    this.props.saveMedia(this.state.imgUrl, align)
+  }
+
+  _functions(e) {
+    // User presses L key
+    if (e.keyCode == 76 && hasCommandModifier(e)) {
+      return 'load'
+    }
+    else if (e.keyCode == 83 /* S key */ && hasCommandModifier(e)) {
+      return 'save'
+    }
+  }
+  
+  _handleKeyCommand(command) {
+    if (command === 'save') {
+      console.log("saved")
+      this.props.saveDB()
+      return 'handled'
+    } 
+    else if (command === 'load') {
+      this.props.saveDB()
+      console.log("loaded")
+      window.setTimeout(() => this.props.load(), 500)
+      return 'handled'
+    }
+    else {
+      return 'unhandled'
+    }
+  }
+
   render() {
 
     var editorStyle = {
@@ -190,7 +262,7 @@ export default class EditView extends Component {
           onChange={this.onEditChange}
           plugins={plugins}
           handleKeyCommand={this.handleKeyCommand}
-          keyBindingFn={this.saveKeyBindingFn}
+          keyBindingFn={this.functions}
           onFocus={() => this.setState({ hasFocus: true })}
           onBlur={() => this.setState({ hasFocus: false })}
           ref={(element) => { this.editor = element; }} />
@@ -202,6 +274,9 @@ export default class EditView extends Component {
       <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit} />
 
     let editRender = (this.props.isQuiz) ? (quizView) : (editor)
+    let imgRender = (this.state.imgUrl != undefined) ?
+                            <ImageC key={this.state.imgUrl} src={this.state.imgUrl} remove={this.props.removeMedia} align={this.alignMedia} mediaAlign={this.state.mediaAlign} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
+                            : undefined
     let toolbar = (this.props.isQuiz) ? undefined : (<Toolbar />)
     return (
       <div className="col-8" style={{ minWidth: 700 }}>
@@ -209,7 +284,13 @@ export default class EditView extends Component {
         {toolbar}
         <span><br /></span>
         <div className="jumbotron" style={{minHeight: 350, backgroundColor: this.props.content.backgroundColor}}>
-          {editRender}
+          <div className="row">
+            {(this.state.mediaAlign === 'left') ? imgRender : undefined}
+            <div className="col">
+              {editRender}
+            </div>
+            {(this.state.mediaAlign === 'right') ? imgRender : undefined}
+            </div>
         </div>
       </div>
     )
@@ -224,4 +305,7 @@ EditView.propTypes = {
   saveContentState: PropTypes.func,
   saveQuizContent: PropTypes.func,
   saveDB: PropTypes.func,
+  load: PropTypes.func,
+  saveMedia: PropTypes.func,
+  removeMedia: PropTypes.func
 }

@@ -23,8 +23,9 @@ export default class Edit extends Component {
           saveContent: undefined,
           quizContent: undefined,
           isQuiz: false,
-          id: 0,
-          backgroundColor: '#E5E7E9'
+          backgroundColor: '#E5E7E9',
+          media: {imgUrl: '', align: ''},
+          slideId: 0
         },
       ],
     }
@@ -42,6 +43,8 @@ export default class Edit extends Component {
     this.saveTitle = this.saveTitle.bind(this)
     this.saveContentState = this.saveContentState.bind(this)
     this.saveQuizContent = this.saveQuizContent.bind(this)
+    this.saveMedia = this.saveMedia.bind(this)
+    this.removeMedia = this.removeMedia.bind(this)
     this.changeBackground = this.changeBackground.bind(this)
   }
 
@@ -49,19 +52,32 @@ export default class Edit extends Component {
     this.load()
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    // This is used for debugging
+    if (this.state != prevState) {
+      //console.log(this.state.content[this.state.currentSlide].slideId)
+    }
+
+  }
+
   save() {
-    let c = this.state.content[this.state.currentSlide].isQuiz ?
-          /* if quiz */ JSON.stringify(this.state.content[this.state.currentSlide].quizContent) :
-          /* else    */ this.state.content[this.state.currentSlide].saveContent
     $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       data: {
-        content: c,
-        index: this.state.content[this.state.currentSlide].id,
-        isQuiz: this.state.content[this.state.currentSlide].isQuiz
+        slides: [...this.state.content]
       },
       type: 'put',
       dataType: 'json',
+      success: (slideIds) => {
+        // Update slideIds
+        let c = [...this.state.content]
+        slideIds.map((id, i) => {
+          c[i].slideId = id
+        })
+        this.setState({content: c}, () => {
+          window.sessionStorage.setItem('slideId', this.state.content[this.state.currentSlide].slideId)
+        })
+      },
       error: (req, err) => {
         alert("Failed to save show " + window.sessionStorage.getItem('id'))
         document.write(req.responseJSON.backtrace[0].args[1].xdebug_message)
@@ -79,6 +95,14 @@ export default class Edit extends Component {
       success: function (data) {
         let loaded = data['slides']
         if (loaded[0] != undefined) {
+          let media = JSON.parse(loaded[0].media || "{}") 
+          window.sessionStorage.setItem('slideId', loaded[0].id)
+          if (media != undefined) {
+            // If an image is on the first slide there is a weird case where we don't have that data
+            // there is probably a better work around.
+            window.sessionStorage.setItem('imgUrl', media.imgUrl)
+            window.sessionStorage.setItem('align', media.align)
+          }
           let showContent = []
           for (let i = 0; i < loaded.length; i++) {
             let saveC = undefined
@@ -96,7 +120,9 @@ export default class Edit extends Component {
               saveContent: saveC,
               quizContent: quizC,
               backgroundColor: loaded[i].backgroundColor,
-              id: loaded[i].slideIndex // This may not be needed
+
+              slideId: Number(loaded[i].id),
+              media: JSON.parse(loaded[i].media || '{}')
             })
           }
 
@@ -104,6 +130,9 @@ export default class Edit extends Component {
             content: showContent,
             id: loaded[0].showId
           });
+        }
+        else {
+          this.save()
         }
       }.bind(this),
       error: function(req, err) {
@@ -115,7 +144,7 @@ export default class Edit extends Component {
 
 
   setCurrentSlide(val) {
-    this.save()
+    this.save() 
     this.setState({
       currentSlide: val
     })
@@ -123,23 +152,21 @@ export default class Edit extends Component {
 
 
   addNewSlide(quiz) {
-    if (typeof(quiz) === 'object') quiz = false // an event is bindinded on some calls which causes errors
+    if (typeof(quiz) != 'boolean') quiz = false // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
-    const newId = Number(this.state.content[this.state.currentSlide].id) + 1
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
         isQuiz: quiz,
         backgroundColor: '#E5E7E9',
-        id: newId
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
     this.setState({
-      currentSlide: index,
+      //currentSlide: index,
       content: copy,
-    })
+    }, () => this.setCurrentSlide(index))
   }
 
 
@@ -166,8 +193,8 @@ export default class Edit extends Component {
 
     $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
-      type: 'patch',
-      data: {index: this.state.content[this.state.currentSlide].id},
+      type: 'delete',
+      data: {slideId: this.state.content[this.state.currentSlide].slideId, type: 'slide'},
       error: (req, res) => {
         console.error(req, res.toString());
       }
@@ -176,7 +203,7 @@ export default class Edit extends Component {
     this.setState({
       content: copy,
       currentSlide: newIndex
-    })
+    }, /*() => this.setCurrentSlide(newIndex)*/)
   }
 
   updateTitle(value) {
@@ -221,28 +248,39 @@ export default class Edit extends Component {
     this.setState({content: c})
   }
 
+  saveMedia(imgUrl, align) {
+    let c = [...this.state.content]
+    c[this.state.currentSlide].media = {imgUrl: imgUrl, align: align}
+    this.setState({content: c}, () => this.save())
+  }
+
+  removeMedia() {
+    $.ajax({
+      url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
+      method: 'delete',
+      data: {type: 'image', slideId: this.state.content[this.state.currentSlide].slideId},
+      error: (req, res) => {
+        console.log(res.toString())
+      }
+    })
+    let c = [...this.state.content]
+    c[this.state.currentSlide].media = ""
+    this.setState({content: c})
+  }
+
   quizConv(quizT) {
     // When we load from the data base the isQuiz boolean
     // is loaded in as a string or a number
     // We need to handle that and bring it back to a boolean
     if (quizT == undefined) return false // initial load
-    if (typeof(quizT) === 'number') return (quizT != 0)
-    return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
+    if (typeof(JSON.parse(quizT)) === 'number') return (JSON.parse(quizT) != 0)
+    return (typeof(JSON.parse(quizT)) === "boolean") ? quizT : JSON.parse(quizT)
   }
 
   changeBackground(newColor) {
-    $.ajax({
-      url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
-      data: {index: this.state.currentSlide, backgroundColor: newColor},
-      type: 'put',
-      error: (req, res) => {
-        console.error(req, res.toString())
-      }
-    })
-
     let c = [...this.state.content]
     c[this.state.currentSlide].backgroundColor = newColor
-    this.setState({content: c})
+    this.setState({content: c}, () => this.save())
   }
 
 
@@ -299,7 +337,10 @@ export default class Edit extends Component {
             deleteElement   ={this.deleteFromStack}
             saveContentState={this.saveContentState}
             saveQuizContent ={this.saveQuizContent}
+            saveMedia       ={this.saveMedia}
+            removeMedia     ={this.removeMedia}
             saveDB          ={this.save}
+            load            ={this.load}
             />
         </div>
       </div>

@@ -16,7 +16,7 @@
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace properties\Exception;
+namespace slideshow\Exception;
 
 class ResourceNotFound extends \Exception
 {

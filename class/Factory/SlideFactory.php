@@ -94,7 +94,7 @@ class SlideFactory extends Base
             $resource->isQuiz = $isQuiz;
             if ($isQuiz) {
                 if (!empty($slide['quizContent'])) {
-                    $resource->content = $slide['quizContent'];
+                    $resource->content = json_encode($slide['quizContent']);
                 }
             }
             else {
@@ -216,8 +216,10 @@ class SlideFactory extends Base
         $flag = false;
         foreach ($paths as $path) {
             $media = json_decode($path['media']);
-            $flag = $this->removeUpload($path['id'], $media->imgUrl);
-            if (!$flag) return false; // An error occured
+            if ($media != null) {
+                $flag = $this->removeUpload($path['id'], $media->imgUrl);
+                if (!$flag) return false; // An error occured
+            }
         }
         return true;
     }

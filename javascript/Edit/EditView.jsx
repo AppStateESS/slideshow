@@ -21,7 +21,7 @@ import {
   OrderedListButton,
 } from 'draft-js-buttons'
 
-import CustomButtons from './CustomToolbarButtons.jsx'
+import Media from './MediaToolbarAddon.jsx'
 import UndoRedo from './UndoRedoButtons.jsx'
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
@@ -52,7 +52,7 @@ const staticToolbar = createToolbarPlugin({
     UnorderedListButton,
     OrderedListButton,
     Separator,
-    CustomButtons
+    Media
   ]
 })
 

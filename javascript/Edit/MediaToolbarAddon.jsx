@@ -8,11 +8,11 @@ import {
 import './buttonStyle.css'
 import 'react-dropzone-uploader/dist/styles.css'
 
-import { EditorState, AtomicBlckUtils} from 'draft-js'
+import { EditorState} from 'draft-js'
 
 import Dropzone from 'react-dropzone-uploader'
 
-export default class CustomToolbarButtons extends Component {
+export default class MediaToolbarAddon extends Component {
   constructor(props) {
     super(props)
 

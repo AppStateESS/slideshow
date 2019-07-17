@@ -128,7 +128,7 @@ export default class Present extends Component {
               saveContent: saveC,
               quizContent: quizC,
               backgroundColor: loaded[i].backgroundColor,
-              media: loaded[i].media
+              media: JSON.parse(loaded[i].media || '{}')
             })
           }
           this.setState({

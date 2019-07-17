@@ -22,6 +22,7 @@ export default class CustomToolbarButtons extends Component {
     }
 
     this.insertMedia = this.insertMedia.bind(this)
+    this.validate = this.validate.bind(this)
     this.mediaModal = this.mediaModal.bind(this)
     this.mediaCancel = this.mediaCancel.bind(this)
   }
@@ -35,7 +36,7 @@ export default class CustomToolbarButtons extends Component {
     formData.append('media', fMeta.file)
     formData.append('slideId', slideId)
     formData.append('id', showId)
-    
+
     $.ajax({
       url: './slideshow/Slide/image/' + window.sessionStorage.getItem('id'),
       type: 'post',
@@ -53,6 +54,12 @@ export default class CustomToolbarButtons extends Component {
       }
     })
     this.setState({mediaView: false})
+  }
+
+  validate({meta}) {
+    if (meta.status === 'rejected_file_type') {
+      alert("Sorry, this file type is not supported")
+    }
   }
 
   mediaModal() {
@@ -76,11 +83,12 @@ export default class CustomToolbarButtons extends Component {
               Upload
             </div>
             <Dropzone
-              accept="image/jpeg,image/png"
+              accept="image/jpeg,image/png,image/gif"
               maxFiles={1}
               multiple={false}
               minSizeBytes={1024}
               maxSizeBytes={18388608}
+              onChangeStatus={this.validate}
               onSubmit={this.insertMedia}
               submitButtonContent={'Insert'}
               inputContent={''}

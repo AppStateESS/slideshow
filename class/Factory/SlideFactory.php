@@ -116,14 +116,18 @@ class SlideFactory extends Base
 
     public function postImage(Request $request)
     {
-        // pull showId and slideIndex from $request
-        $showId = intval($request->pullPostVar('id'));
-        $slideIndex = intval($request->pullPostVar('slideIndex'));
-        //var_dump($slideIndex);
+        $resourceId = intval($request->pullPostVar('slideId'));
 
-        $resourceId = $this->getSlideId($showId, $slideIndex);
-        //var_dump($showId);
-        $resource = $this->load($resourceId);
+        try {
+            $resource = $this->load($resourceId);
+        }
+        catch (\Exception $e) {
+            // Resource doesn't exist
+            $resource = $this->build();
+            $this->saveResource($resource);
+            $resourceId = $resource->id;
+        }
+        
 
         $path = $this->upload($_FILES['media'], $resourceId);
         if ($path != null) {
@@ -144,7 +148,7 @@ class SlideFactory extends Base
         $resource = $this->load($resourceId);
 
         // If there is media associated with an image then we remove it
-        if (!empty($resource->media)) {
+        if (strlen($resource->media) > 0) {
             try {
                 $this->deleteImage($request);
             }
@@ -167,7 +171,7 @@ class SlideFactory extends Base
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
 
-        $this->deleteAllImages($request);
+        if (!$this->deleteAllImages($request)) echo("an error has occured\n");
 
         $sql = 'DELETE from ss_slide WHERE showId=:showId;';
         $db = Database::getDB();
@@ -184,8 +188,8 @@ class SlideFactory extends Base
     {
         $resourceId = $request->pullDeleteVar('slideId');
         $resource = $this->load($resourceId);
-
-        if ($this->removeUpload($resourceId, $resource->media)) {
+        $media = json_decode($resource->media);
+        if ($this->removeUpload($resourceId, $media->imgUrl)) {
             $resource->media = "";
             $this->saveResource($resource);
             return true;
@@ -211,7 +215,8 @@ class SlideFactory extends Base
         $paths = $q->fetchAll();
         $flag = false;
         foreach ($paths as $path) {
-            $flag = $this->removeUpload($path['id'], $path['media']);
+            $media = json_decode($path['media']);
+            $flag = $this->removeUpload($path['id'], $media->imgUrl);
             if (!$flag) return false; // An error occured
         }
         return true;
@@ -231,20 +236,6 @@ class SlideFactory extends Base
         $q->execute(array('showId'=>$showId));
         $slides = $q->fetchAll();
         return $slides;
-    }
-
-    /**
-     * Obtains the resource id for a slide from a showId and slideIndex. I would like to deprecate this method soon.
-     * @return int resourceId for a given slide
-     */
-    private function getSlideId($showId, $slideIndex)
-    {
-        $db = Database::getDB();
-        $sql = 'SELECT id FROM ss_slide WHERE showId=:showId AND slideIndex=:slideIndex;';
-        $pdo = $db->getPDO();
-        $q = $pdo->prepare($sql);
-        $q->execute(array('showId'=>$showId, 'slideIndex'=>$slideIndex));
-        return $q->fetchColumn();
     }
 
     private function upload(array $file, $slideId)

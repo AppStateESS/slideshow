@@ -74,7 +74,9 @@ export default class Edit extends Component {
         slideIds.map((id, i) => {
           c[i].slideId = id
         })
-        this.setState({content: c})
+        this.setState({content: c}, () => {
+          window.sessionStorage.setItem('slideId', this.state.content[this.state.currentSlide].slideId)
+        })
       },
       error: (req, err) => {
         alert("Failed to save show " + window.sessionStorage.getItem('id'))
@@ -94,7 +96,7 @@ export default class Edit extends Component {
         let loaded = data['slides']
         if (loaded[0] != undefined) {
           let media = JSON.parse(loaded[0].media || "{}") 
-          window.sessionStorage.setItem('slideIndex', loaded[0].slideIndex)
+          window.sessionStorage.setItem('slideId', loaded[0].id)
           if (media != undefined) {
             // If an image is on the first slide there is a weird case where we don't have that data
             // there is probably a better work around.
@@ -127,6 +129,9 @@ export default class Edit extends Component {
             id: loaded[0].showId
           });
         }
+        else {
+          this.save()
+        }
       }.bind(this),
       error: function(req, err) {
         alert("Failed to load data.")
@@ -138,8 +143,6 @@ export default class Edit extends Component {
 
   setCurrentSlide(val) {
     this.save() 
-    window.sessionStorage.setItem('slideIndex', val)
-
     this.setState({
       currentSlide: val
     })

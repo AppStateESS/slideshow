@@ -26,22 +26,16 @@ export default class CustomToolbarButtons extends Component {
     this.mediaCancel = this.mediaCancel.bind(this)
   }
 
-  componentDidMount() {
-    //console.log(this.props)
-  }
-
   insertMedia(fileWithMeta) {
     let showId = Number(window.sessionStorage.getItem('id'))
-    let slideIndex = Number(window.sessionStorage.getItem('slideIndex'));
+    let slideId = Number(window.sessionStorage.getItem('slideId'));
     // Handle AJAX
     let fMeta = fileWithMeta[0]
     let formData = new FormData()
-    //formData.append('title', fMeta.meta.name)
     formData.append('media', fMeta.file)
-    formData.append('slideIndex', slideIndex)
+    formData.append('slideId', slideId)
     formData.append('id', showId)
-    //formData.append('height', fMeta.meta.height)
-    //formData.append('width', fMeta.meta.width)
+    
     $.ajax({
       url: './slideshow/Slide/image/' + window.sessionStorage.getItem('id'),
       type: 'post',
@@ -52,6 +46,10 @@ export default class CustomToolbarButtons extends Component {
         window.sessionStorage.setItem('imgUrl', JSON.parse(imageUrl))
         // This caused editView to rerender
         this.props.setEditorState(EditorState.moveFocusToEnd(this.props.getEditorState()))
+      },
+      error: (req, res) => {
+        console.log(req)
+        console.error(res)
       }
     })
     this.setState({mediaView: false})

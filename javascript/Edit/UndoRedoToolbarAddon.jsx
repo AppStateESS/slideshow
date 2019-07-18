@@ -4,7 +4,7 @@ import './buttonStyle.css'
 
 import { EditorState, AtomicBlckUtils} from 'draft-js'
 
-export default class UndoRedoButtons extends Component {
+export default class UndoRedoToolbarAddon extends Component {
   constructor(props) {
     super(props)
   }

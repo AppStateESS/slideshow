@@ -18,11 +18,13 @@ import {
   HeadlineTwoButton,
   HeadlineThreeButton,
   UnorderedListButton,
-  OrderedListButton,
+  OrderedListButton
 } from 'draft-js-buttons'
 
 import Media from './MediaToolbarAddon.jsx'
-import UndoRedo from './UndoRedoButtons.jsx'
+import UndoRedo from './UndoRedoToolbarAddon.jsx'
+import TextColor from './TextColorToolbarAddon.jsx'
+import Alignment from './AlignmentToolbarAddon.jsx'
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
 import 'draft-js-static-toolbar-plugin/lib/plugin.css'
@@ -44,6 +46,7 @@ const staticToolbar = createToolbarPlugin({
     Separator,
     BoldButton,
     ItalicButton,
+    TextColor,
     CodeButton,
     Separator,
     HeadlineOneButton,
@@ -51,6 +54,8 @@ const staticToolbar = createToolbarPlugin({
     HeadlineThreeButton,
     UnorderedListButton,
     OrderedListButton,
+    Separator,
+    Alignment,
     Separator,
     Media
   ]
@@ -75,6 +80,7 @@ const plugins = [
 ]
 
 import ImageC from '../AddOn/ImageColumn.jsx'
+import CustomStyleMap from '../Resources/CustomStyleMap.js';
 
 export default class EditView extends Component {
 
@@ -152,7 +158,9 @@ export default class EditView extends Component {
       let align = window.sessionStorage.getItem('align')
       if (newImg != null && newImg.length > 0) {
         // This is a preventative for a wierd bug where the alignment of the first slide becomes overwritten.
-        align = (align != null && align.length > 0) ? align : 'right'
+        if (align == undefined || align.length > 0) {
+          align = 'right'
+        }
         this.props.saveMedia(newImg, align)
         this.setState({imgUrl: newImg, mediaAlign: align}, () => window.sessionStorage.setItem('imgUrl', ''))
       }
@@ -265,7 +273,8 @@ export default class EditView extends Component {
           keyBindingFn={this.functions}
           onFocus={() => this.setState({ hasFocus: true })}
           onBlur={() => this.setState({ hasFocus: false })}
-          ref={(element) => { this.editor = element; }} />
+          ref={(element) => { this.editor = element; }}
+          customStyleMap={CustomStyleMap} />
       </div>
     )
 
@@ -277,7 +286,8 @@ export default class EditView extends Component {
     let imgRender = (this.state.imgUrl != undefined) ?
                             <ImageC key={this.state.imgUrl} src={this.state.imgUrl} remove={this.props.removeMedia} align={this.alignMedia} mediaAlign={this.state.mediaAlign} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
                             : undefined
-    let toolbar = (this.props.isQuiz) ? undefined : (<Toolbar />)
+    let toolbar = (this.props.isQuiz) ? undefined : <Toolbar />
+     
     return (
       <div className="col-8" style={{ minWidth: 700 }}>
         <p></p>

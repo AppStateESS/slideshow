@@ -5,6 +5,7 @@ import './buttonStyle.css'
 import {EditorState, RichUtils, Modifier} from 'draft-js'
 
 import Tippy from '@tippy.js/react'
+import 'tippy.js/themes/light-border.css'
 import {CirclePicker} from 'react-color'
 
 import TextColorMap from '../Resources/TextColorMap.js'
@@ -64,7 +65,7 @@ export default class TextColorToolbarAddon extends Component {
 
     let colorPopover = (
       <div style={popoverStyle}>
-        <h5 style={{color: 'white'}}>Adjust Text Color</h5>
+        <h5>Adjust Text Color</h5>
         <CirclePicker color={this.state.color} onChangeComplete={this.changeColor}/>
       </div>
     )

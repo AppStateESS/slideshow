@@ -1,13 +1,16 @@
 'use strict'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {Editor, EditorState, convertFromRaw } from 'draft-js'
+import {Editor, EditorState, convertFromRaw, CompositeDecorator} from 'draft-js'
+
+import decorator from '../Resources/LinkDecorator.js'
+import CustomStyleMap from '../Resources/CustomStyleMap.js'
 
 export default class Viewspace extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      editorState: EditorState.createEmpty()
+      editorState: EditorState.createEmpty(decorator)
     }
     this.loadEditorState = this.loadEditorState.bind(this)
   }
@@ -29,7 +32,7 @@ export default class Viewspace extends Component {
     let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
 
     this.setState({
-      editorState: EditorState.createWithContent(contentState)
+      editorState: EditorState.createWithContent(contentState, decorator)
     })
   }
 
@@ -48,7 +51,7 @@ export default class Viewspace extends Component {
       <div className="row">
         {(align === 'left') ? image : undefined}
         <div className="col">
-          <Editor editorState={this.state.editorState} readOnly />
+          <Editor editorState={this.state.editorState} customStyleMap={CustomStyleMap} readOnly />
         </div>
         {(align === 'right') ? image : undefined}
       </div>

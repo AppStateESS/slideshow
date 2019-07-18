@@ -25,20 +25,11 @@ import Media from './MediaToolbarAddon.jsx'
 import UndoRedo from './UndoRedoToolbarAddon.jsx'
 import TextColor from './TextColorToolbarAddon.jsx'
 import Alignment from './AlignmentToolbarAddon.jsx'
+import Link from './LinkToolbarAddon.jsx'
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
 import 'draft-js-static-toolbar-plugin/lib/plugin.css'
 
-// Imports for images
-import createImagePlugin from 'draft-js-image-plugin'
-import createResizeablePlugin from 'draft-js-resizeable-plugin'
-import createAlignmentPlugin from 'draft-js-alignment-plugin'
-import createFocusPlugin from 'draft-js-focus-plugin';
-
-const alignmentPlugin = createAlignmentPlugin()
-const { AlignmentTool } = alignmentPlugin
-const resizeablePlugin = createResizeablePlugin()
-const focusPlugin = createFocusPlugin();
 
 const staticToolbar = createToolbarPlugin({
   structure: [
@@ -57,37 +48,28 @@ const staticToolbar = createToolbarPlugin({
     Separator,
     Alignment,
     Separator,
-    Media
+    Media,
+    Link,
+    //linkPlugin.LinkButton
   ]
 })
-
-const decorator = composeDecorators(
-  resizeablePlugin.decorator,
-  alignmentPlugin.decorator,
-  focusPlugin.decorator,
-)
-
-const imagePlugin = createImagePlugin({ decorator })
 
 const { Toolbar } = staticToolbar
 
 const plugins = [
-  staticToolbar,
-  focusPlugin,
-  alignmentPlugin,
-  resizeablePlugin,
-  imagePlugin
+  staticToolbar
 ]
 
 import ImageC from '../AddOn/ImageColumn.jsx'
 import CustomStyleMap from '../Resources/CustomStyleMap.js';
+import decorator from '../Resources/LinkDecorator.js'
 
 export default class EditView extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      editorState: EditorState.createEmpty(),
+      editorState: EditorState.createEmpty(decorator),
       quizEditView: true,
       updated: false,
       imgUrl: props.content.media.imgUrl,
@@ -183,7 +165,7 @@ export default class EditView extends Component {
         if (this.props.content.saveContent.length > 0) {
           let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
           this.setState({
-            editorState: EditorState.createWithContent(contentState)
+            editorState: EditorState.createWithContent(contentState, decorator)
           })
         }
         else {

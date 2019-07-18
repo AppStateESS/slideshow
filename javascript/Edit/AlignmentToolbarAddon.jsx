@@ -20,7 +20,6 @@ export default class AlignmentToolbarAddon extends Component {
     const editorState = this.props.getEditorState() 
     const selection = editorState.getSelection()
 
-    console.log(selection.isCollapsed())
     
     // remove old alignment
     let newContentState = Object.keys(AlignmentMap)
@@ -36,12 +35,9 @@ export default class AlignmentToolbarAddon extends Component {
 
     const currStyle = editorState.getCurrentInlineStyle() 
 
-    // If nothing is currently selected the we align all
+    // If nothing is currently selected
     if (selection.isCollapsed()) {
-      // Todo: I couldn't find a way to add a selection of everything so this can be done later
-      newEditorState = currStyle.reduce((state, align) => {
-        return RichUtils.toggleInlineStyle(state, align);
-      }, newEditorState);
+      alert("Nothing is selected to align")
     }
 
 
@@ -49,9 +45,7 @@ export default class AlignmentToolbarAddon extends Component {
       newEditorState = RichUtils.toggleInlineStyle(newEditorState, toggledAlignment)
     }
 
-    this.props.setEditorState(newEditorState)
-
-
+    this.props.setEditorState(EditorState.moveFocusToEnd(newEditorState))
   }
 
   render() {

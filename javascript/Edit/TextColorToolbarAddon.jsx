@@ -49,7 +49,6 @@ export default class TextColorToolbarAddon extends Component {
       newEditorState = currStyle.reduce((state, color) => {
         return RichUtils.toggleInlineStyle(state, color);
       }, newEditorState);
-      EditorState.moveFocusToEnd(newEditorState)
     }
 
 
@@ -57,7 +56,7 @@ export default class TextColorToolbarAddon extends Component {
       newEditorState = RichUtils.toggleInlineStyle(newEditorState, toggledColor)
     }
 
-    this.props.setEditorState(newEditorState)
+    this.props.setEditorState(EditorState.moveFocusToEnd(newEditorState))
   }
 
 

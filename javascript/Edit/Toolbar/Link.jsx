@@ -36,7 +36,7 @@ export default class Link extends Component {
     let newEditor = EditorState.set(editorState, {currentContent: contentWithEntity, decorator: decorator})
 
     newEditor = RichUtils.toggleLink(newEditor, newEditor.getSelection(), entityKey)
-    newEditor = RichUtils.toggleInlineStyle(newEditor, 'underline')
+    //newEditor = RichUtils.toggleInlineStyle(newEditor, 'underline')*/
     this.props.setEditorState(newEditor)
   }
 
@@ -48,7 +48,8 @@ export default class Link extends Component {
     let select = "Please select some text"
     if (!selectionState.isCollapsed()) {
       // Text is selected
-      select = contentState.getPlainText()
+      const key = selectionState.getAnchorKey()
+      select = contentState.getBlockForKey(key).getText()
       const start = selectionState.getStartOffset()
       const end = selectionState.getEndOffset()
       select = select.slice(start, end)

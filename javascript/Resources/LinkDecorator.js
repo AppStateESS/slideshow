@@ -1,6 +1,8 @@
 // Link Decorator
 import React from 'react'
 import { CompositeDecorator } from 'draft-js'
+import Tippy from '@tippy.js/react'
+import 'tippy.js/themes/google.css'
 
 function findLinkEntities(contentBlock, callback, contentState) {
     contentBlock.findEntityRanges(
@@ -15,11 +17,18 @@ function findLinkEntities(contentBlock, callback, contentState) {
     );
 }
 const Link = (props) => {
-    const {url} = props.contentState.getEntity(props.entityKey).getData();
+    let {url} = props.contentState.getEntity(props.entityKey).getData();
+    const urlA = url.split("//")
+    console.log(url)
+    if (urlA[0] != "https:" && urlA[0] != "http:") {
+        url = "http://" + url
+    }
     return (
-        <a href={url} style={linkStyle} target="_blank">
-            {props.children}
-        </a>
+        <Tippy content={<a href={url} style={{color: 'white'}}>{url}</a>} arrow={true} interactive={true}>
+            <a href={url} style={linkStyle} target="_blank">
+                {props.children}
+            </a>
+        </Tippy>
     );
 };
 
@@ -27,7 +36,7 @@ const linkStyle = {
     color: 'royalblue',
     textDecorationColor: 'royalblue',
     // There is a bug where this disappears when text is aligned to center/right
-    textDecorationLine: 'underline' 
+    textDecorationLine: 'underline !important' 
 }
 
 const decorator = new CompositeDecorator([

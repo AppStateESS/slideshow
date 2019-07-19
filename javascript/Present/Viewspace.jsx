@@ -5,6 +5,7 @@ import {Editor, EditorState, convertFromRaw, CompositeDecorator} from 'draft-js'
 
 import decorator from '../Resources/LinkDecorator.js'
 import CustomStyleMap from '../Resources/CustomStyleMap.js'
+import CustomBlockFn from '../Resources/CustomBlockFn.js';
 
 export default class Viewspace extends Component {
   constructor(props) {
@@ -51,7 +52,7 @@ export default class Viewspace extends Component {
       <div className="row">
         {(align === 'left') ? image : undefined}
         <div className="col">
-          <Editor editorState={this.state.editorState} customStyleMap={CustomStyleMap} readOnly />
+          <Editor editorState={this.state.editorState} customStyleMap={CustomStyleMap} blockStyleFn={CustomBlockFn} readOnly />
         </div>
         {(align === 'right') ? image : undefined}
       </div>

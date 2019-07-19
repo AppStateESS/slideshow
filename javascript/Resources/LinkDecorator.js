@@ -24,7 +24,7 @@ const Link = (props) => {
         url = "http://" + url
     }
     return (
-        <Tippy content={<a href={url} style={{color: 'white'}}>{url}</a>} arrow={true} interactive={true}>
+        <Tippy content={<a href={url} style={{color: 'white'}} target="_blank">{url}</a>} arrow={true} interactive={true}>
             <a href={url} style={linkStyle} target="_blank">
                 {props.children}
             </a>

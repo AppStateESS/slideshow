@@ -8,9 +8,9 @@ import Tippy from '@tippy.js/react'
 import 'tippy.js/themes/light-border.css'
 import {CirclePicker} from 'react-color'
 
-import TextColorMap from '../Resources/TextColorMap.js'
+import TextColorMap from '../../Resources/TextColorMap.js'
 
-export default class TextColorToolbarAddon extends Component {
+export default class TextColor extends Component {
   constructor(props) {
     super(props)
 
@@ -47,9 +47,9 @@ export default class TextColorToolbarAddon extends Component {
 
     // If nothing is currently selected
     if (selection.isCollapsed()) {
-      newEditorState = currStyle.reduce((state, color) => {
+      /*newEditorState = currStyle.reduce((state, color) => {
         return RichUtils.toggleInlineStyle(state, color);
-      }, newEditorState);
+      }, newEditorState);*/
     }
 
 

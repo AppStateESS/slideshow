@@ -20,6 +20,7 @@ const CustomStyleMap = {
     "align-right" : {textAlign: 'right', display: 'inline-block', width: '100%'},
     "align-center" : {textAlign: 'center', display: 'inline-block', width: '100%'},
     "align-left" : {textAlign: 'left', display: 'inline-block', width: '100%'},
+    "underline" : {textDecoration: 'underline'},
 }
 
 export default CustomStyleMap

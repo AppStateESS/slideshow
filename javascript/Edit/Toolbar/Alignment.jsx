@@ -4,9 +4,9 @@ import './buttonStyle.css'
 
 import { EditorState, Modifier, RichUtils, SelectionState} from 'draft-js'
 
-import AlignmentMap from '../Resources/AlignmentMap.js'
+import AlignmentMap from '../../Resources/AlignmentMap.js'
 
-export default class AlignmentToolbarAddon extends Component {
+export default class Alignment extends Component {
   constructor(props) {
     super(props)
 
@@ -18,9 +18,8 @@ export default class AlignmentToolbarAddon extends Component {
     let toggledAlignment = 'align-' + event.currentTarget.id
 
     const editorState = this.props.getEditorState() 
-    const selection = editorState.getSelection()
+    let selection = editorState.getSelection()
 
-    
     // remove old alignment
     let newContentState = Object.keys(AlignmentMap)
       .reduce((contentState, alignment) => {
@@ -33,13 +32,25 @@ export default class AlignmentToolbarAddon extends Component {
       'change-inline-style'
     )
 
-    const currStyle = editorState.getCurrentInlineStyle() 
 
-    // If nothing is currently selected
+    // If nothing is currently selected, then we align the block
     if (selection.isCollapsed()) {
-      alert("Nothing is selected to align")
+      // Note: this alignment will only apply to things that have no alignment already
+      // So, if something has been aligned through select then things get deselected,
+      // it won't align unless reselected. Consider this an align all
+      const contentState = newEditorState.getCurrentContent()
+      const anchorKey = selection.getAnchorKey()
+      const currBlock = contentState.getBlockForKey(anchorKey)
+      const bData = currBlock.getData().set('align', toggledAlignment)
+      const newContentState = Modifier.setBlockData(contentState, selection, bData)
+      newEditorState = EditorState.push(
+        newEditorState,
+        newContentState,
+        'change-block-data'
+      )
     }
 
+    const currStyle = editorState.getCurrentInlineStyle() 
 
     if (!currStyle.has(toggledAlignment)) {
       newEditorState = RichUtils.toggleInlineStyle(newEditorState, toggledAlignment)

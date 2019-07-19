@@ -21,11 +21,11 @@ import {
   OrderedListButton
 } from 'draft-js-buttons'
 
-import Media from './MediaToolbarAddon.jsx'
-import UndoRedo from './UndoRedoToolbarAddon.jsx'
-import TextColor from './TextColorToolbarAddon.jsx'
-import Alignment from './AlignmentToolbarAddon.jsx'
-import Link from './LinkToolbarAddon.jsx'
+import Media from './Toolbar/Media.jsx'
+import UndoRedo from './Toolbar/UndoRedo.jsx'
+import TextColor from './Toolbar/TextColor.jsx'
+import Alignment from './Toolbar/Alignment.jsx'
+import Link from './Toolbar/Link.jsx'
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
 import 'draft-js-static-toolbar-plugin/lib/plugin.css'
@@ -63,6 +63,7 @@ const plugins = [
 import ImageC from '../AddOn/ImageColumn.jsx'
 import CustomStyleMap from '../Resources/CustomStyleMap.js';
 import decorator from '../Resources/LinkDecorator.js'
+import CustomBlockFn from '../Resources/CustomBlockFn.js'
 
 export default class EditView extends Component {
 
@@ -256,7 +257,8 @@ export default class EditView extends Component {
           onFocus={() => this.setState({ hasFocus: true })}
           onBlur={() => this.setState({ hasFocus: false })}
           ref={(element) => { this.editor = element; }}
-          customStyleMap={CustomStyleMap} />
+          customStyleMap={CustomStyleMap} 
+          blockStyleFn={CustomBlockFn}/>
       </div>
     )
 

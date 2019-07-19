@@ -12,7 +12,7 @@ import { EditorState} from 'draft-js'
 
 import Dropzone from 'react-dropzone-uploader'
 
-export default class MediaToolbarAddon extends Component {
+export default class Media extends Component {
   constructor(props) {
     super(props)
 

@@ -2,9 +2,9 @@
 import React, { Component } from 'react'
 import './buttonStyle.css'
 
-import { EditorState, AtomicBlckUtils} from 'draft-js'
+import { EditorState } from 'draft-js'
 
-export default class UndoRedoToolbarAddon extends Component {
+export default class UndoRedo extends Component {
   constructor(props) {
     super(props)
   }

@@ -25,8 +25,9 @@ const Link = (props) => {
 
 const linkStyle = {
     color: 'royalblue',
-    // There is a bug where this disappears when text is aligned to center/right, so I'm going to take it out for now.
-    //textDecoration: 'underline' 
+    textDecorationColor: 'royalblue',
+    // There is a bug where this disappears when text is aligned to center/right
+    textDecorationLine: 'underline' 
 }
 
 const decorator = new CompositeDecorator([

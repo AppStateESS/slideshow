@@ -19,7 +19,6 @@ function findLinkEntities(contentBlock, callback, contentState) {
 const Link = (props) => {
     let {url} = props.contentState.getEntity(props.entityKey).getData();
     const urlA = url.split("//")
-    console.log(url)
     if (urlA[0] != "https:" && urlA[0] != "http:") {
         url = "http://" + url
     }

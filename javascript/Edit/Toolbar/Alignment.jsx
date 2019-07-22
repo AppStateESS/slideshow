@@ -6,6 +6,8 @@ import { EditorState, Modifier, RichUtils, SelectionState} from 'draft-js'
 
 import AlignmentMap from '../../Resources/AlignmentMap.js'
 
+import Tippy from '@tippy.js/react'
+
 export default class Alignment extends Component {
   constructor(props) {
     super(props)
@@ -83,9 +85,21 @@ export default class Alignment extends Component {
   render() {
     return (
       <span>
-        <button id="left" className="toolbar" onClick={this.align}><i className="fas fa-align-left"></i></button>
-        <button id="center" className="toolbar" onClick={this.align}><i className="fas fa-align-center"></i></button>
-        <button id="right" className="toolbar" onClick={this.align}><i className="fas fa-align-right"></i></button>
+        <Tippy
+          content={<div>Align Left</div>}
+          arrow={true}>
+          <button id="left" className="toolbar" onClick={this.align}><i className="fas fa-align-left"></i></button>
+        </Tippy>
+        <Tippy
+          content={<div>Align Center</div>}
+          arrow={true}>
+          <button id="center" className="toolbar" onClick={this.align}><i className="fas fa-align-center"></i></button>
+        </Tippy>
+        <Tippy
+          content={<div>Align Right</div>}
+          arrow={true}>
+          <button id="right" className="toolbar" onClick={this.align}><i className="fas fa-align-right"></i></button>
+        </Tippy>
       </span>
     )
   }

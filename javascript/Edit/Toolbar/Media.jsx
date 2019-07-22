@@ -8,6 +8,8 @@ import {
 import './buttonStyle.css'
 import 'react-dropzone-uploader/dist/styles.css'
 
+import Tippy from '@tippy.js/react'
+
 import { EditorState} from 'draft-js'
 
 import Dropzone from 'react-dropzone-uploader'
@@ -102,7 +104,12 @@ export default class Media extends Component {
     return (
       <span>
         {mediaModal}
-        <button className="toolbar" onClick={this.mediaModal}><i className="fas fa-images"></i></button>
+        <Tippy
+          content={<div>Insert Image</div>}
+          arrow={true}
+        >
+          <button className="toolbar" onClick={this.mediaModal}><i className="fas fa-images"></i></button>
+        </Tippy>
       </span>
     )
   }

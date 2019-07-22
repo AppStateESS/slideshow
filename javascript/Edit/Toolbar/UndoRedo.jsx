@@ -1,6 +1,7 @@
 'use strict'
 import React, { Component } from 'react'
 import './buttonStyle.css'
+import Tippy from '@tippy.js/react'
 
 import { EditorState } from 'draft-js'
 
@@ -20,8 +21,12 @@ export default class UndoRedo extends Component {
   render() {
     return (
       <span>
-        <button className="toolbar" onClick={this._undo.bind(this)}><i className="fas fa-undo"></i></button>
-        <button className="toolbar" onClick={this._redo.bind(this)}><i className="fas fa-redo"></i></button>
+        <Tippy content={<div>Undo</div>} arrow={true}>
+          <button className="toolbar" onClick={this._undo.bind(this)}><i className="fas fa-undo"></i></button>
+        </Tippy>
+        <Tippy content={<div>Redo</div>} arrow={true}>
+          <button className="toolbar" onClick={this._redo.bind(this)}><i className="fas fa-redo"></i></button>
+        </Tippy>
       </span>
     )
   }

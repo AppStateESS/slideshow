@@ -13,7 +13,6 @@ import QuizView from './Quiz/QuizView.jsx'
 import {
   ItalicButton,
   BoldButton,
-  CodeButton,
   HeadlineOneButton,
   HeadlineTwoButton,
   HeadlineThreeButton,
@@ -38,7 +37,6 @@ const staticToolbar = createToolbarPlugin({
     BoldButton,
     ItalicButton,
     TextColor,
-    CodeButton,
     Separator,
     HeadlineOneButton,
     HeadlineTwoButton,

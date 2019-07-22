@@ -10,7 +10,10 @@ export default class Alignment extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {selection: SelectionState.createEmpty()}
+    this.state = {
+      selection: SelectionState.createEmpty(), 
+      anchorKey: undefined,
+    }
 
 
     this.align = this.align.bind(this)
@@ -20,9 +23,16 @@ export default class Alignment extends Component {
     let toggledAlignment = 'align-' + event.currentTarget.id
 
     const editorState = this.props.getEditorState()
+    const contentState = editorState.getCurrentContent()
     let newEditorState = editorState  
     let selection = editorState.getSelection()
+    let anchorKey = selection.getAnchorKey()
 
+    if (this.state.anchorKey != undefined && anchorKey != this.state.anchorKey) {
+      // dump cache bc slides/or content block was changed
+      anchorKey = this.state.anchorKey
+    }
+    const currBlock = contentState.getBlockForKey(anchorKey)
     // If nothing is currently selected
     if (selection.isCollapsed()) {
       // if the cached selection is undefined, then we align the block
@@ -30,9 +40,6 @@ export default class Alignment extends Component {
         // Note: this alignment will only apply to things that have no alignment already
         // So, if something has been aligned through select then things get deselected,
         // it won't align unless reselected. Consider this an align all
-        const contentState = editorState.getCurrentContent()
-        const anchorKey = selection.getAnchorKey()
-        const currBlock = contentState.getBlockForKey(anchorKey)
         const bData = currBlock.getData().set('align', toggledAlignment)
         const newContentState = Modifier.setBlockData(contentState, selection, bData)
         newEditorState = EditorState.push(
@@ -69,7 +76,7 @@ export default class Alignment extends Component {
     }
 
     // cache the selection
-    this.setState({selection: selection})
+    this.setState({selection: selection, anchorKey: anchorKey})
     this.props.setEditorState(EditorState.moveFocusToEnd(newEditorState))
   }
 

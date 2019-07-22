@@ -7,6 +7,8 @@ import decorator from '../Resources/LinkDecorator.js'
 import CustomStyleMap from '../Resources/CustomStyleMap.js'
 import CustomBlockFn from '../Resources/CustomBlockFn.js';
 
+import '../Edit/custom.css'
+
 export default class Viewspace extends Component {
   constructor(props) {
     super(props)
@@ -38,6 +40,16 @@ export default class Viewspace extends Component {
   }
 
   render() {
+    let styles = CustomStyleMap
+
+    if (this.state.editorState != undefined) {
+      // Custom text color 
+      const color = this.state.editorState.getCurrentInlineStyle().keys().next().value
+      if (color != undefined) {
+        const styleObj = JSON.parse('{"' + color + '":{"color":"' + color + '"}}')
+        styles = Object.assign(styleObj, CustomStyleMap)
+      }
+    }
     let image = undefined
     let align = undefined
     if (this.props.content.media != undefined) {
@@ -52,7 +64,7 @@ export default class Viewspace extends Component {
       <div className="row">
         {(align === 'left') ? image : undefined}
         <div className="col">
-          <Editor editorState={this.state.editorState} customStyleMap={CustomStyleMap} blockStyleFn={CustomBlockFn} readOnly />
+          <Editor editorState={this.state.editorState} customStyleMap={styles} blockStyleFn={CustomBlockFn} readOnly />
         </div>
         {(align === 'right') ? image : undefined}
       </div>

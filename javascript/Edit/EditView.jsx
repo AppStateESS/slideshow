@@ -246,6 +246,17 @@ export default class EditView extends Component {
       borderRadius: '5px'
     }
 
+    let styles = CustomStyleMap
+
+    if (this.state.editorState != undefined) {
+      // Custom text color 
+      const color = this.state.editorState.getCurrentInlineStyle().keys().next().value
+      if (color != undefined) {
+        const styleObj = JSON.parse('{"' + color + '":{"color":"' + color + '"}}')
+        styles = Object.assign(styleObj, CustomStyleMap)
+      }
+    }
+
     let editor = (
       <div className="cust-col-11" style={this.state.hasFocus ? editorStyle : { padding: '5px' }}>
         <Editor
@@ -257,7 +268,7 @@ export default class EditView extends Component {
           onFocus={() => this.setState({ hasFocus: true })}
           onBlur={() => this.setState({ hasFocus: false })}
           ref={(element) => { this.editor = element; }}
-          customStyleMap={CustomStyleMap} 
+          customStyleMap={styles} 
           blockStyleFn={CustomBlockFn}/>
       </div>
     )

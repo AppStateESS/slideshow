@@ -2,11 +2,11 @@
 import React, { Component } from 'react'
 import './buttonStyle.css'
 
-import {EditorState, RichUtils, Modifier} from 'draft-js'
+import {EditorState, RichUtils, Modifier, SelectionState} from 'draft-js'
 
 import Tippy from '@tippy.js/react'
 import 'tippy.js/themes/light-border.css'
-import {CirclePicker} from 'react-color'
+import {CirclePicker, ChromePicker} from 'react-color'
 
 import TextColorMap from '../../Resources/TextColorMap.js'
 
@@ -15,7 +15,9 @@ export default class TextColor extends Component {
     super(props)
 
     this.state = {
-      color: 'black'
+      color: 'black',
+      selection: SelectionState.createEmpty(),
+      showAdvanced: false
     }
 
     this.changeColor = this.changeColor.bind(this)
@@ -29,10 +31,24 @@ export default class TextColor extends Component {
 
   _toggleColor(toggledColor) {
     const editorState = this.props.getEditorState() 
-    const selection = editorState.getSelection()
+    let selection = editorState.getSelection()
     //console.log(selection.isCollapsed())
+    if (selection.isCollapsed()) {
+      // Nothing is selected so we use the previous selection
+      selection = this.state.selection
+      if (selection.isCollapsed()) {
+        alert("Please select some text to apply this color")
+      }
+    }
+    this.setState({selection: selection})
+
+    // Advanced Color
+    const color = editorState.getCurrentInlineStyle().keys().next().value
+    const styleAddon = '{"' + color + '":{"color":"' + color + '"}}'
+    const styles = Object.assign(JSON.parse(styleAddon), TextColorMap)
+
     // remove other colors first
-    let newContentState = Object.keys(TextColorMap)
+    let newContentState = Object.keys(styles)
       .reduce((contentState, color) => {
           return Modifier.removeInlineStyle(contentState, selection, color)
       }, editorState.getCurrentContent())
@@ -46,11 +62,7 @@ export default class TextColor extends Component {
     const currStyle = editorState.getCurrentInlineStyle() 
 
     // If nothing is currently selected
-    if (selection.isCollapsed()) {
-      /*newEditorState = currStyle.reduce((state, color) => {
-        return RichUtils.toggleInlineStyle(state, color);
-      }, newEditorState);*/
-    }
+    
 
 
     if (!currStyle.has(toggledColor)) {
@@ -63,10 +75,22 @@ export default class TextColor extends Component {
 
   render() {
 
+    let advancedColor = (this.state.showAdvanced) ?
+      (<div style={advancedColorStyle}><ChromePicker color={this.state.color} onChangeComplete={this.changeColor} /></div>) : (undefined)
+
     let colorPopover = (
       <div style={popoverStyle}>
         <h5>Adjust Text Color</h5>
-        <CirclePicker color={this.state.color} onChangeComplete={this.changeColor}/>
+        <CirclePicker color={this.state.color} colors={Object.keys(TextColorMap)} onChange={this.changeColor}/>
+        <br></br>
+        <div>
+          <button className="btn btn-primary btn-block" 
+            onClick={() => this.setState({showAdvanced: !this.state.showAdvanced})}>
+              Advanced Color
+          </button>
+          {advancedColor}
+        </div>
+        
       </div>
     )
 
@@ -90,7 +114,12 @@ export default class TextColor extends Component {
 }
 
 const popoverStyle = {
-  //width: 250,
-  //height: 100,
   padding: 10,
+  marginLeft: 'auto',
+  marginRight: 'auto',
+}
+
+const advancedColorStyle = {
+  paddingTop: 10,
+  marginLeft: 10,
 }

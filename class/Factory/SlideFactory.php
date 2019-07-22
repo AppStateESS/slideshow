@@ -216,9 +216,9 @@ class SlideFactory extends Base
         $flag = false;
         foreach ($paths as $path) {
             $media = json_decode($path['media']);
-            if ($media != null) {
+            if ($media != null && !empty($media->imgUrl)) {
                 $flag = $this->removeUpload($path['id'], $media->imgUrl);
-                if (!$flag) return false; // An error occured
+                if (!$flag)  echo("an error has occured");// An error occured
             }
         }
         return true;

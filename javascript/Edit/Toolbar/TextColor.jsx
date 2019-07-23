@@ -17,6 +17,7 @@ export default class TextColor extends Component {
     this.state = {
       color: 'black',
       selection: SelectionState.createEmpty(),
+      anchorKey: undefined,
       showAdvanced: false
     }
 
@@ -32,7 +33,13 @@ export default class TextColor extends Component {
   _toggleColor(toggledColor) {
     const editorState = this.props.getEditorState() 
     let selection = editorState.getSelection()
-    //console.log(selection.isCollapsed())
+    let anchorKey = selection.getAnchorKey()
+
+    if (this.state.anchorKey != undefined && anchorKey != this.state.anchorKey) {
+      // dump cache bc slides/or content block was changed
+      anchorKey = this.state.anchorKey
+    }
+
     if (selection.isCollapsed()) {
       // Nothing is selected so we use the previous selection
       selection = this.state.selection
@@ -40,7 +47,8 @@ export default class TextColor extends Component {
         alert("Please select some text to apply this color")
       }
     }
-    this.setState({selection: selection})
+    // Cache Selection and its Key
+    this.setState({selection: selection, anchorKey: anchorKey})
 
     // Advanced Color
     const color = editorState.getCurrentInlineStyle().keys().next().value

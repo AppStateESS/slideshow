@@ -2,62 +2,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import Editor, { createEditorStateWithText, createWithContent, composeDecorators } from 'draft-js-plugins-editor'
-import {EditorState, ContentState, getDefaultKeyBinding, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
+import createEditorStateWithTextFn from '../Resources/CreateEditorStateWithTextFn'
+import {Editor, EditorState, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
 const {hasCommandModifier} = KeyBindingUtil
 
 import QuizEdit from './Quiz/QuizEdit.jsx'
 import QuizView from './Quiz/QuizView.jsx'
 
-// Toolbar imports
-import {
-  ItalicButton,
-  BoldButton,
-  HeadlineOneButton,
-  HeadlineTwoButton,
-  HeadlineThreeButton,
-  UnorderedListButton,
-  OrderedListButton
-} from 'draft-js-buttons'
-
-import Media from './Toolbar/Media.jsx'
-import UndoRedo from './Toolbar/UndoRedo.jsx'
-import TextColor from './Toolbar/TextColor.jsx'
-import Alignment from './Toolbar/Alignment.jsx'
-import Link from './Toolbar/Link.jsx'
-
-import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
-import 'draft-js-static-toolbar-plugin/lib/plugin.css'
-
-
-const staticToolbar = createToolbarPlugin({
-  structure: [
-    UndoRedo,
-    Separator,
-    BoldButton,
-    ItalicButton,
-    TextColor,
-    Separator,
-    HeadlineOneButton,
-    HeadlineTwoButton,
-    HeadlineThreeButton,
-    UnorderedListButton,
-    OrderedListButton,
-    Separator,
-    Alignment,
-    Separator,
-    Media,
-    Link,
-    //linkPlugin.LinkButton
-  ]
-})
-
-const { Toolbar } = staticToolbar
-
-const plugins = [
-  staticToolbar
-]
-
+import ToolbarC from './Toolbar/Toolbar.jsx'
 import ImageC from '../AddOn/ImageColumn.jsx'
 import CustomStyleMap from '../Resources/CustomStyleMap.js';
 import decorator from '../Resources/LinkDecorator.js'
@@ -139,7 +91,7 @@ export default class EditView extends Component {
       let align = window.sessionStorage.getItem('align')
       if (newImg != null && newImg.length > 0) {
         // This is a preventative for a wierd bug where the alignment of the first slide becomes overwritten.
-        if (align == undefined || align.length > 0) {
+        if (align == undefined || align.length == 0) {
           align = 'right'
         }
         this.props.saveMedia(newImg, align)
@@ -155,9 +107,8 @@ export default class EditView extends Component {
       if (this.props.content.saveContent == undefined) {
         let body = "New Slide"
         this.setState({
-          editorState: createEditorStateWithText(body)
+          editorState: createEditorStateWithTextFn(body)
         }, function () {
-          this.onEditChange(RichUtils.toggleBlockType(this.state.editorState, 'header-one'))
           this.saveEditorState()
         })
       } else {
@@ -171,11 +122,9 @@ export default class EditView extends Component {
           alert("An error has occured. Your data may have been corrupted. This slide will be reset.")
           let body = "New Slide"
           this.setState({
-            editorState: createEditorStateWithText(body)
+            editorState: createEditorStateWithTextFn(body)
           }, function() {
-            this.onEditChange(RichUtils.toggleBlockType(this.state.editorState, 'header-one'))
             this.saveEditorState()
-            //this.props.saveDB()
           })
         }
       }
@@ -260,14 +209,14 @@ export default class EditView extends Component {
         <Editor
           editorState={this.state.editorState}
           onChange={this.onEditChange}
-          plugins={plugins}
           handleKeyCommand={this.handleKeyCommand}
           keyBindingFn={this.functions}
           onFocus={() => this.setState({ hasFocus: true })}
           onBlur={() => this.setState({ hasFocus: false })}
           ref={(element) => { this.editor = element; }}
           customStyleMap={styles} 
-          blockStyleFn={CustomBlockFn}/>
+          blockStyleFn={CustomBlockFn}
+          spellCheck={true}/>
       </div>
     )
 
@@ -279,7 +228,8 @@ export default class EditView extends Component {
     let imgRender = (this.state.imgUrl != undefined) ?
                             <ImageC key={this.state.imgUrl} src={this.state.imgUrl} remove={this.props.removeMedia} align={this.alignMedia} mediaAlign={this.state.mediaAlign} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
                             : undefined
-    let toolbar = (this.props.isQuiz) ? undefined : <Toolbar />
+    let toolbar = (this.props.isQuiz) ? undefined : 
+      <ToolbarC setEditorState={this.onEditChange} getEditorState={() => { return this.state.editorState}}/>
      
     return (
       <div className="col-8" style={{ minWidth: 700 }}>

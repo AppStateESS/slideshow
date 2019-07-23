@@ -1,7 +1,7 @@
 'use strict'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {Editor, EditorState, convertFromRaw, CompositeDecorator} from 'draft-js'
+import {Editor, EditorState, convertFromRaw} from 'draft-js'
 
 import decorator from '../Resources/LinkDecorator.js'
 import CustomStyleMap from '../Resources/CustomStyleMap.js'

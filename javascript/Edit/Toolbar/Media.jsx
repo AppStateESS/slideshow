@@ -46,9 +46,7 @@ export default class Media extends Component {
       processData: false,
       contentType: false,
       success: (imageUrl) => {
-        window.sessionStorage.setItem('imgUrl', JSON.parse(imageUrl))
-        // This caused editView to rerender
-        this.props.setEditorState(EditorState.moveFocusToEnd(this.props.getEditorState()))
+        this.props.saveMedia(JSON.parse(imageUrl), 'right')
       },
       error: (req, res) => {
         console.log(req)

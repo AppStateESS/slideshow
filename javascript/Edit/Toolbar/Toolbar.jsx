@@ -25,7 +25,7 @@ export default class Toolbar extends Component {
         <Separator />
         <Alignment setEditorState={this.props.setEditorState} getEditorState={this.props.getEditorState} />
         <Separator />
-        <Media setEditorState={this.props.setEditorState} getEditorState={this.props.getEditorState} />
+        <Media saveMedia={this.props.saveMedia}/>
         <Link setEditorState={this.props.setEditorState} getEditorState={this.props.getEditorState} />
       </div>
     )

@@ -97,12 +97,6 @@ export default class Edit extends Component {
         if (loaded[0] != undefined) {
           let media = JSON.parse(loaded[0].media || "{}") 
           window.sessionStorage.setItem('slideId', loaded[0].id)
-          if (media != undefined) {
-            // If an image is on the first slide there is a weird case where we don't have that data
-            // there is probably a better work around.
-            window.sessionStorage.setItem('imgUrl', media.imgUrl)
-            window.sessionStorage.setItem('align', media.align)
-          }
           let showContent = []
           for (let i = 0; i < loaded.length; i++) {
             let saveC = undefined

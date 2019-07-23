@@ -85,19 +85,6 @@ export default class EditView extends Component {
     if (this.state.imgUrl != newImgUrl) {
       this.setState({imgUrl: newImgUrl, mediaAlign: newAlign})
     }
-    
-    if (prevState.imgUrl == this.state.imgUrl) {
-      let newImg = window.sessionStorage.getItem('imgUrl')
-      let align = window.sessionStorage.getItem('align')
-      if (newImg != null && newImg.length > 0) {
-        // This is a preventative for a wierd bug where the alignment of the first slide becomes overwritten.
-        if (align == undefined || align.length == 0) {
-          align = 'right'
-        }
-        this.props.saveMedia(newImg, align)
-        this.setState({imgUrl: newImg, mediaAlign: align}, () => window.sessionStorage.setItem('imgUrl', ''))
-      }
-    }
   }
 
   loadEditorState() {
@@ -229,7 +216,7 @@ export default class EditView extends Component {
                             <ImageC key={this.state.imgUrl} src={this.state.imgUrl} remove={this.props.removeMedia} align={this.alignMedia} mediaAlign={this.state.mediaAlign} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
                             : undefined
     let toolbar = (this.props.isQuiz) ? undefined : 
-      <ToolbarC setEditorState={this.onEditChange} getEditorState={() => { return this.state.editorState}}/>
+      <ToolbarC setEditorState={this.onEditChange} getEditorState={() => { return this.state.editorState}} saveMedia={this.props.saveMedia}/>
      
     return (
       <div className="col-8" style={{ minWidth: 700 }}>

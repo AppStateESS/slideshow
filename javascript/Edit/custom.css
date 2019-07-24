@@ -12,6 +12,11 @@
   font-size: 20px;
 }
 
+.linkDecorator {
+  text-decoration-line: underline !important;
+  text-decoration-color: royalblue;  
+}
+
 .ColorPicker {
   margin-top: 35px;
   margin-left: 23px;

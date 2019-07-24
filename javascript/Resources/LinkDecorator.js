@@ -24,8 +24,8 @@ const Link = (props) => {
     }
     return (
         <Tippy content={<a href={url} style={{color: 'white'}} target="_blank">{url}</a>} arrow={true} interactive={true}>
-            <a href={url} style={linkStyle} target="_blank">
-                {props.children}
+            <a className="linkDecorator" href={url} style={linkStyle} target="_blank">
+                {props.children} <i style={icon}className="fas fa-external-link-alt"></i>
             </a>
         </Tippy>
     );
@@ -36,6 +36,11 @@ const linkStyle = {
     textDecorationColor: 'royalblue',
     // There is a bug where this disappears when text is aligned to center/right
     textDecorationLine: 'underline !important' 
+}
+
+const icon = {
+    fontSize: '50%',
+    verticalAlign: 'middle'
 }
 
 const decorator = new CompositeDecorator([

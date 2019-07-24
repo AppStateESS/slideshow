@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import './buttonStyle.css'
 import Tippy from '@tippy.js/react'
 
-import { RichUtils} from 'draft-js'
+import { RichUtils, EditorState } from 'draft-js'
 
 export default class Blocks extends Component {
 
@@ -13,7 +13,7 @@ export default class Blocks extends Component {
       this.props.getEditorState(),
         event.currentTarget.id
       )
-    this.props.setEditorState(eState)
+    this.props.setEditorState(EditorState.moveFocusToEnd(eState))
   }
 
   render() {

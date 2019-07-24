@@ -36,9 +36,58 @@
 }
 
 .align-right {
-  float: right;
+  float: none;
+  text-align: right;
 }
 .align-center {
   float: none;
   text-align: center;
 }
+/*
+.unordered-list-item.align-center {
+  text-align: center;
+  border: 1px solid;
+}
+
+.unordered-list-item.align-right {
+  float: right;
+  text-align: left;
+  border: 1px solid;
+}
+*/
+
+/* The alignment below isn't centered the "correct way" */
+.unordered-list-item.align-center {
+  text-align: left;
+  float: none;
+  /*border: 1px solid;*/
+  width: 30%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ordered-list-item.align-center {
+  text-align: left;
+  float: none;
+  /*border: 1px solid;*/
+  width: 30%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.unordered-list-item.align-right {
+  text-align: left;
+  float: none;
+  margin-left: 70%
+  /*border: 1px solid;*/
+}
+
+.ordered-list-item.align-right {
+  text-align: left;
+  float: none;
+  margin-left: 70%
+  /*border: 1px solid;*/
+}
+
+
+

@@ -36,11 +36,9 @@
 }
 
 .align-right {
-  text-align: right !important;
+  float: right;
 }
 .align-center {
-  text-align: center !important;
-}
-.align-left {
-  text-align: left !important;
+  float: none;
+  text-align: center;
 }

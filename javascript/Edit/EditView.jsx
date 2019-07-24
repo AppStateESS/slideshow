@@ -2,8 +2,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import createEditorStateWithTextFn from '../Resources/CreateEditorStateWithTextFn'
-import {Editor, EditorState, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
+import {Editor, EditorState, ContentState, RichUtils, KeyBindingUtil, convertToRaw, convertFromRaw} from 'draft-js'
 const {hasCommandModifier} = KeyBindingUtil
 
 import QuizEdit from './Quiz/QuizEdit.jsx'
@@ -33,8 +32,7 @@ export default class EditView extends Component {
       this.setState({
         editorState,
         updated: true
-      })
-      //this.saveEditorState()
+      }, () => this.saveEditorState())
     }
 
 
@@ -92,27 +90,17 @@ export default class EditView extends Component {
     if (!this.props.isQuiz) {
       // If there isn't any content then we make some
       if (this.props.content.saveContent == undefined) {
-        let body = "New Slide"
-        this.setState({
-          editorState: createEditorStateWithTextFn(body)
-        }, function () {
-          this.saveEditorState()
-        })
+        const eState = EditorState.createWithContent(ContentState.createFromText("New Slide"), decorator)
+        this.onEditChange(RichUtils.toggleBlockType(eState, 'header-one'))
       } else {
         if (this.props.content.saveContent.length > 0) {
-          let contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
-          this.setState({
-            editorState: EditorState.createWithContent(contentState, decorator)
-          })
+          const contentState = convertFromRaw(JSON.parse(this.props.content.saveContent))
+          this.onEditChange(EditorState.createWithContent(contentState, decorator))
         }
         else {
           alert("An error has occured. Your data may have been corrupted. This slide will be reset.")
-          let body = "New Slide"
-          this.setState({
-            editorState: createEditorStateWithTextFn(body)
-          }, function() {
-            this.saveEditorState()
-          })
+          const eState = EditorState.createWithContent(ContentState.createFromText("New Slide"), decorator)
+          this.onEditChange(RichUtils.toggleBlockType(eState, 'header-one'))
         }
       }
     }
@@ -146,6 +134,12 @@ export default class EditView extends Component {
   }
 
   _functions(e) {
+    // This is currently deprecated 
+    // bc of a bug where the default key commands did not 
+    // function properly
+    // I will keep the code here, however, for the case
+    // we want to use this in the future
+
     // User presses L key
     if (e.keyCode == 76 && hasCommandModifier(e)) {
       return 'load'
@@ -153,9 +147,17 @@ export default class EditView extends Component {
     else if (e.keyCode == 83 /* S key */ && hasCommandModifier(e)) {
       return 'save'
     }
+    /*else if (e.keyCode == 13) {
+      return 'split-block'
+    }*/
   }
   
   _handleKeyCommand(command) {
+    // This is currently deprecated 
+    // bc of a bug where the default key commands did not 
+    // function properly
+    // I will keep the code here, however, for the case
+    // we want to use this in the future
     if (command === 'save') {
       console.log("saved")
       this.props.saveDB()
@@ -167,7 +169,14 @@ export default class EditView extends Component {
       window.setTimeout(() => this.props.load(), 500)
       return 'handled'
     }
+    else if (command === 'split-block') {
+      console.log('split-block')
+      const cState = this.state.editorState.getCurrentContent()
+      const eState = EditorState.push(this.state.editorState, cState, 'split-block')
+      this.onEditChange(eState)
+    }
     else {
+      console.log("unhandeled key command")
       return 'unhandled'
     }
   }
@@ -196,11 +205,10 @@ export default class EditView extends Component {
         <Editor
           editorState={this.state.editorState}
           onChange={this.onEditChange}
-          handleKeyCommand={this.handleKeyCommand}
-          keyBindingFn={this.functions}
-          onFocus={() => this.setState({ hasFocus: true })}
-          onBlur={() => this.setState({ hasFocus: false })}
-          ref={(element) => { this.editor = element; }}
+          //handleKeyCommand={this.handleKeyCommand}
+          //keyBindingFn={this.functions}
+          //onFocus={() => this.setState({ hasFocus: true })}
+          //onBlur={() => this.setState({ hasFocus: false })}
           customStyleMap={styles} 
           blockStyleFn={CustomBlockFn}
           spellCheck={true}/>
@@ -216,7 +224,7 @@ export default class EditView extends Component {
                             <ImageC key={this.state.imgUrl} src={this.state.imgUrl} remove={this.props.removeMedia} align={this.alignMedia} mediaAlign={this.state.mediaAlign} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
                             : undefined
     let toolbar = (this.props.isQuiz) ? undefined : 
-      <ToolbarC setEditorState={this.onEditChange} getEditorState={() => { return this.state.editorState}} saveMedia={this.props.saveMedia}/>
+      <ToolbarC setEditorState={this.onEditChange} getEditorState={() => this.state.editorState} saveMedia={this.props.saveMedia}/>
      
     return (
       <div className="col-8" style={{ minWidth: 700 }}>

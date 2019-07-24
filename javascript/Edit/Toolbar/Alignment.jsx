@@ -12,15 +12,27 @@ export default class Alignment extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      selection: SelectionState.createEmpty(), 
-      anchorKey: undefined,
-    }
-
-
-    this.align = this.align.bind(this)
+    this.alignBlock = this.alignBlock.bind(this)
   }
 
+
+  alignBlock(event) {
+    const toggledAlignment = 'align-' + event.currentTarget.id
+    const editorState = this.props.getEditorState()
+    const contentState = editorState.getCurrentContent()
+    const selection = editorState.getSelection()
+    let currBlock = contentState.getBlockForKey(selection.getFocusKey())
+    const bData = currBlock.getData().set('align', toggledAlignment)
+    const newContentState = Modifier.setBlockData(contentState, selection, bData)
+    const newEditorState = EditorState.push(
+      editorState,
+      newContentState,
+      'change-block-data'
+    )
+    this.props.setEditorState(newEditorState)
+  }
+  /* DEPRECATED 
+  // This function adds alignment to the block and the inlinestyle ranges, which causes problems
   align(event) {
     let toggledAlignment = 'align-' + event.currentTarget.id
 
@@ -80,7 +92,7 @@ export default class Alignment extends Component {
     // cache the selection
     this.setState({selection: selection, anchorKey: anchorKey})
     this.props.setEditorState(EditorState.moveFocusToEnd(newEditorState))
-  }
+  } */
 
   render() {
     return (
@@ -88,17 +100,17 @@ export default class Alignment extends Component {
         <Tippy
           content={<div>Align Left</div>}
           arrow={true}>
-          <button id="left" className="toolbar" onClick={this.align}><i className="fas fa-align-left"></i></button>
+          <button id="left" className="toolbar" onClick={this.alignBlock}><i className="fas fa-align-left"></i></button>
         </Tippy>
         <Tippy
           content={<div>Align Center</div>}
           arrow={true}>
-          <button id="center" className="toolbar" onClick={this.align}><i className="fas fa-align-center"></i></button>
+          <button id="center" className="toolbar" onClick={this.alignBlock}><i className="fas fa-align-center"></i></button>
         </Tippy>
         <Tippy
           content={<div>Align Right</div>}
           arrow={true}>
-          <button id="right" className="toolbar" onClick={this.align}><i className="fas fa-align-right"></i></button>
+          <button id="right" className="toolbar" onClick={this.alignBlock}><i className="fas fa-align-right"></i></button>
         </Tippy>
       </span>
     )

@@ -8,11 +8,13 @@ import {
 import './buttonStyle.css'
 import 'react-dropzone-uploader/dist/styles.css'
 
+import Tippy from '@tippy.js/react'
+
 import { EditorState} from 'draft-js'
 
 import Dropzone from 'react-dropzone-uploader'
 
-export default class MediaToolbarAddon extends Component {
+export default class Media extends Component {
   constructor(props) {
     super(props)
 
@@ -44,9 +46,7 @@ export default class MediaToolbarAddon extends Component {
       processData: false,
       contentType: false,
       success: (imageUrl) => {
-        window.sessionStorage.setItem('imgUrl', JSON.parse(imageUrl))
-        // This caused editView to rerender
-        this.props.setEditorState(EditorState.moveFocusToEnd(this.props.getEditorState()))
+        this.props.saveMedia(JSON.parse(imageUrl), 'right')
       },
       error: (req, res) => {
         console.log(req)
@@ -102,7 +102,12 @@ export default class MediaToolbarAddon extends Component {
     return (
       <span>
         {mediaModal}
-        <button className="toolbar" onClick={this.mediaModal}><i className="fas fa-images"></i></button>
+        <Tippy
+          content={<div>Insert Image</div>}
+          arrow={true}
+        >
+          <button className="toolbar" onClick={this.mediaModal}><i className="fas fa-images"></i></button>
+        </Tippy>
       </span>
     )
   }

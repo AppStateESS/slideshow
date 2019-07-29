@@ -16,43 +16,38 @@ export default class AnswerTypeCards extends Component {
 
   render() {
     return (
-      <div style={{ padding: 10 }}>
-        <Row style={{ padding: 10, justifyContent: 'center' }} >
-          <Card bg="secondary" text="white" style={{ width: '12rem', marginRight: '1rem' }}>
-            <Card.Header>Multiple Choice</Card.Header>
-            <Card.Body>
-              <Card.Text>
-                Multiple answers for students to choose from with one correct.
-              </Card.Text>
-            </Card.Body>
-            <Card.Footer>
-              <Button id={'choice'} onClick={this.props.switchView}>Select</Button>
-            </Card.Footer>
-          </Card>
-          <Card bg="secondary" text="white" style={{ width: '12rem', marginRight: '1rem' }}>
-            <Card.Header>Open Answer</Card.Header>
-            <Card.Body>
-              <Card.Text>
-                Open text field for students to write a response.
-              </Card.Text>
-            </Card.Body>
-            <Card.Footer>
-              <Button id={'open'} onClick={this.props.switchView}>Select</Button>
-            </Card.Footer>
-          </Card>
-          <Card bg="secondary" text="white" style={{ width: '12rem' }}>
-            <Card.Header>Multiple-Select Choice</Card.Header>
-            <Card.Body>
-              <Card.Text>
-                Allow studetns to select multiple options from a multiple-choice set using radio buttons.
-              </Card.Text>
-            </Card.Body>
-            <Card.Footer>
-              <Button id={'select'} onClick={this.props.switchView}>Select</Button>
-            </Card.Footer>
-          </Card>
-        </Row>
+      <div className="row" style={{margin: 10}}>
+        <div className="col">
+          <div className="card text-center text-white bg-secondary">
+            <div className="card-header">Multiple Choice</div>
+            <div className="card-body">
+              <p className="card-text">Multiple choice options with one possible correct answer</p>
+              <br></br>
+              <button className="btn btn-primary btn-block" id="choice" onClick={this.props.switchView}>Select</button>
+            </div>
+          </div>
+        </div>
+        <div className="col">
+          <div className="card text-center text-white bg-secondary">
+            <div className="card-header">Open Answer</div>
+            <div className="card-body">
+              <p className="card-text">Open answer field for user's open response</p>
+              <br></br>
+              <button className="btn btn-primary btn-block" id="open" onClick={this.props.switchView}>Select</button>
+            </div>
+          </div>
+        </div>
+        <div className="col">
+          <div className="card text-center text-white bg-secondary">
+            <div className="card-header">Multiple Select</div>
+            <div className="card-body">
+              <p className="card-text">Multiple choice options with one or more possible correct answer(s)</p>
+              <button className="btn btn-primary btn-block" id="select" onClick={this.props.switchView}>Select</button>
+            </div>
+          </div>
+        </div>
       </div>
+      
     )
   }
 }

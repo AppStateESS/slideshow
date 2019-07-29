@@ -1,9 +1,6 @@
 'use strict'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {
-  Button
-} from 'react-bootstrap'
 
 export default class QuizView extends Component {
   constructor(props) {
@@ -53,11 +50,10 @@ export default class QuizView extends Component {
     // Also need to handle open answers
     let title = (this.props.quizContent == undefined) ? 'No data loaded' : this.props.quizContent.questionTitle
     return (
-      <span>
+      <div>
         <h1>{title}</h1>
         {questions}
-        <Button variant="outline-primary" onClick={this.props.toggle} block><i className="fas fa-edit"></i> Edit Quiz Slide</Button>
-      </span>
+      </div>
     )
   }
 }

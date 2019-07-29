@@ -17,8 +17,8 @@ export default class MultipleSelectBlock extends Component {
 
   render() {
     return (
-      <Form.Row key={'row-' + this.props.id} id={this.props.id}>
-        <Form.Group controlId={'text-' + this.props.id} style={{ width: '30rem', marginRight: '1rem' }}>
+      <Form.Row key={'row-' + this.props.id} id={this.props.id} style={rowStyle}>
+        <Form.Group controlId={'text-' + this.props.id} style={{ width: '60%', marginRight: '1rem' }}>
           <Form.Control
             key={'text-' + this.props.id}
             value={this.props.value}
@@ -45,6 +45,11 @@ export default class MultipleSelectBlock extends Component {
     )
   }
 }
+
+const rowStyle = {
+  marginLeft: '10%'
+}
+
 
 MultipleSelectBlock.propTypes = {
   id: PropTypes.number,

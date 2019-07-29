@@ -35,9 +35,17 @@ export default class QuestionTitleBlock extends Component {
   render() {
     return (
       <Form.Group key={'questionTitle'} >
-        <Form.Label>Question: </Form.Label>
-        <Form.Control id={'title-' + this.props.id} value={this.state.title} onChange={this.onChange} />
+        <p style={{textAlign: 'center', marginBottom: 0}}>Question</p>
+        <Form.Control id={'title-' + this.props.id} value={this.state.title} onChange={this.onChange} style={formControlStyle}/>
       </Form.Group>
     )
   }
+}
+
+
+const formControlStyle = {
+  textAlign: 'center',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  width: '60%'
 }

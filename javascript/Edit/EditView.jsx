@@ -9,6 +9,7 @@ import QuizEdit from './Quiz/QuizEdit.jsx'
 import QuizView from './Quiz/QuizView.jsx'
 
 import ToolbarC from './Toolbar/Toolbar.jsx'
+import ToolbarQ from './Toolbar/QuizToolbar.jsx'
 import ImageC from '../AddOn/ImageColumn.jsx'
 import CustomStyleMap from '../Resources/CustomStyleMap.js';
 import decorator from '../Resources/LinkDecorator.js'
@@ -43,6 +44,7 @@ export default class EditView extends Component {
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.toggleQuizEdit = this.toggleQuizEdit.bind(this)
     this.alignMedia = this.alignMedia.bind(this)
+    this.takeDomScreen = this.takeDomScreen.bind(this)
   }
 
   componentDidMount() {
@@ -62,6 +64,7 @@ export default class EditView extends Component {
       }
       else if (this.state.updated) {
         // current component updated
+        this.takeDomScreen()
         this.saveEditorState()
         this.setState({ updated: false })
       }
@@ -98,7 +101,7 @@ export default class EditView extends Component {
           this.onEditChange(EditorState.createWithContent(contentState, decorator))
         }
         else {
-          alert("An error has occured. Your data may have been corrupted. This slide will be reset.")
+          console.log("An error has occured. Your data may have been corrupted. This slide will be reset.")
           const eState = EditorState.createWithContent(ContentState.createFromText("New Slide"), decorator)
           this.onEditChange(RichUtils.toggleBlockType(eState, 'header-one'))
         }
@@ -112,12 +115,14 @@ export default class EditView extends Component {
       let contentState = this.state.editorState.getCurrentContent()
       let saveContent = JSON.stringify(convertToRaw(contentState))
 
+      this.takeDomScreen()
       this.props.saveContentState(saveContent)
     }
   }
 
   saveQuizContent(quizContent) {
     this.toggleQuizEdit()
+    this.takeDomScreen()
     this.props.saveQuizContent(quizContent)
   }
 
@@ -181,6 +186,11 @@ export default class EditView extends Component {
     }
   }
 
+  takeDomScreen() {
+    var node = document.getElementById('editor')
+    this.props.saveThumb(node)
+  }
+
   render() {
 
     var editorStyle = {
@@ -223,22 +233,25 @@ export default class EditView extends Component {
     let imgRender = (this.state.imgUrl != undefined) ?
                             <ImageC key={this.state.imgUrl} src={this.state.imgUrl} remove={this.props.removeMedia} align={this.alignMedia} mediaAlign={this.state.mediaAlign} height={'100%'} width={'100%'}/> // Note: we can custom the width and length through these fields
                             : undefined
-    let toolbar = (this.props.isQuiz) ? undefined : 
+    let toolbar = (this.props.isQuiz) ?  
+      <ToolbarQ toggleQuizEdit={this.toggleQuizEdit} view={this.state.quizEditView} />:
       <ToolbarC setEditorState={this.onEditChange} getEditorState={() => this.state.editorState} saveMedia={this.props.saveMedia}/>
      
     return (
-      <div className="col-8" style={{ minWidth: 700 }}>
+      <div className="col">
         <p></p>
-        {toolbar}
-        <span><br /></span>
-        <div className="jumbotron" style={{minHeight: 350, backgroundColor: this.props.content.backgroundColor}}>
-          <div className="row">
-            {(this.state.mediaAlign === 'left') ? imgRender : undefined}
-            <div className="col">
-              {editRender}
-            </div>
-            {(this.state.mediaAlign === 'right') ? imgRender : undefined}
-            </div>
+        <div style={{minWidth: 700}}>
+          {toolbar}
+          <span><br /></span>
+          <div id="editor" className="jumbotron" style={{ minHeight: 450, position: 'relative', backgroundColor: this.props.content.backgroundColor}}>
+            <div className="row">
+              {(this.state.mediaAlign === 'left') ? imgRender : undefined}
+              <div className="col">
+                {editRender}
+              </div>
+              {(this.state.mediaAlign === 'right') ? imgRender : undefined}
+              </div>
+          </div>
         </div>
       </div>
     )
@@ -255,5 +268,6 @@ EditView.propTypes = {
   saveDB: PropTypes.func,
   load: PropTypes.func,
   saveMedia: PropTypes.func,
-  removeMedia: PropTypes.func
+  removeMedia: PropTypes.func,
+  saveThumb: PropTypes.func
 }

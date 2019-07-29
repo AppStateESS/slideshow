@@ -61,6 +61,12 @@ class SlideResource extends BaseAbstract
     */
     protected $media;
 
+    /**
+    * Thumbnail for the slide (img preview of the slideshow content)
+    * @var phpws2\Variable\StringVar
+    */
+    protected $thumb;
+
     public function __construct()
     {
         parent::__construct();
@@ -70,6 +76,7 @@ class SlideResource extends BaseAbstract
         $this->isQuiz = new \phpws2\Variable\BooleanVar(0, 'isQuiz');
         $this->backgroundColor = new \phpws2\Variable\StringVar('#E5E7E9', 'backgroundColor');
         $this->media = new \phpws2\Variable\StringVar(null, 'media');
+        $this->thumb = new \phpws2\Variable\StringVar(null, 'thumb');
     }
 
 }

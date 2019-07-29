@@ -2,12 +2,14 @@
 import React, { Component } from 'react'
 import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
-import SlidesView from './SlidesView.jsx'
+import NavCards from './NavCards.jsx'
 import {
   Button,
   InputGroup,
   FormControl,
 } from 'react-bootstrap'
+
+import domtoimage from '../Resources/dom-to-image'
 
 export default class Edit extends Component {
   constructor() {
@@ -25,9 +27,11 @@ export default class Edit extends Component {
           isQuiz: false,
           backgroundColor: '#E5E7E9',
           media: {imgUrl: '', align: ''},
-          slideId: 0
+          slideId: 0,
+          thumb: undefined
         },
       ],
+      domNode: undefined
     }
 
 
@@ -36,7 +40,9 @@ export default class Edit extends Component {
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
     this.addNewQuiz = this.addNewQuiz.bind(this)
+    this.pushNewSlide = this.pushNewSlide.bind(this)
     this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this)
+    this.moveSlide = this.moveSlide.bind(this)
     this.updateTitle = this.updateTitle.bind(this)
     this.updateTitleEdit = this.updateTitleEdit.bind(this)
     this.editTitle = this.editTitle.bind(this)
@@ -44,6 +50,7 @@ export default class Edit extends Component {
     this.saveContentState = this.saveContentState.bind(this)
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.saveMedia = this.saveMedia.bind(this)
+    this.saveThumb = this.saveThumb.bind(this)
     this.removeMedia = this.removeMedia.bind(this)
     this.changeBackground = this.changeBackground.bind(this)
   }
@@ -84,6 +91,39 @@ export default class Edit extends Component {
         console.error(req, err.toString());
       }
     })
+    if (this.state.domNode != undefined) {
+      domtoimage.toPng(this.state.domNode).then((dataUrl) => {
+        let img = new Image()
+        img.src = dataUrl
+        img.width = 200
+        img.height = 100
+        img.id = this.props.currentSlide
+        //console.log("upload begin")
+        let fData = new FormData()
+        fData.append('thumb', img.src)
+        fData.append('slideId', window.sessionStorage.getItem('slideId'))
+        $.post({
+          url: './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
+          type: 'POST',
+          data: fData,
+          processData: false,
+          contentType: false,
+          success: (path) => {
+            //console.log(JSON.parse(path))
+            let c = [...this.state.content]
+            c[this.state.currentSlide].thumb = JSON.parse(path)
+            this.setState({content: c})
+          },
+          error: (req, res) => {
+            console.log(req.toString())
+            console.error(res.toString())
+          }
+        })
+      }).catch(function (error) {
+        console.error(error)
+      })
+    }
+    
   }
 
 
@@ -114,7 +154,7 @@ export default class Edit extends Component {
               saveContent: saveC,
               quizContent: quizC,
               backgroundColor: loaded[i].backgroundColor,
-
+              thumb: JSON.parse(loaded[i].thumb || '{}'), // Ensure that this isn't undefined
               slideId: Number(loaded[i].id),
               media: JSON.parse(loaded[i].media || '{}')
             })
@@ -170,6 +210,23 @@ export default class Edit extends Component {
     this.addNewSlide(true)
   }
 
+  // addNewSlide to the end
+  pushNewSlide() {
+    const index = this.state.content.length
+    const newSlide = {
+        saveContent: undefined,
+        quizContent: undefined,
+        isQuiz: false,
+        backgroundColor: '#E5E7E9',
+    }
+    let copy = [...this.state.content]
+    copy.push(newSlide)
+    this.setState({
+      //currentSlide: index,
+      content: copy,
+    }, () => this.setCurrentSlide(index))
+  }
+
   deleteCurrentSlide() {
     let copy = [...this.state.content]
     let newIndex = this.state.currentSlide
@@ -178,7 +235,7 @@ export default class Edit extends Component {
     // Current slide is the first slide and there are no other slides
     if (this.state.currentSlide === 0 && this.state.content.length == 1) {
       // set the array to an empty slide
-      copy = [{saveContent: undefined}]
+      copy = [{saveContent: undefined, isQuiz: false, backgroundColor: '#E5E7E9'}]
     }
     // If we are deleting the last slide
     if (this.state.currentSlide == copy.length) {
@@ -198,6 +255,14 @@ export default class Edit extends Component {
       content: copy,
       currentSlide: newIndex
     }, /*() => this.setCurrentSlide(newIndex)*/)
+  }
+
+  moveSlide(fromIndex, toIndex) {
+    let c = [...this.state.content]
+    let slide = c[fromIndex]
+    c.splice(fromIndex, 1)
+    c.splice(toIndex, 0, slide)
+    this.setState({content: c})
   }
 
   updateTitle(value) {
@@ -246,6 +311,10 @@ export default class Edit extends Component {
     let c = [...this.state.content]
     c[this.state.currentSlide].media = {imgUrl: imgUrl, align: align}
     this.setState({content: c}, () => this.save())
+  }
+
+  saveThumb(imagePath) {
+    this.setState({domNode: imagePath})
   }
 
   removeMedia() {
@@ -319,11 +388,13 @@ export default class Edit extends Component {
           updateTitle       ={this.updateTitle}
           currentColor      ={this.state.content[this.state.currentSlide].backgroundColor}/>
         <div className="row">
-          <SlidesView
-            slides          ={this.state.content}
-            currentSlide    ={this.state.currentSlide}
+          <NavCards 
+            content         ={this.state.content}
             setCurrentSlide ={this.setCurrentSlide}
-            addNewSlide     ={this.addNewSlide}/>
+            addNewSlide     ={this.pushNewSlide}
+            currentSlide    ={this.state.currentSlide}
+            moveSlide       ={this.moveSlide}
+          />
           <EditView
             currentSlide    ={this.state.currentSlide}
             content         ={this.state.content[this.state.currentSlide]}
@@ -333,6 +404,7 @@ export default class Edit extends Component {
             saveQuizContent ={this.saveQuizContent}
             saveMedia       ={this.saveMedia}
             removeMedia     ={this.removeMedia}
+            saveThumb    ={this.saveThumb}
             saveDB          ={this.save}
             load            ={this.load}
             />

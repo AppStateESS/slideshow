@@ -34,6 +34,8 @@ class slideshowUpdate
                 $this->update('1.3.1');
             case $this->compare('1.3.2'):
                 $this->update('1.3.2');
+            case $this->compare('1.3.3'):
+                $this->update('1.3.3');
         }
     }
 
@@ -118,6 +120,19 @@ class slideshowUpdate
 
         $changes[] = 'can now add media to slides';
         $this->addContent('1.3.2', $changes);
+    }
+
+    private function v1_3_3()
+    {
+        $db = \phpws2\Database::getDB();
+
+        $t = $db->addTable('ss_slide');
+        $dt = new \phpws2\Database\Datatype\Varchar($t, 'thumb');
+        $dt->setDefault(null);
+        $dt->add();
+
+        $changes[] = 'thumbnail support';
+        $this->addContent('1.3.3', $changes);
     }
 
     private function addContent($version, array $changes)

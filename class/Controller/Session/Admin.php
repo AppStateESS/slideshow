@@ -19,7 +19,6 @@
 namespace slideshow\Controller\Session;
 
 use Canopy\Request;
-use Canopy\PHPWS_User;
 use slideshow\Factory\SessionFactory;
 use slideshow\View\SessionView;
 

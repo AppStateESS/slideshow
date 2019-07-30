@@ -7,7 +7,7 @@ export default function QuizToolbar(props) {
     <i className="fas fa-edit"></i> Edit Quiz Slide</button>)
 
   const cancel = (<button key="cancel" className="btn btn-outline-secondary btn-block"style={{ marginTop: 3 }} onClick={props.toggleQuizEdit}>
-    <i className="far fa-window-close"></i> Cancel</button>)
+    <i className="far fa-window-close"></i> Close Edit View</button>)
 
   return (
     <div>

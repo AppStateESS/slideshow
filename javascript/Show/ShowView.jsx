@@ -8,12 +8,7 @@ import {
   Jumbotron,
   Button,
   Col,
-  Row,
-  InputGroup,
   Modal,
-  ModalHeader,
-  ModalBody,
-  FormControl,
   } from 'react-bootstrap'
 
 export default class ShowView extends Component {
@@ -29,6 +24,7 @@ export default class ShowView extends Component {
       this.saveNewShow = this.saveNewShow.bind(this)
       this.toggleNewSlide = this.toggleNewSlide.bind(this)
       this.updateTitle = this.updateTitle.bind(this)
+      this.handleKeyDown = this._handleKeyDown.bind(this)
     }
 
   componentDidMount() {
@@ -36,7 +32,8 @@ export default class ShowView extends Component {
   }
 
   saveNewShow() {
-    if (this.state.resource.title != null) {
+    console.log(this.state.resource.title)
+    if (this.state.resource.title != undefined) {
       // new show
       $.ajax({
         url: './slideshow/Show',
@@ -52,6 +49,9 @@ export default class ShowView extends Component {
           console.error(req, err.toString());
         }.bind(this)
       });
+    }
+    else {
+      alert("Title cannot be empty")
     }
   }
 
@@ -85,6 +85,12 @@ export default class ShowView extends Component {
     });
   }
 
+  _handleKeyDown(event) {
+    if (event.key === "Enter") {
+      this.saveNewShow()
+    }
+  }
+
   render() {
 
     const modal = (
@@ -98,16 +104,17 @@ export default class ShowView extends Component {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <InputGroup>
-            <FormControl
-              placeholder="New Show"
-              onChange={this.updateTitle}
-              value={this.state.resource.title}
-            />
-            <InputGroup.Append>
-              <Button onClick={this.saveNewShow} variant="success">Save</Button>
-            </InputGroup.Append>
-          </InputGroup>
+            <div className="input-group mb-3">
+              <input type="input" 
+                className="form-control" 
+                placeholder="New Show" 
+                onChange={this.updateTitle}
+                onKeyDown={this.handleKeyDown}>
+              </input>
+              <div className="input-group-append">
+                <button type="button" className="btn btn-success"onClick={this.saveNewShow}>Save</button>
+              </div>
+            </div>
         </Modal.Body>
       </Modal>
     )

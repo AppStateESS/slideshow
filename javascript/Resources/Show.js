@@ -1,7 +1,7 @@
 let Show = {
   id: -1,
   active: 0,
-  title: '',
+  title: undefined,
   content: []
 }
 

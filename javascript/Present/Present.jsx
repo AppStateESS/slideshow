@@ -121,14 +121,14 @@ export default class Present extends Component {
             if (!isQ) {
               saveC = loaded[i].content
             } else {
-              quizC = loaded[i].content
+              quizC = JSON.parse(loaded[i].content)
             }
             showContent.push({
               isQuiz: isQ,
               saveContent: saveC,
               quizContent: quizC,
               backgroundColor: loaded[i].backgroundColor,
-              id: loaded[i].slideIndex // This may not be needed
+              media: JSON.parse(loaded[i].media || '{}')
             })
           }
           this.setState({
@@ -274,7 +274,6 @@ export default class Present extends Component {
               currentSlide={this.state.currentSlide}
               high={this.state.highestSlide}
               content={this.state.content[this.state.currentSlide]}
-              nextSlide={this.next}
               validate={this.validate}
               />
           </div>

@@ -1,24 +1,19 @@
-'use strict'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Form,
-  Row,
-  Col
 } from 'react-bootstrap'
 
-export default class MultipleChoiceBlock extends Component {
+export default class MultipleSelectBlock extends Component {
   constructor(props) {
     super(props)
-
+    
     this.delete = this.delete.bind(this)
   }
-
 
   delete() {
     this.props.remove(this.props.id)
   }
-
 
   render() {
     return (
@@ -33,8 +28,8 @@ export default class MultipleChoiceBlock extends Component {
         <Form.Group id={'correct-' + this.props.id}>
           <Form.Check
             custom
-            type='radio'
-            id={'check-' + this.props.id}
+            type='checkbox'
+            id={'select-' + this.props.id}
             name={'choices'}
             label='Correct Answer'
             onChange={this.props.onChange}
@@ -51,9 +46,9 @@ export default class MultipleChoiceBlock extends Component {
   }
 }
 
-MultipleChoiceBlock.propTypes = {
+MultipleSelectBlock.propTypes = {
   id: PropTypes.number,
   onChange: PropTypes.func,
-  placeholder: PropTypes.string,
+  value: PropTypes.string,
   checked: PropTypes.bool
 }

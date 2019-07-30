@@ -31,12 +31,12 @@ export default class Edit extends Component {
           thumb: undefined
         },
       ],
-      domNode: undefined
     }
 
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
+    this.saveDomScreen = this.saveDomScreen.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
     this.addNewQuiz = this.addNewQuiz.bind(this)
@@ -50,7 +50,6 @@ export default class Edit extends Component {
     this.saveContentState = this.saveContentState.bind(this)
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.saveMedia = this.saveMedia.bind(this)
-    this.saveThumb = this.saveThumb.bind(this)
     this.removeMedia = this.removeMedia.bind(this)
     this.changeBackground = this.changeBackground.bind(this)
   }
@@ -61,13 +60,14 @@ export default class Edit extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     // This is used for debugging
-    if (this.state != prevState) {
-      //console.log(this.state.content[this.state.currentSlide].slideId)
+    if (this.state.currentSlide != prevState.currentSlide) {
+
     }
 
   }
 
   save() {
+   this.saveDomScreen() 
     $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       data: {
@@ -91,39 +91,6 @@ export default class Edit extends Component {
         console.error(req, err.toString());
       }
     })
-    if (this.state.domNode != undefined) {
-      domtoimage.toPng(this.state.domNode).then((dataUrl) => {
-        let img = new Image()
-        img.src = dataUrl
-        img.width = 200
-        img.height = 100
-        img.id = this.props.currentSlide
-        //console.log("upload begin")
-        let fData = new FormData()
-        fData.append('thumb', img.src)
-        fData.append('slideId', window.sessionStorage.getItem('slideId'))
-        $.post({
-          url: './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
-          type: 'POST',
-          data: fData,
-          processData: false,
-          contentType: false,
-          success: (path) => {
-            //console.log(JSON.parse(path))
-            let c = [...this.state.content]
-            c[this.state.currentSlide].thumb = JSON.parse(path)
-            this.setState({content: c})
-          },
-          error: (req, res) => {
-            console.log(req.toString())
-            console.error(res.toString())
-          }
-        })
-      }).catch(function (error) {
-        console.error(error)
-      })
-    }
-    
   }
 
 
@@ -135,7 +102,6 @@ export default class Edit extends Component {
       success: function (data) {
         let loaded = data['slides']
         if (loaded[0] != undefined) {
-          let media = JSON.parse(loaded[0].media || "{}") 
           window.sessionStorage.setItem('slideId', loaded[0].id)
           let showContent = []
           for (let i = 0; i < loaded.length; i++) {
@@ -176,12 +142,46 @@ export default class Edit extends Component {
     });
   }
 
+  saveDomScreen(domNode, index) {
+    if (domNode === undefined) {
+      domNode = document.getElementById('editor')
+      index = domNode.getAttribute('data-key')
+    }
+    
+    if (domNode.getAttribute('data-key') == index) {
+      domtoimage.toPng(domNode).then((dataUrl) => {
+        let img = new Image()
+        img.src = dataUrl
+        img.width = 200
+        img.height = 100
+        let fData = new FormData()
+        fData.append('thumb', img.src)
+        fData.append('slideId', this.state.content[index].slideId)
+        $.post({
+          url: './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
+          type: 'POST',
+          data: fData,
+          processData: false,
+          contentType: false,
+          success: (path) => {
+            let c = [...this.state.content]
+            c[index].thumb = JSON.parse(path)
+            this.setState({content: c})
+          },
+          error: (req, res) => {
+            console.log(req)
+            console.error(res)
+          }
+        })
+      }).catch(function (error) {
+        console.error(error)
+      })
+    }
+  }
+
 
   setCurrentSlide(val) {
-    this.save() 
-    this.setState({
-      currentSlide: val
-    })
+    this.setState({currentSlide: val}, () => this.save())
   }
 
 
@@ -313,9 +313,6 @@ export default class Edit extends Component {
     this.setState({content: c}, () => this.save())
   }
 
-  saveThumb(imagePath) {
-    this.setState({domNode: imagePath})
-  }
 
   removeMedia() {
     $.ajax({
@@ -394,6 +391,7 @@ export default class Edit extends Component {
             addNewSlide     ={this.pushNewSlide}
             currentSlide    ={this.state.currentSlide}
             moveSlide       ={this.moveSlide}
+            saveDomScreen   ={this.saveDomScreen}
           />
           <EditView
             currentSlide    ={this.state.currentSlide}
@@ -404,7 +402,6 @@ export default class Edit extends Component {
             saveQuizContent ={this.saveQuizContent}
             saveMedia       ={this.saveMedia}
             removeMedia     ={this.removeMedia}
-            saveThumb    ={this.saveThumb}
             saveDB          ={this.save}
             load            ={this.load}
             />

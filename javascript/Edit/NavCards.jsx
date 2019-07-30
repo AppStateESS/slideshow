@@ -72,7 +72,7 @@ export default class NavCards extends Component {
     })
 
     return (
-      <div id="container" className="col" style={containerStyle}>
+      <div id="container" className="col" style={containerStyle} onMouseEnter={() => this.props.saveDomScreen()}>
         {data}
         <div id={this.props.content.length - 1} className="card" 
           style={this.state.addSlideHover ? addSlideHover : addSlideStyle} 

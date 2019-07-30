@@ -44,7 +44,6 @@ export default class EditView extends Component {
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.toggleQuizEdit = this.toggleQuizEdit.bind(this)
     this.alignMedia = this.alignMedia.bind(this)
-    this.takeDomScreen = this.takeDomScreen.bind(this)
   }
 
   componentDidMount() {
@@ -64,7 +63,6 @@ export default class EditView extends Component {
       }
       else if (this.state.updated) {
         // current component updated
-        this.takeDomScreen()
         this.saveEditorState()
         this.setState({ updated: false })
       }
@@ -115,14 +113,12 @@ export default class EditView extends Component {
       let contentState = this.state.editorState.getCurrentContent()
       let saveContent = JSON.stringify(convertToRaw(contentState))
 
-      this.takeDomScreen()
       this.props.saveContentState(saveContent)
     }
   }
 
   saveQuizContent(quizContent) {
     this.toggleQuizEdit()
-    this.takeDomScreen()
     this.props.saveQuizContent(quizContent)
   }
 
@@ -186,10 +182,6 @@ export default class EditView extends Component {
     }
   }
 
-  takeDomScreen() {
-    var node = document.getElementById('editor')
-    this.props.saveThumb(node)
-  }
 
   render() {
 
@@ -243,7 +235,7 @@ export default class EditView extends Component {
         <div style={{minWidth: 700}}>
           {toolbar}
           <span><br /></span>
-          <div id="editor" className="jumbotron" style={{ minHeight: 450, position: 'relative', backgroundColor: this.props.content.backgroundColor}}>
+          <div id="editor" data-key={this.props.currentSlide} className="jumbotron" style={{ minHeight: 450, position: 'relative', backgroundColor: this.props.content.backgroundColor}}>
             <div className="row">
               {(this.state.mediaAlign === 'left') ? imgRender : undefined}
               <div className="col">

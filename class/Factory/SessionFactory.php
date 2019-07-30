@@ -94,4 +94,19 @@ class SessionFactory extends Base
         return $resource;
     }
 
+    public function getAll(Request $request)
+    {
+        $vars = $request->getRequestVars();
+        $showId = intval($vars['Session']);
+
+        $sql = "SELECT username, highestSlide, completed FROM ss_session WHERE showId=:showId;";
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        $q->execute(array(':showId' => $showId));
+        $result = $q->fetchAll();
+
+        return $result;
+    }
+
 }

@@ -16,9 +16,19 @@
   top: 0px;
   right: 5px;
   height: 5px;
+  cursor: pointer;
 }
 
 .alert-delete {
   margin-left: 1rem;
   margin-right: 1rem;
+}
+
+.card-user {
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  height: 20px;
+  color: grey;
+  cursor: pointer;
 }

@@ -18,7 +18,7 @@
  * @license http://opensource.org/licenses/gpl-3.0.html
  */
 $proper_name = 'Slideshow';
-$version = '1.3.2';
+$version = '1.3.3';
 $register = false;
 $unregister = false;
 $import_sql = false;

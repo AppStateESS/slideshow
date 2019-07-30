@@ -69,8 +69,7 @@ export default class QuizEdit extends Component {
 		let nqContent = Object.assign({}, this.state.quizContent)
 
 		if (this.state.view == 'choice') {
-			if (this.state.quizContent.correctAnswers == undefined || this.state.quizContent.correctAnswers === []
-				|| nqContent.correctAnswers == false) {
+			if (this.state.quizContent.correctAnswers.length == 0) {
 				alert('Please select a correct answer')
 				return
 			}
@@ -88,8 +87,7 @@ export default class QuizEdit extends Component {
 			})
 		}
 		else if (this.state.view == 'select') {
-			if (this.state.quizContent.correctAnswers == undefined || this.state.quizContent.correctAnswers === []
-				|| nqContent.correctAnswers == false) {
+			if (this.state.quizContent.correctAnswers.length == 0) {
 				alert('Please select a correct answer(s)')
 				return
 			}
@@ -184,7 +182,7 @@ export default class QuizEdit extends Component {
 			}
 			return <MultipleChoice key={i} id={i} onChange={this.updateQuizContent} remove={this.remove} value={choice} checked={checked} />
 		})
-		choices.push(<Button key={'add'} variant="primary" onClick={this.addAnswer} style={{ marginBottom: '2rem' }}><i className="fas fa-plus-circle"></i> Add Another Answer</Button>)
+		choices.push(<Button key={'add'} variant="primary" onClick={this.addAnswer} style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }} block><i className="fas fa-plus-circle"></i> Add Another Answer</Button>)
 		return choices
 	}
 
@@ -204,7 +202,7 @@ export default class QuizEdit extends Component {
 			let checked = (this.state.quizContent.correctAnswers.includes(i.toString()))
 			return <MultipleSelect key={i} id={i} onChange={this.updateQuizContent} remove={this.remove} value={choice} checked={checked} />
 		})
-		choices.push(<Button key={'add'} variant="primary" onClick={this.addAnswer} style={{ marginBottom: '2rem' }}><i className="fas fa-plus-circle"></i> Add Another Answer</Button>)
+		choices.push(<Button key={'add'} variant="primary" onClick={this.addAnswer} style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }} block><i className="fas fa-plus-circle"></i> Add Another Answer</Button>)
 		return choices
 	}
 
@@ -213,7 +211,7 @@ export default class QuizEdit extends Component {
 			<AnswerTypeCards switchView={this.switchView} selectOne={this.state.quizContent.correctAnswers} />
 		) : null
 
-		let showAddElement = this.state.addElementVisible ?
+		let showAddElement = this.state.addElementVisible || this.state.view === 'showTypes' ?
 			undefined :
 			<span>
 				<Button id='showTypes' key="2" variant="secondary" onClick={this.switchView} block><i className="fas fa-undo"></i> Change Answer Type</Button>
@@ -232,13 +230,16 @@ export default class QuizEdit extends Component {
 		}
 		let title = this.state.quizContent.questionTitle
 		return (
-			<Form>
-				<h3>New Quiz:</h3>
-				<QuestionTitle value={title} onChange={this.updateQuizContent} id={0} />
-				{quizBuild}
-				{answerTypeBlock}
-				{showAddElement}
-			</Form>
+			<div>
+				<h3 style={{textAlign: 'center', marginTop: -40}}>Edit Quiz</h3>
+				<Form>
+					<QuestionTitle value={title} onChange={this.updateQuizContent} id={0} />
+					<hr style={{border: '1px solid', width: '50%'}}></hr>
+					{quizBuild}
+					{answerTypeBlock}
+					{showAddElement}
+				</Form>
+			</div>
 		)
 	}
 }

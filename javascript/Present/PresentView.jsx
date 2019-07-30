@@ -25,11 +25,9 @@ export default class PresentView extends Component {
           validate={this.props.validate} />) :
         <Viewspace content={this.props.content} />
       return (
-        <div className="mh-100">
-          <div className="jumbotron" style={{minHeight: 350, backgroundColor: this.props.content.backgroundColor}}>
+          <div className="jumbotron" style={{minHeight: 400, minWidth: 800, backgroundColor: this.props.content.backgroundColor}}>
             {viewspace}
           </div>
-        </div>
       )
     }
     return null

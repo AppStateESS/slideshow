@@ -107,6 +107,10 @@ class SlideFactory extends Base
             if (!empty($slide['media'])) {    
                 $resource->media = json_encode($slide['media']);
             }
+            $resource->thumb = "";
+            if (!empty($slide['thumb'])) {
+                $resource->thumb = json_encode($slide['thumb']);
+            }
             $this->saveResource($resource);
             array_push($ids, $resource->id);
             $slideIndex++;
@@ -128,11 +132,36 @@ class SlideFactory extends Base
             $resourceId = $resource->id;
         }
         
-
-        $path = $this->upload($_FILES['media'], $resourceId);
+        $target = $resourceId . '/';
+        $path = $this->upload($_FILES['media'], $target, $resourceId);
         if ($path != null) {
             $media = array('imgUrl' => $path, 'align' => 'right');
             $resource->media = json_encode($media);
+        }
+        $this->saveResource($resource);
+        return $path;
+    }
+
+    public function postThumb(Request $request)
+    {
+        $resourceId = intval($request->pullPostVar('slideId'));
+
+        try {
+            $resource = $this->load($resourceId);
+        }
+        catch (\Exception $e) {
+            // Resource doesn't exist
+            $resource = $this->build();
+            $this->saveResource($resource);
+            $resourceId = $resource->id;
+        }
+
+        $file_string_data = file_get_contents("data://".$request->pullPostVar('thumb'));
+        $target = $resourceId . "/";
+        
+        $path = $this->upload($file_string_data, $target, $resourceId);
+        if ($path != null) {
+            $resource->thumb = json_encode($path);
         }
         $this->saveResource($resource);
         return $path;
@@ -146,16 +175,8 @@ class SlideFactory extends Base
     {
         $resourceId = $request->pullDeleteVar('slideId');
         $resource = $this->load($resourceId);
-
-        // If there is media associated with an image then we remove it
-        if (strlen($resource->media) > 0) {
-            try {
-                $this->deleteImage($request);
-            }
-            catch (\Exception $e) {
-                echo("A fatal error has occured: " . $e);
-            }
-        }
+        
+        $this->deleteSlideDir($resourceId);
 
         return ($this->deleteResource($resource) != 0);
     }
@@ -212,16 +233,30 @@ class SlideFactory extends Base
         $q = $pdo->prepare($sql);
         $q->execute(array('showId'=>$showId));
         if (!$q) return false;
-        $paths = $q->fetchAll();
+        $res = $q->fetchAll();
         $flag = false;
-        foreach ($paths as $path) {
-            $media = json_decode($path['media']);
+        foreach ($res as $r) {
+            $media = json_decode($r['media']);
             if ($media != null && !empty($media->imgUrl)) {
-                $flag = $this->removeUpload($path['id'], $media->imgUrl);
+                $flag = $this->removeUpload($r['id'], $media->imgUrl);
                 if (!$flag)  echo("an error has occured");// An error occured
             }
+            $this->deleteSlideDir($r['id']);
         }
         return true;
+    }
+
+    private function deleteSlideDir($resourceId)
+    {
+        $dir = SLIDESHOW_MEDIA_DIRECTORY . $resourceId;
+        if (is_dir($dir)) {
+            // If directory exists then we dump it
+            system('rm -rf ' . escapeshellarg($dir), $ret);
+            if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+        }
+        else {
+            echo("directory already removed");
+        }
     }
 
     /**
@@ -240,30 +275,46 @@ class SlideFactory extends Base
         return $slides;
     }
 
-    private function upload(array $file, $slideId)
+    private function upload($file, $path, $slideId)
     {
-        $target = SLIDESHOW_MEDIA_DIRECTORY . $slideId . '/';
+        $target = SLIDESHOW_MEDIA_DIRECTORY . $path;
         $dir = PHPWS_HOME_DIR . $target;
-        $dest = $dir . basename($file['name']);
 
-        if (is_dir($dir))
-        {
-            // This means there is alredy an image stored at this location so we need to remove it
-            // I do this by removing the entire directory
-            system('rm -rf ' . escapeshellarg($dir), $ret);
-            if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
         }
-        mkdir($dir, 0755, true);
 
-        if (move_uploaded_file($file['tmp_name'], $dest)) {
-            return './' . $target .  basename($file['name']);
+        if (gettype($file) === 'array') {
+            $dest = $dir . basename($file['name']);
+            if (move_uploaded_file($file['tmp_name'], $dest)) {
+                return './' . $target .  basename($file['name']);
+            }
+            else {
+                echo("not uploaded and error occured");
+                var_dump($file);
+                var_dump($target);
+            }
+            return null;
         }
-        else {
-            echo("not uploaded and error occured");
-            var_dump($file);
-            var_dump($target);
+        else if (gettype($file) === 'string') { // file is a thumbnail
+            $dir .= 'thumb/';
+            if (is_dir($dir)) {
+                // If directory exists then we dump it
+                system('rm -rf ' . escapeshellarg($dir), $ret);
+                if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+            }
+            mkdir($dir, 0755, true);
+            // image will be named based on timestamp
+            $filename = $dir . time() . '.png';
+            $status = file_put_contents($filename, $file);
+            if (!$status) {
+                // error has occured
+                return null;
+            }
+            return './' . $target . 'thumb/' . time() . '.png';
         }
         return null;
+        
     }
 
     private function removeUpload($slideId, $path) {
@@ -273,7 +324,6 @@ class SlideFactory extends Base
         try {
             unlink($path);
             $dir = SLIDESHOW_MEDIA_DIRECTORY . $slideId . '/';
-            rmdir($dir);
             return true;
         }
         catch (\Exception $e) {

@@ -70,4 +70,10 @@ class Admin extends Base
  {
      return $this->factory->postImage($request);
  }
+
+ protected function thumbPostCommand(Request $request)
+ {
+     return $this->factory->postThumb($request);
+ }
+ 
 }

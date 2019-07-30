@@ -269,14 +269,12 @@ export default class Present extends Component {
         <h1 style={{textDecorationLine: 'underline'}}>{this.state.title}</h1>
         <br></br>
         <div style={{justifyContent: 'center', display: 'flex'}}>
-          <div style={{maxWidth: 700, width: "95%"}}>
-            <PresentView
-              currentSlide={this.state.currentSlide}
-              high={this.state.highestSlide}
-              content={this.state.content[this.state.currentSlide]}
-              validate={this.validate}
-              />
-          </div>
+          <PresentView
+            currentSlide={this.state.currentSlide}
+            high={this.state.highestSlide}
+            content={this.state.content[this.state.currentSlide]}
+            validate={this.validate}
+            />
         </div>
         <div style={{justifyContent: 'center', display: 'flex', marginBottom: '2rem'}}>
           <div className="btn-toolbar">

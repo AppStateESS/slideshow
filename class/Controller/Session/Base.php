@@ -20,6 +20,7 @@ namespace slideshow\Controller\Session;
 
 use Canopy\Request;
 use slideshow\Factory\SessionFactory as Factory;
+use slideshow\View\SessionView as View;
 use slideshow\Controller\RoleController;
 
 class Base extends RoleController
@@ -30,6 +31,11 @@ class Base extends RoleController
      */
     protected $factory;
 
+    /**
+     * @var slideshow\View\SessionView
+     */
+    protected $view;
+
     protected function loadFactory()
     {
         $this->factory = new Factory;
@@ -37,7 +43,7 @@ class Base extends RoleController
 
     protected function loadView()
     {
-
+        $this->view = new View;
     }
 
 }

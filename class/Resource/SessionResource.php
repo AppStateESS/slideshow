@@ -27,6 +27,12 @@ class SessionResource extends BaseAbstract
     protected $userId;
 
     /**
+    * username
+    * @var phpws2\Variable\StringVar
+    */
+    protected $username;
+
+    /**
     * SlideShow id
     * @var phpws2\Variable\IntegerVar
     */
@@ -50,6 +56,7 @@ class SessionResource extends BaseAbstract
     {
         parent::__construct();
         $this->userId = new \phpws2\Variable\IntegerVar(\Current_User::getId(), 'userId');
+        $this->username = new \phpws2\Variable\StringVar(\Current_User::getUsername(), 'username');
         $this->showId = new \phpws2\Variable\IntegerVar(0, 'showId');
         $this->highestSlide = new \phpws2\Variable\SmallInteger(0, 'highestSlide');
         $this->completed = new \phpws2\Variable\BooleanVar(false, 'completed');

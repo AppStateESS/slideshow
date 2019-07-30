@@ -25,7 +25,7 @@ const Link = (props) => {
     return (
         <Tippy content={<a href={url} style={{color: 'white'}} target="_blank">{url}</a>} arrow={true} interactive={true}>
             <a className="linkDecorator" href={url} style={linkStyle} target="_blank">
-                {props.children} <i style={icon}className="fas fa-external-link-alt"></i>
+                {props.children}
             </a>
         </Tippy>
     );

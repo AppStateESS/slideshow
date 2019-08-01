@@ -32,3 +32,22 @@
   color: grey;
   cursor: pointer;
 }
+
+.tool {
+  background: white;
+  color: #888;
+  font-size: 18px;
+  border: 0;
+  padding-top: 0px;
+  vertical-align: bottom;
+}
+
+button.drop {
+  width: 90%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.remove {
+  margin-top: 1rem;
+}

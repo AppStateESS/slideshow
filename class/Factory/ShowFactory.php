@@ -24,6 +24,8 @@ use SlideShow\Factory\SlideFactory;
 use phpws2\Database;
 use Canopy\Request;
 
+define('SLIDESHOW_MEDIA_DIRECTORY', 'images/slideshow/');
+
 class ShowFactory extends Base
 {
 
@@ -164,8 +166,75 @@ class ShowFactory extends Base
 
     public function delete($showId)
     {
-        self::deleteResource($this->load($showId));
-        return true;
+        $returnFlag = true;
+        $resource = $this->load($showId);
+        if ($resource->preview != null) {
+            // this will be set to false if something went wrong
+            $returnFlag = $this->deletePreviewImage($showId);
+        }
+        self::deleteResource($resource);
+        return $returnFlag;
+    }
+
+    public function postPreviewImage(Request $request) 
+    {
+        $vars = $request->getRequestVars();
+        $showId = $vars['id'];
+        if (!empty($showId)) {
+            $resource = $this->load($showId);
+        }
+        else {
+            throw new \Exception("Error loading slideId");
+        }
+
+        $path = $this->uploadPreview($_FILES['media'], $showId);
+        $resource->preview = $path;
+        $this->saveResource($resource);
+        return $path;
+    }
+
+    public function deletePreviewImage($resourceId)
+    {
+        $resource = $this->load($resourceId);
+        $resource->preview = "";
+        $this->saveResource($resource);
+
+        return $this->deletePreview($resourceId);
+    }
+
+    private function uploadPreview(array $file, $resourceId)
+    {
+        
+        // Check to see if there is a show directory
+        $master_dir = PHPWS_HOME_DIR . SLIDESHOW_MEDIA_DIRECTORY . 'show/';
+        $resource_dir = $master_dir . $resourceId . '/';
+        //isdir($master_dir)
+        // Check to see if there is a directory for the resource
+        if (is_dir($resource_dir)) {
+            // If directory exists then we dump it
+            system('rm -rf ' . escapeshellarg($resource_dir), $ret);
+            if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+        }
+        mkdir($resource_dir, 0755, true);
+
+        // upload the image 
+        $dest = $resource_dir . basename($file['name']);
+        if (move_uploaded_file($file['tmp_name'], $dest)) {
+            return './' . SLIDESHOW_MEDIA_DIRECTORY . 'show/' . $resourceId . '/' . basename($file['name']);
+        }
+        else {
+            var_dump($file);
+            var_dump($dest);
+            return "not uploaded and error occured";
+        }
+    }
+
+    private function deletePreview($resourceId)
+    {
+        $dir = PHPWS_HOME_DIR . SLIDESHOW_MEDIA_DIRECTORY . 'show/' . $resourceId . '/';
+        system('rm -rf ' . escapeshellarg($dir), $ret);
+        if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+        else return true;
     }
 
 }

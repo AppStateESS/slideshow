@@ -36,6 +36,8 @@ class slideshowUpdate
                 $this->update('1.3.2');
             case $this->compare('1.3.3'):
                 $this->update('1.3.3');
+            case $this->compare('1.3.4'):
+                $this->update('1.3.4');
         }
     }
 
@@ -133,6 +135,19 @@ class slideshowUpdate
 
         $changes[] = 'thumbnail support';
         $this->addContent('1.3.3', $changes);
+    }
+
+    private function v1_3_4()
+    {
+        $db = \phpws2\Database::getDB();
+
+        $t = $db->addTable('ss_show');
+        $dt = new \phpws2\Database\Datatype\Varchar($t, 'preview');
+        $dt->setDefault(null);
+        $dt->add();
+
+        $changes[] = 'show preview image';
+        $this->addContent('1.3.4', $changes);
     }
 
     private function addContent($version, array $changes)

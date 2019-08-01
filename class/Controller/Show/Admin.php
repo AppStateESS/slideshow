@@ -69,7 +69,14 @@ class Admin extends Base
 
     protected function deleteCommand(Request $request)
     {
-        $this->factory->delete($this->id);
+      switch($request->pullDeleteVar('type')) {
+        case 'preview':
+          return $this->factory->deletePreviewImage($this->id);
+        case 'show':
+          return $this->factory->delete($this->id);
+        default:
+          return $this->factory->delete($this->id);
+      }  
     }
 
     protected function putCommand(Request $request)
@@ -87,6 +94,11 @@ class Admin extends Base
     protected function presentJsonCommand(Request $request)
     {
         return $this->factory->getShowDetails($request);
+    }
+
+    protected function previewPostCommand(Request $request) 
+    {
+      return $this->factory->postPreviewImage($request);
     }
 
     protected function getJsonView($data, Request $request)

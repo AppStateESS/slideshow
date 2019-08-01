@@ -17,7 +17,8 @@ export default class ShowView extends Component {
       this.state = {
         resource: Show,
         showData: null,
-        modalOpen: false
+        modalOpen: false,
+        newShowFocus: false
       }
 
       this.getData     = this.getData.bind(this)
@@ -32,7 +33,6 @@ export default class ShowView extends Component {
   }
 
   saveNewShow() {
-    console.log(this.state.resource.title)
     if (this.state.resource.title != undefined) {
       // new show
       $.ajax({
@@ -42,7 +42,7 @@ export default class ShowView extends Component {
         dataType: 'json',
         success: function(showId) {
           window.sessionStorage.setItem('id', showId)
-          window.setInterval(() => window.location.href = './slideshow/Slide/Edit', 200)
+          window.setInterval(() => window.location.href = './slideshow/Slide/Edit', 100)
         }.bind(this),
         error: function(req, err) {
           alert("Failed to save data.")
@@ -100,21 +100,19 @@ export default class ShowView extends Component {
         >
         <Modal.Header closeButton>
           <Modal.Title>
-            Enter a Title:
+            New Show
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <div className="input-group mb-3">
-              <input type="input" 
-                className="form-control" 
-                placeholder="New Show" 
-                onChange={this.updateTitle}
-                onKeyDown={this.handleKeyDown}>
-              </input>
-              <div className="input-group-append">
-                <button type="button" className="btn btn-success"onClick={this.saveNewShow}>Save</button>
-              </div>
-            </div>
+          <input type="input" 
+            className="form-control" 
+            placeholder="Enter a title" 
+            onChange={this.updateTitle}
+            onKeyDown={this.handleKeyDown}
+            style={{textAlign: 'center'}}>
+          </input>
+          <br></br>
+          <button className="btn btn-success btn-block" onClick={this.saveNewShow}>Save</button>
         </Modal.Body>
       </Modal>
     )
@@ -130,29 +128,32 @@ export default class ShowView extends Component {
              id={show.id}
              title={show.title}
              active={show.active}
-             load={this.getData} />
+             load={this.getData}
+             img={show.preview} />
          )}.bind(this)
       );
 
       return (
         <div>
-          <h2>Shows:</h2>
-          <Jumbotron>
+          <h2>Shows</h2>
+          <div className="jumbotron">
             <CardDeck className="card-deck d-flex justify-content-center">
               {cards}
             </CardDeck>
             <hr />
-            <Col>
-              <Card body className="text-center">
-                <Card.Body>
-                  <Card.Title>Create New Show</Card.Title>
-                  <Button variant="outline-primary" onClick={this.toggleNewSlide} color="primary">
-                    <i className="fas fa-plus-circle"></i>
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Jumbotron>
+            <div className="col">
+              <div className="card text-center" 
+                onClick={this.toggleNewSlide} 
+                onMouseEnter={() => this.setState({newShowFocus: true})}
+                onMouseLeave={() => this.setState({newShowFocus: false})} 
+                style={(this.state.newShowFocus) ? {border: 'solid 3px #007bff', color: '#007bff'} : {border: 'solid 3px white', color: 'dimgrey' }}>
+                <div className="card-body">
+                  <h5>Create New Show</h5>
+                  <i className="fas fa-plus-circle" style={{fontSize: 30}}></i>
+                </div>
+              </div>
+            </div>
+          </div>
           {modal}
         </div>
       )

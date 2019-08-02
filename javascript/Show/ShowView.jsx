@@ -3,11 +3,7 @@ import React, {Component} from 'react'
 import ShowCard from './ShowCard.jsx'
 import Show from '../Resources/Show.js'
 import {
-  Card,
   CardDeck,
-  Jumbotron,
-  Button,
-  Col,
   Modal,
   } from 'react-bootstrap'
 

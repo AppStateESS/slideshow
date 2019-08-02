@@ -50,7 +50,8 @@ export default class ShowView extends Component {
                key={show.id}
                id={show.id}
                title={show.title}
-               load={this.getData} />
+               load={this.getData}
+               preview={show.preview} />
            )
          }}.bind(this)
       )

@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {
-  Card,
-  Button,
   InputGroup,
   FormControl,
 } from 'react-bootstrap'
@@ -139,7 +137,7 @@ export default class ShowCard extends Component {
                       onChange={this.updateTitle}
                     />
                     <InputGroup.Append>
-                      <Button variant="primary" onClick={this.handleSave}>Save</Button>
+                      <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
                     </InputGroup.Append>
                   </InputGroup>
     } else {
@@ -156,14 +154,16 @@ export default class ShowCard extends Component {
 
     return (
       <div style={{paddingBottom: "25px"}}>
-        <Card>
+        <div className="card">
           <div className="card-img-caption">
             <img className="card-img-top" src={this.state.img}/>
           </div>
-          <Card.Body>
-            <Card.Title className="d-flex justify-content-center">
-              {cardTitle}
-            </Card.Title>
+          <div className="card-body">
+            <div className="card-title">
+              <div className="d-flex justify-content-center">
+                <h5>{cardTitle}</h5>
+              </div>
+            </div>
             <div className="d-flex justify-content-around" style={{marginBottom: 10, marginLeft: 'auto', marginRight: 'auto', border: '1px black' }}>
               <PreviewUpload id={this.state.id} changePreview={this.changePreview}/>
               <SessionTool sessionTransition={this.sessionTransition} />
@@ -171,14 +171,14 @@ export default class ShowCard extends Component {
             </div>
             <hr></hr>
             <div className="d-flex justify-content-around">
-              <Button onClick={this.presentTransition} variant="primary">View</Button>
-              <Button onClick={this.editTransition} variant="secondary">Edit</Button>
+              <button className="btn btn-primary" onClick={this.presentTransition} >View</button>
+              <button className="btn btn-secondary" onClick={this.editTransition} >Edit</button>
               <Tippy content={<div>Activate for students</div>} placement="bottom" arrow={true}>
                 <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>
               </Tippy>
             </div>
-          </Card.Body>
-        </Card>
+          </div>
+        </div>
       </div>
     )
   }

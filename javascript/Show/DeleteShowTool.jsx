@@ -22,7 +22,7 @@ export default function DeleteShowTool(props) {
         content={<div>Delete this show</div>}
         arrow={true}
       >
-        <button className="tool" onClick={() => setDeleteAlert(true)}><i className="fas fa-trash"></i></button>
+        <button className="tool trash" onClick={() => setDeleteAlert(true)}><i className="fas fa-trash"></i></button>
       </Tippy>
     </Tippy>
   )

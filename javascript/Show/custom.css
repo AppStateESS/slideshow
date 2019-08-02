@@ -42,6 +42,15 @@
   vertical-align: bottom;
 }
 
+.trash:hover {
+  background: white;
+  color: red;
+  font-size: 18px;
+  border: 0;
+  padding-top: 0px;
+  vertical-align: bottom;
+}
+
 button.drop {
   width: 90%;
   margin-left:auto;

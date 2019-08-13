@@ -23,6 +23,7 @@ export default class ShowCard extends Component {
         img: ShowLogo,
         active: 0,
         edit: false,
+        useThumb: false
     }
 
     this.handleSave = this.handleSave.bind(this)
@@ -34,6 +35,7 @@ export default class ShowCard extends Component {
     this.presentTransition = this.presentTransition.bind(this)
     this.sessionTransition = this.sessionTransition.bind(this)
     this.changePreview = this.changePreview.bind(this)
+    this.useThumb = this.useThumb.bind(this)
     this.submitOnEnter = this.submitOnEnter.bind(this)
   }
 
@@ -42,7 +44,7 @@ export default class ShowCard extends Component {
       title: this.props.title,
       active: Number(this.props.active),
       id: this.props.id,
-      img: this.props.img.length > 0 ? this.props.img : ShowLogo 
+      img: this.props.img.length > 0 ? this.props.img : ShowLogo,
     })
   }
 
@@ -128,6 +130,23 @@ export default class ShowCard extends Component {
    }
    this.setState({img: imgPath})
  }
+ 
+ useThumb(enable) {
+  $.ajax({
+    url: `./slideshow/Show/useThumb?id=${this.state.id}`,
+    type: 'POST',
+    data: {value: enable},
+    success: (thumb) => {
+      if (thumb.length > 0) {
+        this.changePreview(JSON.parse(thumb))
+      }
+    },
+    error: (req, res) => {
+      console.log(req)
+      console.error(res)
+    }
+  })
+ }
 
  submitOnEnter(event) {
    if (event.key === "Enter") {
@@ -164,7 +183,7 @@ export default class ShowCard extends Component {
       <div style={{paddingBottom: "25px"}}>
         <div className="card">
           <div className="card-img-caption">
-            <img className="card-img-top" src={this.state.img}/>
+            <img className="card-img-top" src={this.state.img} alt={"An error has occured with displaying this image"}/>
           </div>
           <div className="card-body">
             <div className="card-title">
@@ -173,7 +192,7 @@ export default class ShowCard extends Component {
               </div>
             </div>
             <div className="d-flex justify-content-around" style={{marginBottom: 10, marginLeft: 'auto', marginRight: 'auto', border: '1px black' }}>
-              <PreviewUpload id={this.state.id} changePreview={this.changePreview}/>
+              <PreviewUpload id={this.state.id} changePreview={this.changePreview} useThumb={this.useThumb}/>
               <SessionTool sessionTransition={this.sessionTransition} />
               <DeleteShowTool delete={this.deleteShow} />
             </div>

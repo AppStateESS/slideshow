@@ -197,6 +197,7 @@ class ShowFactory extends Base
     {
         $resource = $this->load($resourceId);
         $resource->preview = "";
+        $resource->useThumb = false;
         $this->saveResource($resource);
 
         return $this->deletePreview($resourceId);
@@ -210,19 +211,28 @@ class ShowFactory extends Base
 
         $path = '';
 
+        $this->deletePreviewImage($resourceId);
+
         if ($value) {
-            // Means we need to initialize preview with the location of the preview image.
-            $sql = 'SELECT thumb FROM ss_slide WHERE showId=:resourceId;';
-            $db = Database::getDB();
-            $pdo = $db->getPDO();
-            $query = $pdo->prepare($sql);
-            $query->bindParam(':resourceId', $resourceId, \PDO::PARAM_INT);
-            $query->execute();
-            $result = $query->fetch();
-            $path = $result['thumb'];
+            $path = $this->getFirstPreview($resourceId);
         }
-        $resource->preview = json_decode($path);
+
         $this->saveResource($resource);
+        return $path;
+    }
+
+    public function getFirstPreview($resourceId)
+    {
+
+        $sql = 'SELECT thumb FROM ss_slide WHERE showId=:resourceId;';
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $query = $pdo->prepare($sql);
+        $query->bindParam(':resourceId', $resourceId, \PDO::PARAM_INT);
+        $query->execute();
+        $result = $query->fetch();
+        $path = $result['thumb'];
+
         return json_decode($path);
     }
 

@@ -64,7 +64,7 @@ class Admin extends Base
 
     protected function listJsonCommand(Request $request)
     {
-        return array('listing'=>$this->factory->listing(true));
+        return array('listing'=>$this->get($request));
     }
 
     protected function deleteCommand(Request $request)
@@ -85,10 +85,15 @@ class Admin extends Base
         return true;
     }
 
-    protected function getCommand(Request $request)
+    protected function get()
     {
-        $shows = $this->factory->getShows();
-        return json_encode($shows);
+        $shows = $this->factory->listing(true);
+        foreach ($shows as &$show) {
+          if ($show['useThumb'] == 1) {
+            $show['preview'] = $this->factory->getFirstPreview($show['id']);
+          }
+        }
+        return $shows;
     }
 
     protected function presentJsonCommand(Request $request)

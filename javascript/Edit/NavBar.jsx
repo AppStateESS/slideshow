@@ -59,8 +59,8 @@ export default class NavBar extends Component {
           <Settings
             changeBackground ={this.props.changeBackground}
             id               ={this.props.id}
-            updateTitle      ={this.props.updateTitle}
-            currentColor     ={this.props.currentColor}/>
+            currentColor     ={this.props.currentColor}
+            slideTimer       ={this.props.slideTimer}/>
       </ButtonToolbar>
     </div>
     )
@@ -76,5 +76,4 @@ NavBar.propTypes = {
   id: PropTypes.number,
   changeBackground: PropTypes.func,
   currentColor: PropTypes.string,
-  updateTitle: PropTypes.func,
 }

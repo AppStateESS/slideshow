@@ -189,6 +189,7 @@ class ShowFactory extends Base
 
         $path = $this->uploadPreview($_FILES['media'], $showId);
         $resource->preview = $path;
+        $resource->useThumb = false;
         $this->saveResource($resource);
         return $path;
     }

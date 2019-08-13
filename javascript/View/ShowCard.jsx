@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import { Card, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap'
+
+import Tippy from '@tippy.js/react'
 import './custom.css'
 
 import AppLogo from "../../img/showimg.png"
@@ -10,7 +10,7 @@ export default class ShowCard extends Component {
     super(props)
 
     this.state = {
-        img: AppLogo,
+        img: props.preview,
         active: 0,
         sessionFlag: 0 // case 0: begin/start
                       // case 1: continue
@@ -23,6 +23,9 @@ export default class ShowCard extends Component {
 
   componentDidMount() {
     this.getSessionInfo()
+    if (this.props.preview.length == 0) {
+      this.setState({img: AppLogo})
+    }
   }
 
   presentTransition() {
@@ -36,9 +39,6 @@ export default class ShowCard extends Component {
       type: 'GET',
       dataType: 'json',
       success: function (data) {
-        console.log(this.props.id)
-        console.log(data)
-        console.log(data.highestSlide)
         let session = 0
         if (Number(data.completed)) {
           session = 2 // Review
@@ -60,56 +60,41 @@ export default class ShowCard extends Component {
     let present = undefined
     switch (this.state.sessionFlag) {
       case 0:
-        present = <Button onClick={this.presentTransition} variant="primary">Begin</Button>
+        present = <button onClick={this.presentTransition} className="btn btn-primary btn-block" >Begin</button>
         break;
       case 1:
         present =
-        <OverlayTrigger placement="bottom"
-          overlay={
-            <Tooltip>
-              Incomplete. Click to continue
-            </Tooltip>
-          }>
-            <Button onClick={this.presentTransition} variant="warning">Continue</Button>
-          </OverlayTrigger>
+        <Tippy placement="bottom" content={<div>Incomplete. Click to continue</div>} arrow={true}>
+            <button onClick={this.presentTransition} className="btn btn-warning btn-block" >Continue</button>
+        </Tippy>
         break;
       case 2:
         present =
-        <OverlayTrigger placement="bottom"
-          overlay={
-            <Tooltip>
-              Completed. Click to review
-            </Tooltip>
-          }>
-            <Button onClick={this.presentTransition} variant="success" >Review</Button>
-        </OverlayTrigger>
+        <Tippy placement="bottom" content={<div>Completed. Click to review</div>} arrow={true}>
+            <button onClick={this.presentTransition} className="btn btn-success btn-block" >Review</button>
+        </Tippy>
         break;
     }
 
     return (
       <div style={{paddingBottom: "25px"}}>
-        <Card>
+        <div className="card">
           <div className="card-img-caption">
             <img className="card-img-top" src={this.state.img}/>
           </div>
-          <Card.Body>
-            <Card.Title className="d-flex justify-content-center">
-              {this.props.title}
-            </Card.Title>
+          <div className="card-body">
+            <div className="card-title">
+              <div className="d-flex justify-content-center">
+                <h5>{this.props.title}</h5>
+              </div>
+            </div>
             <div className="d-flex justify-content-around">
               {present}
             </div>
-          </Card.Body>
-        </Card>
+          </div>
+        </div>
       </div>
     )
 }
 
 }
-
-ShowCard.propTypes = {
-   //id: PropTypes.string,
-   title: PropTypes.string,
-   //active: PropTypes.number,
-   //load: PropTypes.function
- }

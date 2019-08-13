@@ -1,18 +1,17 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {
-  Card,
-  Button,
-  Alert,
   InputGroup,
   FormControl,
-  Overlay,
-  OverlayTrigger,
-  Tooltip,
 } from 'react-bootstrap'
 import './custom.css'
 
 import ShowLogo from "../../img/showimg.png"
+
+import PreviewUpload from "./PreviewUpload";
+import SessionTool from './SessionTool';
+import DeleteShowTool from './DeleteShowTool';
+import Tippy from '@tippy.js/react';
 
 export default class ShowCard extends Component {
   constructor(props) {
@@ -24,8 +23,7 @@ export default class ShowCard extends Component {
         img: ShowLogo,
         active: 0,
         edit: false,
-        alert: false,
-        closex: true
+        useThumb: false
     }
 
     this.handleSave = this.handleSave.bind(this)
@@ -36,14 +34,17 @@ export default class ShowCard extends Component {
     this.editTransition = this.editTransition.bind(this)
     this.presentTransition = this.presentTransition.bind(this)
     this.sessionTransition = this.sessionTransition.bind(this)
-    this.deleteAlert = this.deleteAlert.bind(this)
+    this.changePreview = this.changePreview.bind(this)
+    this.useThumb = this.useThumb.bind(this)
+    this.submitOnEnter = this.submitOnEnter.bind(this)
   }
 
   componentDidMount() {
     this.setState({
       title: this.props.title,
       active: Number(this.props.active),
-      id: this.props.id
+      id: this.props.id,
+      img: this.props.img.length > 0 ? this.props.img : ShowLogo,
     })
   }
 
@@ -79,6 +80,7 @@ export default class ShowCard extends Component {
      url: './slideshow/Show/' + this.state.id,
      type: 'delete',
      dataType: 'json',
+     data: {type: 'show'},
      success: function() {
        this.props.load()
      }.bind(this),
@@ -106,26 +108,50 @@ export default class ShowCard extends Component {
 
  editTransition() {
    window.sessionStorage.setItem('id', this.state.id)
-   window.location.href = './slideshow/Slide/Edit/'
+   window.setTimeout(() => window.location.href = './slideshow/Slide/Edit/', 200)
  }
 
  presentTransition() {
    window.sessionStorage.setItem('id', this.state.id)
-   window.location.href = './slideshow/Slide/Present/'
+   window.setTimeout(() => window.location.href = './slideshow/Slide/Present/', 200)
  }
 
  sessionTransition() {
    console.log('success')
    window.sessionStorage.setItem('id', this.state.id)
    window.sessionStorage.setItem('title', this.state.title)
-   window.location.href = './slideshow/Session/table'
+   window.setTimeout(() => window.location.href = './slideshow/Session/table', 200)
  }
 
- deleteAlert() {
-   this.setState({
-     alert: !this.state.alert,
-     closex: !this.state.closex
-   })
+
+ changePreview(imgPath) {
+   if (imgPath == undefined) {
+     imgPath = ShowLogo
+   }
+   this.setState({img: imgPath})
+ }
+ 
+ useThumb(enable) {
+  $.ajax({
+    url: `./slideshow/Show/useThumb?id=${this.state.id}`,
+    type: 'POST',
+    data: {value: enable},
+    success: (thumb) => {
+      if (thumb.length > 0) {
+        this.changePreview(JSON.parse(thumb))
+      }
+    },
+    error: (req, res) => {
+      console.log(req)
+      console.error(res)
+    }
+  })
+ }
+
+ submitOnEnter(event) {
+   if (event.key === "Enter") {
+     this.handleSave()
+   }
  }
 
   render() {
@@ -135,9 +161,10 @@ export default class ShowCard extends Component {
                     <FormControl
                       value={this.state.title}
                       onChange={this.updateTitle}
+                      onKeyDown={this.submitOnEnter}
                     />
                     <InputGroup.Append>
-                      <Button variant="primary" onClick={this.handleSave}>Save</Button>
+                      <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
                     </InputGroup.Append>
                   </InputGroup>
     } else {
@@ -152,54 +179,33 @@ export default class ShowCard extends Component {
     let activeLabel = (this.state.active !== 0) ? "Active" : "Inactive"
     let activeBtnType = (this.state.active !== 0) ? "btn btn-outline-success" : "btn btn-outline-danger"
 
-    const delAlert = <div className="alert-delete">
-                       <Alert variant="danger" className="text-danger" show={this.state.alert} onClose={this.deleteAlert} dismissible>
-                         <span style={{marginLeft: 30}}>Are you sure?</span>
-                         <Button style={{marginLeft: 20}} variant="outline-danger" onClick={this.deleteShow}>Delete</Button>
-                       </Alert>
-                     </div>
-    let activeX = (this.state.closex) ? (<a className="close card-text" aria-label="Close" onClick={this.deleteAlert}>
-                                          <span aria-hidden="true">&times;</span>
-                                         </a>) : undefined
-
-    let session = <OverlayTrigger placement="top"
-                   overlay={
-                    <Tooltip>
-                      View user progress
-                    </Tooltip>
-                   }>
-                   <span onClick={this.sessionTransition}>
-                        <a className="fas fa-users"></a>
-                   </span>
-                 </OverlayTrigger>
-
     return (
       <div style={{paddingBottom: "25px"}}>
-        {delAlert}
-        <Card>
+        <div className="card">
           <div className="card-img-caption">
-            <div className="card-user">{session}</div>
-            {activeX}
-            <img className="card-img-top" src={this.state.img}/>
+            <img className="card-img-top" src={this.state.img} alt={"An error has occured with displaying this image"}/>
           </div>
-          <Card.Body>
-            <Card.Title className="d-flex justify-content-center">
-              {cardTitle}
-            </Card.Title>
-            <div className="d-flex justify-content-around">
-              <Button onClick={this.presentTransition} variant="primary">Present</Button>
-              <Button onClick={this.editTransition} variant="secondary">Edit</Button>
-              <OverlayTrigger placement="bottom"
-                overlay={
-                  <Tooltip>
-                    Activate for students
-                  </Tooltip>
-                  }>
-              <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>
-              </OverlayTrigger>
+          <div className="card-body">
+            <div className="card-title">
+              <div className="d-flex justify-content-center">
+                <h5>{cardTitle}</h5>
+              </div>
             </div>
-          </Card.Body>
-        </Card>
+            <div className="d-flex justify-content-around" style={{marginBottom: 10, marginLeft: 'auto', marginRight: 'auto', border: '1px black' }}>
+              <PreviewUpload id={this.state.id} changePreview={this.changePreview} useThumb={this.useThumb}/>
+              <SessionTool sessionTransition={this.sessionTransition} />
+              <DeleteShowTool delete={this.deleteShow} />
+            </div>
+            <hr></hr>
+            <div className="d-flex justify-content-around">
+              <button className="btn btn-primary" onClick={this.presentTransition} >View</button>
+              <button className="btn btn-secondary" onClick={this.editTransition} >Edit</button>
+              <Tippy content={<div>Activate for students</div>} placement="bottom" arrow={true}>
+                <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>
+              </Tippy>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

@@ -7,6 +7,7 @@
 namespace slideshow;
 
 use slideshow\Factory\NavBar;
+use slideshow\Factory\Home;
 use Canopy\Request;
 use Canopy\Response;
 use Canopy\Server;
@@ -21,7 +22,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         parent::__construct();
         $this->loadDefines();
         $this->setTitle('slideshow');
-        $this->setProperName('SlideShow');
+        $this->setProperName('Slideshow');
         spl_autoload_register('\slideshow\Module::autoloader', true, true);
     }
 
@@ -42,7 +43,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         } catch (\Exception $e) {
             if (SS_FRIENDLY_ERROR) {
                 \phpws2\Error::log($e);
-                echo \Layout::wrap('<div class="jumbotron"><h1>Uh oh...</h1><p>An error occurred with SlideShow.</p></div>', 'SlideShow Error', true);
+                echo \Layout::wrap('<div class="jumbotron"><h1>Uh oh...</h1><p>An error occurred with Slideshow.</p></div>', 'Slideshow Error', true);
                 exit();
             } else {
                 throw $e;
@@ -58,8 +59,10 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
 
     public function afterRun(Request $request, Response $response)
     {
-        \Layout::addStyle('slideshow');
-        $this->showNavBar($request);
+        if (!\PHPWS_Core::atHome()) {
+            \Layout::addStyle('slideshow');
+            $this->showNavBar($request);
+        }
     }
 
     private function loadDefines()
@@ -75,17 +78,22 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
 
     public function runTime(Request $request)
     {
-        if ($request->getModule() !== 'slideshow') {
-            \Layout::addStyle('slideshow');
+        if (\PHPWS_Core::atHome()) {
+            if (\Current_User::isLogged()) {
+                Server::forward('./slideshow/Show/');
+            }
+            $content = Home::view();
+            \Layout::add($content);
+        } 
+        else if ($request->getModule() !== 'slideshow') {
+            // PHPCORE::atHome
             $this->showNavBar($request);
         }
     }
 
     private function showNavBar(Request $request)
     {
-        if ($request->isGet() && !$request->isAjax() &&
-                (\Current_User::allow('slideshow') || \Current_User::allow('users'))) {
-
+        if ($request->isGet() && !$request->isAjax()) {
             NavBar::view($request);
         }
     }

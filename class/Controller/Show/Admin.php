@@ -101,6 +101,11 @@ class Admin extends Base
       return $this->factory->postPreviewImage($request);
     }
 
+    protected function useThumbPostCommand(Request $request)
+    {
+      return $this->factory->setUseThumb($request->pullPostVarIfSet('value'), $request->getVar('id'));
+    }
+
     protected function getJsonView($data, Request $request)
     {
       $vars = $request->getRequestVars();

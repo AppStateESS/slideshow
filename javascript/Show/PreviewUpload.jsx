@@ -55,8 +55,21 @@ export default function Media(props) {
     })
   }
 
-  function useThumb() {
-
+  function useThumb(val) {
+    console.log(val)
+    $.ajax({
+      url: `./slideshow/Show/useThumb?id=${props.id}`,
+      type: 'POST',
+      data: {value: val},
+      success: (thumb) => {
+        console.log(JSON.parse(thumb))
+        props.changePreview(JSON.parse(thumb))
+      },
+      error: (req, res) => {
+        console.log(req)
+        console.error(res)
+      }
+    })
   }
 
   function validate({meta}) {
@@ -92,7 +105,7 @@ export default function Media(props) {
         </div>
         <hr></hr>
         <div>
-          <button className="btn btn-primary btn-block" onClick={() => {useThumb(); setModalView(false)}}>
+          <button className="btn btn-primary btn-block" onClick={() => {useThumb(true); setModalView(false)}}>
             Use First Slide as Preview 
           </button>
           <button className="btn btn-danger btn-block" onClick={() => {removeMedia(); setModalView(false)}}>
@@ -110,18 +123,3 @@ export default function Media(props) {
     </span>
   )
 }
-
-
-/*
-<div className="card" style={{cursor: 'pointer'}}>
-          <div className="card-header text-center"  onClick={() => {useThumb(); setModalView(false)}}>
-            Use First Slide as Preview <i className="far fa-image"></i>
-          </div>
-        </div>
-        <br></br>
-        <div className="card" style={{cursor: 'pointer'}}>
-            <div className="card-header text-center" style={{color: 'red'}} onClick={() => {removeMedia(); setModalView(false)}}>
-              Remove Current Preview <i className="far fa-window-close"></i>
-            </div>
-        </div>
-        */

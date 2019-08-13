@@ -34,6 +34,7 @@ export default class ShowCard extends Component {
     this.presentTransition = this.presentTransition.bind(this)
     this.sessionTransition = this.sessionTransition.bind(this)
     this.changePreview = this.changePreview.bind(this)
+    this.submitOnEnter = this.submitOnEnter.bind(this)
   }
 
   componentDidMount() {
@@ -128,6 +129,12 @@ export default class ShowCard extends Component {
    this.setState({img: imgPath})
  }
 
+ submitOnEnter(event) {
+   if (event.key === "Enter") {
+     this.handleSave()
+   }
+ }
+
   render() {
     let cardTitle;
     if (this.state.edit) {
@@ -135,6 +142,7 @@ export default class ShowCard extends Component {
                     <FormControl
                       value={this.state.title}
                       onChange={this.updateTitle}
+                      onKeyDown={this.submitOnEnter}
                     />
                     <InputGroup.Append>
                       <button className="btn btn-primary" onClick={this.handleSave}>Save</button>

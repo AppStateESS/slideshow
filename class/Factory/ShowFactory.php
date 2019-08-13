@@ -202,6 +202,30 @@ class ShowFactory extends Base
         return $this->deletePreview($resourceId);
     }
 
+    public function setUseThumb($value, $resourceId)
+    {
+        $value = ($value === 'true' && gettype($value) !== 'boolean') ? true : false;
+        $resource = $this->load($resourceId);
+        $resource->useThumb = $value;
+
+        $path = '';
+
+        if ($value) {
+            // Means we need to initialize preview with the location of the preview image.
+            $sql = 'SELECT thumb FROM ss_slide WHERE showId=:resourceId;';
+            $db = Database::getDB();
+            $pdo = $db->getPDO();
+            $query = $pdo->prepare($sql);
+            $query->bindParam(':resourceId', $resourceId, \PDO::PARAM_INT);
+            $query->execute();
+            $result = $query->fetch();
+            $path = $result['thumb'];
+        }
+        $resource->preview = json_decode($path);
+        $this->saveResource($resource);
+        return json_decode($path);
+    }
+
     private function uploadPreview(array $file, $resourceId)
     {
         

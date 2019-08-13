@@ -146,6 +146,10 @@ class slideshowUpdate
         $dt->setDefault(null);
         $dt->add();
 
+        $dt = new \phpws2\Database\Datatype\Boolean($t, 'useThumb');
+        $dt->setDefault(false);
+        $dt->add();
+
         $changes[] = 'show preview image';
         $this->addContent('1.3.4', $changes);
     }

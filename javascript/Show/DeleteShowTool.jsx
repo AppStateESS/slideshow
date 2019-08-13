@@ -8,10 +8,7 @@ export default function DeleteShowTool(props) {
   
   return (
     <Tippy 
-      content={(<span><div style={{padding: 20}}>
-                  <div className="alert alert-danger text-dark" role="alert">
-                      Are you sure you want to delete this slideshow?
-                  </div>
+      content={(<span><div style={{padding: 20, width: 300}}>
                   <button className="btn btn-danger btn-block" onClick={() => props.delete()}>Delete Show</button>
                   <button className="btn btn-secondary btn-block" onClick={() => setDeleteAlert(false)}>Cancel</button>
                 </div></span>)} 

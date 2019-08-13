@@ -23,20 +23,20 @@ class NavBar
 
     public static $items;
     public static $options;
-    public static $title = 'Administrate';
     public static $has_run = false;
-    public static $halt = false;
 
     public static function view(\Canopy\Request $request)
     {
-        if (self::$has_run || self::$halt) {
+        if (self::$has_run) {
             return;
         }
         self::$has_run = true;
         $auth = \Current_User::getAuthorization();
+        $authKey= \Current_User::getAuthKey();
 
         $vars['logged'] = \Current_User::isLogged();
         $vars['admin'] = \Current_User::allow('slideshow');
+        $vars['is_deity'] = \Current_User::isDeity();
 
         $vars['items'] = null;
         $vars['options'] = null;
@@ -48,12 +48,11 @@ class NavBar
             $vars['options'] = implode('</li><li>', self::$options);
         }
 
-        $vars['is_deity'] = \Current_User::isDeity();
         $vars['logout_uri'] = $auth->logout_link;
+        $vars['boost_uri'] = "index.php?module=boost&action=admin&tab=other_mods&authkey=" . $authKey;
         $vars['username'] = \Current_User::getDisplayName();
         $vars['home'] = \Canopy\Server::getSiteUrl();
-        $vars['title'] = self::$title;
-        $vars['current_area'] = self::getNavTitle($request);
+        
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('slideshow', 'navbar.html');
         $content = $template->get();
@@ -61,23 +60,6 @@ class NavBar
         \Layout::plug($content, 'NAV_LINKS');
     }
 
-    private static function userLogin()
-    {
-        if (!\Current_User::isLogged()) {
-            $auth = \Current_User::getAuthorization();
-            if (!empty($auth->login_link)) {
-                $url = $auth->login_link;
-            } else {
-                $url = 'index.php?module=users&action=user&command=login_page';
-            }
-            NavBar::addItem("<a href='$url'>Sign in</a>");
-        }
-    }
-
-    private static function getNavTitle(\Canopy\Request $request)
-    {
-        return self::$title;
-    }
 
     public static function addItem($item)
     {
@@ -91,16 +73,6 @@ class NavBar
         } else {
             self::$options[] = $option;
         }
-    }
-
-    public static function setTitle($title)
-    {
-        self::$title = $title;
-    }
-    
-    public static function halt()
-    {
-        self::$halt = true;
     }
 
 }

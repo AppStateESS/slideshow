@@ -142,7 +142,7 @@ export default class ShowView extends Component {
                 onClick={this.toggleNewSlide} 
                 onMouseEnter={() => this.setState({newShowFocus: true})}
                 onMouseLeave={() => this.setState({newShowFocus: false})} 
-                style={(this.state.newShowFocus) ? {border: 'solid 3px #007bff', color: '#007bff'} : {border: 'solid 3px white', color: 'dimgrey' }}>
+                style={(this.state.newShowFocus) ? {border: 'solid 3px #337ab7', color: '#337ab7'} : {border: 'solid 3px white', color: 'dimgrey' }}>
                 <div className="card-body">
                   <h5>Create New Show</h5>
                   <i className="fas fa-plus-circle" style={{fontSize: 30}}></i>

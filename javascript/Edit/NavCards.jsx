@@ -21,7 +21,7 @@ export default class NavCards extends Component {
       if (event.target.className === 'thumb' && Number(event.target.id) >= 0) {
         this.setState({dragLineIndex: Number(event.target.id)})
       }
-    })
+    }, false)
 
     document.addEventListener('dragstart', (event) => {
       let img = event.target.cloneNode(true)
@@ -36,7 +36,7 @@ export default class NavCards extends Component {
       this.props.moveSlide(this.state.dragItem, this.state.dragLineIndex)
       this.props.setCurrentSlide(this.state.dragLineIndex)
       this.setState({dragLineIndex: -1})
-    })
+    }, false)
   }
 
   componentWillUnmount() {

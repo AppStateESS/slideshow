@@ -56,9 +56,11 @@ export default class TextColor extends Component {
     const styles = Object.assign(JSON.parse(styleAddon), TextColorMap)
 
     // remove other colors first
-    let newContentState = Object.keys(styles)
-      .reduce((contentState, color) => {
-          return Modifier.removeInlineStyle(contentState, selection, color)
+    let mapping = Object.keys(styles).map((style) => {
+      if (style.startsWith('#')) return style
+    })
+    let newContentState = mapping.reduce((contentState, color) => {
+            return Modifier.removeInlineStyle(contentState, selection, color)
       }, editorState.getCurrentContent())
     
     let newEditorState = EditorState.push(

@@ -194,12 +194,19 @@ export default class EditView extends Component {
     let styles = CustomStyleMap
 
     if (this.state.editorState != undefined) {
-      // Custom text color 
-      const color = this.state.editorState.getCurrentInlineStyle().keys().next().value
-      if (color != undefined) {
-        const styleObj = JSON.parse('{"' + color + '":{"color":"' + color + '"}}')
-        styles = Object.assign(styleObj, CustomStyleMap)
-      }
+      // This adds custom styles to the mix
+      this.state.editorState.getCurrentInlineStyle().map((customStyle) => {
+        if (customStyle != undefined) {
+          let styleObj = undefined
+          // Custom text color 
+          if (customStyle.charAt(0) === '#') {
+            styleObj = JSON.parse('{"' + customStyle + '":{"color":"' + customStyle + '"}}')
+          } // Custom font sizes would be added as an else if here
+          if (styleObj != undefined) {
+            styles = Object.assign(styleObj, CustomStyleMap)
+          }
+        }
+      })
     }
 
     let editor = (

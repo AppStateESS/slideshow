@@ -79,7 +79,7 @@ class SlideFactory extends Base
 
         $slideIndex = 0;
         foreach ($slides as $slide) {
-            $resource;
+            $resource = null;
             if (empty($slide['slideId'])) {
                 $resource = $this->build();
             }
@@ -305,13 +305,15 @@ class SlideFactory extends Base
             }
             mkdir($dir, 0755, true);
             // image will be named based on timestamp
-            $filename = $dir . time() . '.png';
-            $status = file_put_contents($filename, $file);
+            $time = time();
+            $filename = $time . '.png';
+            $dest = $dir . $filename;
+            $status = file_put_contents($dest, $file);
             if (!$status) {
                 // error has occured
                 return null;
             }
-            return './' . $target . 'thumb/' . time() . '.png';
+            return './' . $target . 'thumb/' . $filename;
         }
         return null;
         

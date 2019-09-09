@@ -51,6 +51,7 @@ export default class Media extends Component {
       error: (req, res) => {
         console.log(req)
         console.error(res)
+        alert("An error has occured with this image. Please try a different image.")
       }
     })
     this.setState({mediaView: false})

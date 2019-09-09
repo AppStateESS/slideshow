@@ -97,9 +97,17 @@ abstract class RoleController
     {
         $id = $request->shiftCommand();
         if (!is_numeric($id)) {
-            throw new \slideshow\Exception\MissingRequestId($id);
+            $vars = $request->getRequestVars();
+            if (empty($vars['id'])) {
+                throw new \slideshow\Exception\MissingRequestId($id);
+            }
+            else {
+                $this->id = intval($vars['id']);
+            }
         }
-        $this->id = $id;
+        else {
+            $this->id = $id;
+        }   
     }
 
     public function put(Request $request)

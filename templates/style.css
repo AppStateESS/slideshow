@@ -1,3 +1,18 @@
 .panel-html-view p {
   font-size : 18px;
 }
+
+.index {
+  position:absolute;
+  top: 50;
+  left:0;
+  right:100;
+  bottom:0;
+  margin:auto
+}
+
+.btn-secondary {
+  background: dimgray;
+  border-color: dimgray;
+}
+

@@ -4,8 +4,6 @@ import './buttonStyle.css'
 
 import { EditorState, Modifier, RichUtils, SelectionState} from 'draft-js'
 
-import AlignmentMap from '../../Resources/AlignmentMap.js'
-
 import Tippy from '@tippy.js/react'
 
 export default class Alignment extends Component {

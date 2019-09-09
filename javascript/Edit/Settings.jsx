@@ -8,7 +8,6 @@ import {
   Form,
   Row,
   Col,
-  Tooltip,
   OverlayTrigger,
   Popover,
 } from 'react-bootstrap'
@@ -16,8 +15,8 @@ import { CirclePicker, SketchPicker } from 'react-color';
 import './custom.css'
 
 export default class Settings extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       settings: false,
       slideTimer: '2s',
@@ -26,13 +25,16 @@ export default class Settings extends Component {
 
     this.toggleSettings = this.toggleSettings.bind(this)
     this.handleColorChange = this.handleColorChange.bind(this)
-    this.load = this.load.bind(this)
     this.changeTime = this.changeTime.bind(this)
     this.handleSketchPicker = this.handleSketchPicker.bind(this)
   }
 
-  componentDidMount() {
-    this.load()
+  componentDidUpdate(prevProps) {
+    if (prevProps.slideTimer != this.props.slideTimer) {
+      this.setState({
+        slideTimer: String(this.props.slideTimer) + 's'
+      })
+    }
   }
 
   toggleSettings() {
@@ -41,25 +43,6 @@ export default class Settings extends Component {
 
   handleColorChange(color) {
     this.props.changeBackground(color.hex)
-  }
-
-  load() {
-    let time = -1
-    $.ajax({
-      url: './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
-      type: 'GET',
-      dataType:'json',
-      success: function (data) {
-        time = String(data[0].slideTimer) + 's'
-        this.setState({
-          slideTimer: time
-        })
-        this.props.updateTitle(data[0].title)
-      }.bind(this),
-      error: (req, res) => {
-        console.error(req, res.toString())
-      }
-    })
   }
 
   changeTime(event) {

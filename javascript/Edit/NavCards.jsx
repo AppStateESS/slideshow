@@ -21,7 +21,7 @@ export default class NavCards extends Component {
       if (event.target.className === 'thumb' && Number(event.target.id) >= 0) {
         this.setState({dragLineIndex: Number(event.target.id)})
       }
-    })
+    }, false)
 
     document.addEventListener('dragstart', (event) => {
       let img = event.target.cloneNode(true)
@@ -36,7 +36,7 @@ export default class NavCards extends Component {
       this.props.moveSlide(this.state.dragItem, this.state.dragLineIndex)
       this.props.setCurrentSlide(this.state.dragLineIndex)
       this.setState({dragLineIndex: -1})
-    })
+    }, false)
   }
 
   componentWillUnmount() {
@@ -57,9 +57,9 @@ export default class NavCards extends Component {
 
     let data = this.props.content.map((slide, i) => {
       let key = (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)) //#1E90FF
-      let highlight = (this.props.currentSlide == i) ? ({border: 'solid 3px #007bff', borderRadius: 3, zIndex: -1}) : {padding: '3px'}
+      let highlight = (this.props.currentSlide == i) ? ({border: 'solid 3px #337ab7', borderRadius: 3, zIndex: -1}) : {padding: '3px'}
       let top = (this.state.dragItem >= this.state.dragLineIndex)
-      let bar = (this.state.dragLineIndex != -1 && i == this.state.dragLineIndex) ? {border: 'solid 1px #1E90FF'} : {border: 'solid 1px white'}
+      let bar = (this.state.dragLineIndex != -1 && i == this.state.dragLineIndex) ? {border: 'solid 1px #337ab7'} : {border: 'solid 1px white'}
       return (
         <span key={i}>
           {top ? <div key={`a-${i}`} style={bar}></div> : undefined}
@@ -79,7 +79,7 @@ export default class NavCards extends Component {
           onClick={this.handleNewSlide} onMouseEnter={() => this.setState({addSlideHover: true})} onMouseLeave={() => this.setState({addSlideHover: false})}>
           Add New Slide
           <br></br>
-          <i className="fas fa-plus-circle" style={{color: '#007bff',float: 'right', marginLeft: '44%'}}></i>
+          <i className="fas fa-plus-circle" style={{color: '#337ab7',float: 'right', marginLeft: '44%'}}></i>
         </div>
       </div>
     )
@@ -92,7 +92,7 @@ const cardStyle = {
 }
 
 const addSlideStyle = {
-  border: 'dashed 1px ', width: 175, height: 100, textAlign: 'center', justifyContent: 'center', color: '#007bff', marginBottom: 20, marginTop: 10
+  border: 'dashed 1px ', width: 175, height: 100, textAlign: 'center', justifyContent: 'center', color: '#337ab7', marginBottom: 20, marginTop: 10
 }
 
 const addSlideHover = {

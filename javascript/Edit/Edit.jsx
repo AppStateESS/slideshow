@@ -19,7 +19,7 @@ export default class Edit extends Component {
       currentSlide: 0,
       id: window.sessionStorage.getItem('id'),
       showTitle: 'Edit:',
-      edit: false,
+      editTitleView: false,
       content: [
         {
           saveContent: undefined,
@@ -31,6 +31,7 @@ export default class Edit extends Component {
           thumb: undefined
         },
       ],
+      slideTimer: 2,
     }
 
 
@@ -43,9 +44,6 @@ export default class Edit extends Component {
     this.pushNewSlide = this.pushNewSlide.bind(this)
     this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this)
     this.moveSlide = this.moveSlide.bind(this)
-    this.updateTitle = this.updateTitle.bind(this)
-    this.updateTitleEdit = this.updateTitleEdit.bind(this)
-    this.editTitle = this.editTitle.bind(this)
     this.saveTitle = this.saveTitle.bind(this)
     this.saveContentState = this.saveContentState.bind(this)
     this.saveQuizContent = this.saveQuizContent.bind(this)
@@ -139,6 +137,22 @@ export default class Edit extends Component {
         alert("Failed to load data.")
         console.error(req, err.toString());
       }.bind(this)
+    });
+
+    $.ajax({
+      url: './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
+      type: 'GET',
+      dataType:'json',
+      success: (data) => {
+        this.setState({
+          slideTimer: Number(data[0].slideTimer),
+          showTitle: data[0].title,
+        })
+      },
+      error: (request, response) => {
+        console.log(request)
+        console.error(response)
+      }
     });
   }
 
@@ -265,18 +279,6 @@ export default class Edit extends Component {
     this.setState({content: c})
   }
 
-  updateTitle(value) {
-    this.setState({showTitle: value})
-  }
-
-  updateTitleEdit(event) {
-    this.setState({showTitle: event.target.value})
-  }
-
-  editTitle() {
-    this.setState({edit: true})
-  }
-
   saveTitle() {
     $.ajax({
       url: './slideshow/Show/' + window.sessionStorage.getItem('id'),
@@ -284,7 +286,7 @@ export default class Edit extends Component {
       type: 'put',
       dataType: 'json',
       success: function() {
-        this.setState({edit: false})
+        this.setState({editTitleView: false})
       }.bind(this),
       error: function(req, err) {
         alert("Failed to save data.")
@@ -347,12 +349,13 @@ export default class Edit extends Component {
   render() {
     let isQuiz = this.quizConv(this.state.content[this.state.currentSlide].isQuiz)
     let cardTitle;
-    if (this.state.edit) {
+    if (this.state.editTitleView) {
       cardTitle = <InputGroup>
                     <FormControl
                       style={{maxWidth: 350}}
                       value={this.state.showTitle}
-                      onChange={this.updateTitleEdit}
+                      onChange={(event) => this.setState({showTitle: event.target.value})}
+                      onKeyDown={(event) => {if (event.key === 'Enter') this.saveTitle()}}
                     />
                     <InputGroup.Append>
                       <Button variant="primary" onClick={this.saveTitle}>Save</Button>
@@ -363,7 +366,7 @@ export default class Edit extends Component {
                     <u>
                     {this.state.showTitle}
                     </u>
-                    <a onClick={this.editTitle} style={{paddingLeft: "10px", cursor: "pointer"}}>
+                    <a onClick={() => this.setState({editTitleView: true})} style={{paddingLeft: "10px", cursor: "pointer"}}>
                       <i className="fas fa-edit fa-sm"></i>
                     </a>
                   </div>
@@ -382,8 +385,9 @@ export default class Edit extends Component {
           insertQuiz        ={this.addNewQuiz}
           saveDB            ={this.save}
           changeBackground  ={this.changeBackground}
-          updateTitle       ={this.updateTitle}
-          currentColor      ={this.state.content[this.state.currentSlide].backgroundColor}/>
+          currentColor      ={this.state.content[this.state.currentSlide].backgroundColor}
+          slideTimer        ={this.state.slideTimer}
+          />
         <div className="row">
           <NavCards 
             content         ={this.state.content}

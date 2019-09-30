@@ -157,16 +157,18 @@ export default class ShowCard extends Component {
   render() {
     let cardTitle;
     if (this.state.edit) {
-      cardTitle = <InputGroup>
-                    <FormControl
+      cardTitle = <div className="input-group w-auto">
+                    <input
+                      type="text"
+                      className="form-control" 
                       value={this.state.title}
                       onChange={this.updateTitle}
                       onKeyDown={this.submitOnEnter}
                     />
-                    <InputGroup.Append>
+                    <div className="input-group-append">
                       <button className="btn btn-primary" onClick={this.handleSave}>Save</button>
-                    </InputGroup.Append>
-                  </InputGroup>
+                    </div>
+                  </div>
     } else {
       cardTitle = <div style={{maxWidth: 250, textAlign: 'center'}}>
                     {this.state.title}
@@ -188,21 +190,22 @@ export default class ShowCard extends Component {
           <div className="card-body">
             <div className="card-title">
               <div className="d-flex justify-content-center">
-                <h5>{cardTitle}</h5>
+                <h5 style={{width: 250, height: 30, border: '0px solid'}}>{cardTitle}</h5>
               </div>
             </div>
-            <div className="d-flex justify-content-around" style={{marginBottom: 10, marginLeft: 'auto', marginRight: 'auto', border: '1px black' }}>
+            <div className="d-flex justify-content-around" style={{ marginLeft: 'auto', marginRight: 'auto', border: '1px black' }}>
               <PreviewUpload id={this.state.id} changePreview={this.changePreview} useThumb={this.useThumb}/>
               <SessionTool sessionTransition={this.sessionTransition} />
               <DeleteShowTool delete={this.deleteShow} />
             </div>
             <hr></hr>
             <div className="d-flex justify-content-around">
-              <button className="btn btn-primary" onClick={this.presentTransition} >View</button>
-              <button className="btn btn-secondary" onClick={this.editTransition} >Edit</button>
+              
+              <button className="btn btn-secondary" onClick={this.editTransition} style={{width: 82}}>Edit</button>
               <Tippy content={<div>Activate for students</div>} placement="bottom" arrow={true}>
-                <button type="button" className={activeBtnType} onClick={this.handleActivation} > {activeLabel} </button>
+                <button type="button" className={activeBtnType} onClick={this.handleActivation} style={{width: 82}}> {activeLabel} </button>
               </Tippy>
+              <button className="btn btn-primary" onClick={this.presentTransition} >Preview</button>
             </div>
           </div>
         </div>

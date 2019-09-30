@@ -96,7 +96,7 @@ const addSlideStyle = {
 }
 
 const addSlideHover = {
-  border: 'solid 3px', color: '007bff', width: 175, height: 100, textAlign: 'center', justifyContent: 'center', marginBottom: 20, marginTop: 10
+  border: 'solid 3px', color: '007bff', width: 175, height: 100, textAlign: 'center', justifyContent: 'center', marginBottom: 20, marginTop: 10, cursor: 'pointer'
 }
 
 const containerStyle = {

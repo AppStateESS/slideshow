@@ -1,9 +1,5 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {
-  InputGroup,
-  FormControl,
-} from 'react-bootstrap'
 import './custom.css'
 
 import ShowLogo from "../../img/showimg.png"

@@ -54,7 +54,7 @@ export default class NavBar extends Component {
               <Dropdown.Divider />
               <Dropdown.Item style={{color: "red"}} onClick={this.props.deleteSlide}>Delete Slide</Dropdown.Item>
            </DropdownButton>
-           <Button variant="secondary" onClick={this.handlePresent}>Present</Button>
+           <Button variant="secondary" onClick={this.handlePresent}>Preview</Button>
         </ButtonGroup>
           <Settings
             changeBackground ={this.props.changeBackground}

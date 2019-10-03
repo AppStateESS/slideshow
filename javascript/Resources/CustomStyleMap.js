@@ -21,6 +21,8 @@ const CustomStyleMap = {
     "align-center" : {textAlign: 'center', display: 'inline-block', width: '100%'},
     "align-left" : {textAlign: 'left', display: 'inline-block', width: '100%'},
     "underline" : {textDecoration: 'underline'},
+    "BOLD" : {fontWeight: 'bold'},
+    "ITALIC": {fontStyle: 'italic'}
 }
 
 export default CustomStyleMap

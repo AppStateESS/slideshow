@@ -3,7 +3,6 @@ import React, {Component} from 'react'
 import ShowCard from './ShowCard.jsx'
 import Show from '../Resources/Show.js'
 import {
-  CardDeck,
   Modal,
   } from 'react-bootstrap'
 
@@ -133,16 +132,16 @@ export default class ShowView extends Component {
         <div>
           <h2>Shows</h2>
           <div className="jumbotron">
-            <CardDeck className="card-deck d-flex justify-content-center">
+            <div className="card-deck d-flex justify-content-center">
               {cards}
-            </CardDeck>
+            </div>
             <hr />
             <div className="col">
               <div className="card text-center" 
                 onClick={this.toggleNewSlide} 
                 onMouseEnter={() => this.setState({newShowFocus: true})}
                 onMouseLeave={() => this.setState({newShowFocus: false})} 
-                style={(this.state.newShowFocus) ? {border: 'solid 3px #337ab7', color: '#337ab7'} : {border: 'solid 3px white', color: 'dimgrey'}}>
+                style={(this.state.newShowFocus) ? {border: 'solid 3px #337ab7', color: '#337ab7', cursor: 'pointer'} : {border: 'solid 3px white', color: 'dimgrey' }}>
                 <div className="card-body">
                   <h5>Create New Show</h5>
                   <i className="fas fa-plus-circle" style={{fontSize: 30}}></i>

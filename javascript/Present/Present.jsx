@@ -1,6 +1,8 @@
 'use strict'
 import React, { Component } from 'react'
 import PresentView from './PresentView.jsx'
+import './custom.css'
+import Tippy from '@tippy.js/react';
 
 export default class Present extends Component {
   constructor() {
@@ -247,22 +249,26 @@ export default class Present extends Component {
 
   render() {
     let inc = 0
-    let slidesButtons = this.state.content.map(function(slide) {
+    let slidesDropdowns = this.state.content.map(function(slide) {
       inc += 1
       if (inc - 1 == this.state.currentSlide) {
         return (
-          <button key={inc} className="btn btn-primary">{inc}</button>
+          <button className="btn btn-secondary tipp-butt" key={inc}>{inc}</button>
         )
       }
-      else if (inc <= this.state.highestSlide + 1 && inc >  this.state.currentSlide - 7) {
+      else if (inc <= this.state.highestSlide + 1 && inc >  this.state.currentSlide - 6) {
         return (
-          <button key={inc} className="btn btn-secondary" onClick={this.changeSlide.bind(this,inc-1)}>{inc}</button>
+          <button className="btn btn-secondary tipp-butt" key={inc} onClick={this.changeSlide.bind(this,inc-1)}>{inc}</button>
         )
       }
     }.bind(this));
-    let nextButton = (this.state.finishFlag) ?
-      <button key="finish" className="btn btn-secondary" onClick={this.returnToShowList} disabled={this.state.nextDisable}>Finish</button> :
-      <button key="next" className="btn btn-secondary" onClick={this.next} disabled={this.state.nextDisable}>Next</button>
+
+    let finButton 
+    if (this.state.finishFlag === true) {
+      finButton = <button key="finish" className="btn btn-success" onClick={this.returnToShowList} disabled={this.state.nextDisable}>Finish</button>
+    }
+    //progress stores % value of progress for bar and % in bar.
+    const progress = String(Math.round(((this.state.highestSlide+1)/this.state.content.length) * 100)) + '%'
 
     return(
       <div>
@@ -276,15 +282,37 @@ export default class Present extends Component {
             validate={this.validate}
             />
         </div>
-        <div style={{justifyContent: 'center', display: 'flex', marginBottom: '2rem'}}>
+        <div className="progress">
+          <div className="progress-bar" 
+               role="progressbar" 
+               aria-valuemin="0" 
+               aria-valuemax="100" 
+               key={progress}
+               style={{width: progress}}>
+                 {progress}
+          </div>
+        </div>
+        <div style={{justifyContent: 'center', display: 'flex'}}>
           <div className="btn-toolbar">
             <div className="btn-group">
-              <button className="btn btn-secondary" onClick={this.prev} disabled={this.state.prevDisable}>Previous</button>
-              {slidesButtons}
-              {nextButton}
+              <button key="prev-perm" className="btn btn-secondary" onClick={this.prev} disabled={this.state.prevDisable}><i className="fas fa-arrow-circle-left"></i></button>
+              <Tippy 
+                content={slidesDropdowns} 
+                placement="top" 
+                arrow={true}
+                interactive={true}
+                trigger="click"
+                hideOnClick={true}
+                maxWidth={200}>
+                <button className="btn btn-primary">{this.state.currentSlide+1}/{this.state.content.length}</button>
+              </Tippy>
+              <button key="next-perm" className="btn btn-secondary" onClick={this.next} disabled={this.state.nextDisable}><i className="fas fa-arrow-circle-right"></i></button>              
             </div>
           </div>
         </div>
+        <div style={{justifyContent: 'center', display: 'flex', marginBottom: '2rem', marginTop: '5px'}}>
+          {finButton}
+        </div> 
     </div>
     )
   }

@@ -1,0 +1,14 @@
+.progress {
+    margin: auto;
+    width: 800px;
+    margin-bottom: 20px !important;
+}
+.dropdown-menu {
+    max-height: 150px;
+    overflow: auto;
+}
+
+.tipp-butt {
+    margin: 5px;
+    text-align: 'center';
+}

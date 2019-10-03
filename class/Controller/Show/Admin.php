@@ -96,11 +96,6 @@ class Admin extends Base
         return $shows;
     }
 
-    protected function presentJsonCommand(Request $request)
-    {
-        return $this->factory->getShowDetails($request);
-    }
-
     protected function previewPostCommand(Request $request) 
     {
       return $this->factory->postPreviewImage($request);

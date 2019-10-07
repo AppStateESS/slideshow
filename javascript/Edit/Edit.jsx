@@ -110,7 +110,7 @@ export default class Edit extends Component {
               saveC = loaded[i].content
             } else {
               if (loaded[i].content != undefined) {
-                quizC = JSON.parse(loaded[i].content)
+                //quizC = JSON.parse(loaded[i].content)
               }
             }
             showContent.push({
@@ -221,6 +221,21 @@ export default class Edit extends Component {
   addNewQuiz() {
     // This method is useless, since we can change this at the call. However, previous code implemented this method seperately
     // and we can simplify this at a later time.
+    $.ajax({
+      url: './slideshow/Quiz/',
+      method: 'post',
+      data: {
+        questionTile: 'this is a test title',
+        type: 'open' 
+      },
+      success: (id) => {
+        console.log(id)
+        sessionStorage.setItem('quizId', id)
+      },
+      error: (req, res) => {
+        console.log(res.toString())
+      }
+    })
     this.addNewSlide(true)
   }
 

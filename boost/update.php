@@ -38,6 +38,8 @@ class slideshowUpdate
                 $this->update('1.3.3');
             case $this->compare('1.3.4'):
                 $this->update('1.3.4');
+            case $this->compare('1.4.1');
+                $this->update('1.4.1');
         }
     }
 
@@ -152,6 +154,18 @@ class slideshowUpdate
 
         $changes[] = 'show preview image';
         $this->addContent('1.3.4', $changes);
+    }
+
+    private function v1_4_1()
+    {
+        
+        $db = \phpws2\Database::getDB();
+        
+        $quiz = new \slideshow\Resource\QuizResource;
+        $quiz->createTable($db); 
+
+        $changes[] = 'add quiz table';
+        $this->addContent('1.4.1', $changes);
     }
 
     private function addContent($version, array $changes)

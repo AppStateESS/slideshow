@@ -8,8 +8,12 @@ import {
   ButtonGroup,
   Row,
   Col,
-  Card
+  Card,
+  InputGroup,
+  FormControl
 } from 'react-bootstrap'
+
+import Tippy from '@tippy.js/react'
 
 export default class OpenAnswerBlock extends Component {
   constructor(props) {
@@ -44,21 +48,23 @@ export default class OpenAnswerBlock extends Component {
     return (
 
       <Form.Row key={'row-' + this.props.id} id={this.props.id} style={{ padding: '1rem' }} >
-        <Form.Group controlId={'opentext-' + this.props.id} style={{ width: '25rem', marginRight: '1rem' }}>
-          <Form.Label >Open Answer</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows="3"
-            onChange={this.onChangeValue}
-            value={this.state.value} />
-        </Form.Group>
-        <Form.Group id={'openOptions-' + this.props.id}>
+        <Form.Group controlId={'openOptions-' + this.props.id}>
           <Form.Label>Options</Form.Label>
-          <Form.Check
-            type='checkbox'
-            id={'check-' + this.props.id}
-            label='Enable keyed-answer'
-            onChange={this.onChangeValue} />
+          <InputGroup className="mb-3">
+            <Tippy
+              content="Enable min word count"
+              arrow={true}>
+              <InputGroup.Prepend>
+                <InputGroup.Checkbox aria-label="Checkbox for following text input" />
+              </InputGroup.Prepend>
+            </Tippy>
+            <FormControl 
+              disabled={false}
+              aria-label="Text input with checkbox" 
+              placeholder="Min word count" 
+              onChange={this.onChangeValue}
+              value={this.state.value} />
+          </InputGroup>
         </Form.Group>
       </Form.Row>
     )

@@ -27,6 +27,8 @@ function slideshow_uninstall(&$content)
       $db->buildTable('ss_show')->drop();
       $db->buildTable('ss_session')->drop();
       $db->buildTable('ss_slide')->drop();
+      $db->buildTable('ss_quiz')->drop();
+
     }
     catch (Exception $e) {
       \phpws2\Error::log($e);

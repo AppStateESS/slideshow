@@ -1,15 +1,17 @@
 'use strict'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import CustomModal from './CustomMessage'
 import {
-  Form,
-  Row,
-  Col
+  Form
 } from 'react-bootstrap'
 
 export default class MultipleChoiceBlock extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      modalShow: false
+    }
 
     this.delete = this.delete.bind(this)
   }
@@ -18,7 +20,6 @@ export default class MultipleChoiceBlock extends Component {
   delete() {
     this.props.remove(this.props.id)
   }
-
 
   render() {
     return (
@@ -46,6 +47,14 @@ export default class MultipleChoiceBlock extends Component {
             <span style={{ marginLeft: 15, color: "grey" }}><i className="fas fa-times"></i></span>
           </a>
         </Form.Group>
+        <a className="close card-text" aria-label="Close" onClick={()=> this.setState({showModal: true})}>
+            <span style={{ marginLeft: 15, color: "grey" }}><i className="fas fa-cog"></i></span>
+        </a>
+        
+        <CustomModal 
+          show={this.state.showModal} 
+          onHide={()=> this.setState({showModal: false})} 
+        />
       </Form.Row>
     )
   }

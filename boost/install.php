@@ -16,20 +16,23 @@ function slideshow_install(&$content)
     $show;
     $session;
     $slide;
+    $quiz;
     try {
         $tables = new slideshow\Tables;
 
         $show = $tables->createShow();
         $session = $tables->createSession();
         $slide = $tables->createSlide();
+        $quiz = $tables->createQuiz();
 
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
         $db->rollback();
 
-        $show->drop(true);
-        $session->drop(true);
-        $slide->drop(true);
+        //$show->drop(true);
+        //$session->drop(true);
+        //$slide->drop(true);
+        //$quiz->drop(true);
         
         throw $e;
     }

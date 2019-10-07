@@ -67,6 +67,13 @@ class SlideResource extends BaseAbstract
     */
     protected $thumb;
 
+    /**
+    * quiz's id
+    * default value is -1 if not quiz
+    * @var phpws2\Variable\SmallInteger
+    */
+    protected $quizId;
+
     public function __construct()
     {
         parent::__construct();
@@ -77,6 +84,7 @@ class SlideResource extends BaseAbstract
         $this->backgroundColor = new \phpws2\Variable\StringVar('#E5E7E9', 'backgroundColor');
         $this->media = new \phpws2\Variable\StringVar(null, 'media');
         $this->thumb = new \phpws2\Variable\StringVar(null, 'thumb');
+        $this->quizId = new \phpws2\Variable\SmallInteger(0, 'quizId');
     }
 
 }

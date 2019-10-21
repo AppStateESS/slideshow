@@ -83,9 +83,8 @@ class QuizFactory extends Base
 
     public function delete(Request $request)
     {
-        $vars = $request->getVars();
+        $vars = $request->getRequestVars();
         $quizId = $vars['Quiz'];
-        var_dump($vars);
         $resource = $this->load($quizId);
         return $this->deleteResource($resource) != 0;
     }

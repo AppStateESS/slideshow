@@ -16,22 +16,12 @@ export default function QuizEdit(props) {
 
     
     useEffect(() => {
-        setId(window.sessionStorage.getItem('quizId'))
-        //dont forget to clear correct answers when switching types
-        /*$.ajax({
-            url: './slideshow/Quiz/' + id,
-            type: 'get',
-            success: (data) => {
-                console.log(data)
-            }
-        })*/
-        console.log(props)
         let initQuestion = ''
         let initAnswers = ['', '']
         let initCorrect = []
         let initType = 'showTypes'
         let initFeedback = []
-        let initId = -1
+        let initId = window.sessionStorage.getItem('quizId')
         
         if (props.quizContent != null) {
             // Hooks are not allowed to be called in conditonals which is why there is this horrible code structure here
@@ -61,16 +51,12 @@ export default function QuizEdit(props) {
    }, [question])
 
     async function save() {
+        /* debug
         console.log('saving quiz: ', id)
         console.log('the answers are: ', answers)
         console.log('with the correct indexes of : ', correct)
         console.log(question)
-        /*let formData = new FormData()
-        formData.append('quizId', id)
-        formData.append('questionTitle', question)
-        formData.append('answers', answers)
-        formData.append('correct', correct)
-        formData.append('type', type)*/
+        */
         let quizContent = {
             'quizId': id,
             'question': question,
@@ -78,16 +64,11 @@ export default function QuizEdit(props) {
             'correct': correct,
             'type': type
         }
-        //formData.append('answerFeedback', feedback)
         await $.ajax({
             url: './slideshow/Quiz/' + id,
             type: 'put',
             data: quizContent,
-            //contentType: false,
-            //processData: false,
             success: async (res) => {
-                console.log("saved successfully")
-                console.log(res)
                 await props.load()
                 //props.toggle()
             },
@@ -142,7 +123,6 @@ export default function QuizEdit(props) {
 
     function buildChoiceBlock() {
         let i = -1
-        console.log(correct)
 		let choices = answers.map((choice) => {
             i++
 		    let checked = correct.includes(i)

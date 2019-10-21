@@ -5,34 +5,13 @@ import PropTypes from 'prop-types'
 export default class QuizView extends Component {
   constructor(props) {
     super(props)
-    /*this.state = {
-      quizContent: {
-        questionTitle: 'No data Loaded',
-        answers: ['this might be an error']
-      }
-    }*/
   }
-
-  /*componentDidMount() {
-    if (this.props.quizContent != undefined) {
-      this.setState({
-        quizContent: this.props.quizContent
-      })
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.quizContent != prevProps.quizContent && this.props.quizContent != undefined) {
-      this.setState({
-        quizContent: this.props.quizContent
-      })
-    }
-  }*/
 
   render() {
     let questions = undefined
-    console.log(this.props.quizContent.answers)
-    if (this.props.quizContent.answers != null) {
+    if (this.props.quizContent != null) {
+      //console.log(this.props.quizContent)
+      // TODO: fix bug with icon not changing when correct does. We need to force a rerender 
       questions = this.props.quizContent.answers.map(function (question, i) {
         //let key = question
         let check = (<i className="fas fa-times-circle" style={{ color: 'red' }}></i>)

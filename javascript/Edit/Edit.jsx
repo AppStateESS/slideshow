@@ -55,7 +55,6 @@ export default class Edit extends Component {
 
   componentDidMount() {
     this.load()
-    console.log(this.state.content)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -107,16 +106,14 @@ export default class Edit extends Component {
           for (let i = 0; i < loaded.length; i++) {
             let saveC = undefined
             let quizC = null
+            let qId = -1
             // We may not need a quizConv anymore...
-            console.log(loaded[i].quizId)
             let isQ = this.quizConv(loaded[i].isQuiz)
             if (!isQ) {
               saveC = loaded[i].content
             } else {
-              console.log("---load----")
-              quizC = await this.loadQuiz(loaded[i].quizId, i)
-              console.log("after----")
-              //prom.then((data) => quizC = data)
+              qId = Number(loaded[i].quizId)
+              quizC = await this.loadQuiz(qId)
             }
             showContent.push({
               isQuiz: isQ,
@@ -126,10 +123,9 @@ export default class Edit extends Component {
               thumb: JSON.parse(loaded[i].thumb || '{}'), // Ensure that this isn't undefined
               slideId: Number(loaded[i].id),
               media: JSON.parse(loaded[i].media || '{}'),
-              quizId: loaded[i].quizId
+              quizId: qId
             })
           }
-          console.log(loaded[i].quizId)
           this.setState({
             content: showContent,
             id: loaded[0].showId
@@ -162,33 +158,23 @@ export default class Edit extends Component {
     });
   }
 
-  async loadQuiz(id, slideIndex) {
+  async loadQuiz(id) {
     let quizContent = {}
     await $.ajax({
       url: './slideshow/Quiz/' + id,
       type: 'GET',
       dataType: 'json',
       success: async (data) => {
-        console.log("---load Quiz----")
-        console.log(data[0])
-        console.log(data)
         // Convert array to object
         data = data[0]
-        console.log(data)
         quizContent = {
           question: data['question'],
           answers: JSON.parse(data['answers']),
           correct: JSON.parse(data['correct']),
           type: data['type'],
           answerFeedback: JSON.parse(data['answerFeedback']),
-          quizId: data['id']
+          quizId: Number(data['id'])
         }
-        /*
-        let slides = [...this.state.content]
-        slides[slideIndex].quizContent = quizContent
-        slides[slideIndex].quizId = data['id']
-        this.setState({content: slides}, () => console.log(this.state.content))*/
-
       },
       error: (req, res) => {
         console.error(res)
@@ -241,6 +227,7 @@ export default class Edit extends Component {
 
 
   addNewSlide(quizId) {
+    console.log(typeof(quizId), quizId)
     if (typeof(quizId) != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
@@ -248,7 +235,7 @@ export default class Edit extends Component {
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
-        isQuiz: (typeof(quizId) == 'number'),
+        isQuiz: (quizId !== -1),
         backgroundColor: '#E5E7E9',
         quizId: quizId
     }
@@ -338,8 +325,6 @@ export default class Edit extends Component {
         console.error(req, res.toString());
       }
     })
-
-    i
 
     this.setState({
       content: copy,

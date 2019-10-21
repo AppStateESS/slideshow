@@ -1,8 +1,8 @@
 'use strict'
 import React, { Component } from 'react'
-import './buttonStyle.css'
+import './toolbar.css'
 
-import { EditorState, Modifier, RichUtils, CompositeDecorator} from 'draft-js'
+import { EditorState, RichUtils} from 'draft-js'
 import decorator from '../../Resources/LinkDecorator'
 
 import Tippy from '@tippy.js/react'

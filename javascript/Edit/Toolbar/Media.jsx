@@ -5,12 +5,10 @@ import {
   Modal
 } from 'react-bootstrap'
 
-import './buttonStyle.css'
+import './toolbar.css'
 import 'react-dropzone-uploader/dist/styles.css'
 
 import Tippy from '@tippy.js/react'
-
-import { EditorState} from 'draft-js'
 
 import Dropzone from 'react-dropzone-uploader'
 

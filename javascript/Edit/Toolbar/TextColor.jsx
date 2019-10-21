@@ -1,6 +1,6 @@
 'use strict'
 import React, { Component } from 'react'
-import './buttonStyle.css'
+import './toolbar.css'
 
 import {EditorState, RichUtils, Modifier, SelectionState} from 'draft-js'
 

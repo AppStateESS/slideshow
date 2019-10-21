@@ -38,15 +38,37 @@ class QuizFactory extends Base
         return new QuizResource;
     }
 
-    public function get()
+    public function get(Request $request)
     {
+        $vars = $request->getRequestVars();
+        $quizId = $vars['Quiz'];
 
+        $sql = 'SELECT * FROM ss_quiz WHERE id=:quizId;';
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        $q->execute(array('quizId'=>$quizId));
+        $quiz = $q->fetchAll();
+        return $quiz;
     }
 
     public function put(Request $request) 
     {
-        $questionTitle = $resourse->pullPostVar('questionTitle');
-        var_dump($request->getVars());
+        $vars = $request->getVars();
+
+        $resource;
+        try {
+            $resource = $this->load($request->pullPutvar('quizId'));
+        }
+        catch (\Exception $e) {
+            var_dump("Resource doesn't exist", $e);
+            $resource = $this->build();
+        }
+        $resource->question = $request->pullPutVar('question');
+        $resource->answers = $request->pullPutVar('answers');
+        $resource->correct = $request->pullPutVar('correct');
+        $resource->type = $request->pullPutvar('type');
+        $this->saveResource($resource);
         return $request;
         
     }
@@ -57,5 +79,14 @@ class QuizFactory extends Base
 
         $this->saveResource($resource);
         return $resource->id;
+    }
+
+    public function delete(Request $request)
+    {
+        $vars = $request->getVars();
+        $quizId = $vars['Quiz'];
+        var_dump($vars);
+        $resource = $this->load($quizId);
+        return $this->deleteResource($resource) != 0;
     }
 }

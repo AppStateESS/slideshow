@@ -31,11 +31,13 @@ export default class QuizView extends Component {
 
   render() {
     let questions = undefined
-    if (this.props.quizContent != undefined) {
+    console.log(this.props.quizContent.answers)
+    if (this.props.quizContent.answers != null) {
       questions = this.props.quizContent.answers.map(function (question, i) {
+        //let key = question
         let check = (<i className="fas fa-times-circle" style={{ color: 'red' }}></i>)
-        if (this.props.quizContent.correctAnswers != undefined) {
-          if ((this.props.quizContent.correctAnswers).includes(i.toString())) {
+        if (this.props.quizContent.correct != undefined) {
+          if ((this.props.quizContent.correct).includes(i.toString())) {
             check = (<i className="fas fa-check-circle" style={{ color: 'green' }}></i>)
           }
         }
@@ -48,7 +50,7 @@ export default class QuizView extends Component {
     }
     // TODO: rework this to be more pretty
     // Also need to handle open answers
-    let title = (this.props.quizContent == undefined) ? 'No data loaded' : this.props.quizContent.questionTitle
+    let title = (this.props.quizContent == undefined) ? 'No data loaded' : this.props.quizContent.question
     return (
       <div>
         <h1>{title}</h1>

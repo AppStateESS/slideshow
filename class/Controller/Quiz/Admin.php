@@ -3,7 +3,7 @@
 /*
 * The MIT License
 *
-* Copyright 2018 
+* Copyright 2019
 * Tyler Craig <craigta1@appstate.edu>.
 * Connor Plunkett <plunkettc@appstate.edu>
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,5 +40,13 @@ class Admin extends Base
     protected function putCommand(Request $request)
     {
         return $this->factory->put($request);
+    }
+
+    protected function viewJsonCommand(Request $request) {
+        return $this->factory->get($request);
+    }
+
+    protected function deleteCommand(Request $request) {
+        return $this->factory->delete($request);
     }
 }

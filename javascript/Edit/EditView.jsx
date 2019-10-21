@@ -71,7 +71,8 @@ export default class EditView extends Component {
     // If quiz component updated and the data is there then we switch to view mode else we switch to edit mode.
     if (prevProps.content.quizContent != this.props.content.quizContent) {
       // Yes i understand this would be a good spot to use a ternary operator, but we use that too much. :P
-      if (this.props.content.quizContent != undefined) {
+      console.log(this.props.content)
+      if (this.props.content.quizContent != null /*&& this.props.content.quizContent != null*/) {
         this.setState({ quizEditView: false })
       }
       else {
@@ -122,7 +123,7 @@ export default class EditView extends Component {
     this.props.saveQuizContent(quizContent)
   }
 
-  toggleQuizEdit() {
+  async toggleQuizEdit() {
     this.setState({
       quizEditView: !this.state.quizEditView
     })
@@ -225,7 +226,7 @@ export default class EditView extends Component {
     )
 
     let quizView = (this.state.quizEditView) ?
-      <QuizEdit quizContent={this.props.content.quizContent} saveQC={this.saveQuizContent} saveDB={this.props.saveDB} toggle={this.toggleQuizEdit} /> :
+      <QuizEdit quizContent={this.props.content.quizContent} load={this.props.load} saveQC={this.saveQuizContent} saveDB={this.props.saveDB} toggle={this.toggleQuizEdit} /> :
       <QuizView quizContent={this.props.content.quizContent} toggle={this.toggleQuizEdit} />
 
     let editRender = (this.props.isQuiz) ? (quizView) : (editor)

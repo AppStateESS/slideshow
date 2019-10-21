@@ -37,6 +37,7 @@ export default class Edit extends Component {
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
+    this.loadQuiz = this.loadQuiz.bind(this)
     this.saveDomScreen = this.saveDomScreen.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
@@ -54,6 +55,7 @@ export default class Edit extends Component {
 
   componentDidMount() {
     this.load()
+    console.log(this.state.content)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -92,26 +94,29 @@ export default class Edit extends Component {
   }
 
 
-  load() {
+  async load() {
     $.ajax({
       url: './slideshow/Slide/edit/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
       dataType: 'json',
-      success: function (data) {
+      success: async function (data) {
         let loaded = data['slides']
         if (loaded[0] != undefined) {
           window.sessionStorage.setItem('slideId', loaded[0].id)
           let showContent = []
           for (let i = 0; i < loaded.length; i++) {
             let saveC = undefined
-            let quizC = undefined
+            let quizC = null
+            // We may not need a quizConv anymore...
+            console.log(loaded[i].quizId)
             let isQ = this.quizConv(loaded[i].isQuiz)
             if (!isQ) {
               saveC = loaded[i].content
             } else {
-              if (loaded[i].content != undefined) {
-                //quizC = JSON.parse(loaded[i].content)
-              }
+              console.log("---load----")
+              quizC = await this.loadQuiz(loaded[i].quizId, i)
+              console.log("after----")
+              //prom.then((data) => quizC = data)
             }
             showContent.push({
               isQuiz: isQ,
@@ -120,10 +125,11 @@ export default class Edit extends Component {
               backgroundColor: loaded[i].backgroundColor,
               thumb: JSON.parse(loaded[i].thumb || '{}'), // Ensure that this isn't undefined
               slideId: Number(loaded[i].id),
-              media: JSON.parse(loaded[i].media || '{}')
+              media: JSON.parse(loaded[i].media || '{}'),
+              quizId: loaded[i].quizId
             })
           }
-
+          console.log(loaded[i].quizId)
           this.setState({
             content: showContent,
             id: loaded[0].showId
@@ -154,6 +160,41 @@ export default class Edit extends Component {
         console.error(response)
       }
     });
+  }
+
+  async loadQuiz(id, slideIndex) {
+    let quizContent = {}
+    await $.ajax({
+      url: './slideshow/Quiz/' + id,
+      type: 'GET',
+      dataType: 'json',
+      success: async (data) => {
+        console.log("---load Quiz----")
+        console.log(data[0])
+        console.log(data)
+        // Convert array to object
+        data = data[0]
+        console.log(data)
+        quizContent = {
+          question: data['question'],
+          answers: JSON.parse(data['answers']),
+          correct: JSON.parse(data['correct']),
+          type: data['type'],
+          answerFeedback: JSON.parse(data['answerFeedback']),
+          quizId: data['id']
+        }
+        /*
+        let slides = [...this.state.content]
+        slides[slideIndex].quizContent = quizContent
+        slides[slideIndex].quizId = data['id']
+        this.setState({content: slides}, () => console.log(this.state.content))*/
+
+      },
+      error: (req, res) => {
+        console.error(res)
+      }
+    })
+    return quizContent
   }
 
   saveDomScreen(domNode, index) {
@@ -199,15 +240,17 @@ export default class Edit extends Component {
   }
 
 
-  addNewSlide(quiz) {
-    if (typeof(quiz) != 'boolean') quiz = false // an event is bindinded on some calls which causes errors
+  addNewSlide(quizId) {
+    if (typeof(quizId) != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
+    console.log(quizId)
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
-        isQuiz: quiz,
+        isQuiz: (typeof(quizId) == 'number'),
         backgroundColor: '#E5E7E9',
+        quizId: quizId
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
@@ -229,14 +272,16 @@ export default class Edit extends Component {
         type: 'open' 
       },
       success: (id) => {
-        console.log(id)
+        //console.log(id)
         sessionStorage.setItem('quizId', id)
+        //console.log(Number(id))
+        //console.log(typeof(Number(id)))
+        this.addNewSlide(Number(id))
       },
       error: (req, res) => {
         console.log(res.toString())
       }
     })
-    this.addNewSlide(true)
   }
 
   // addNewSlide to the end
@@ -258,6 +303,20 @@ export default class Edit extends Component {
 
   deleteCurrentSlide() {
     let copy = [...this.state.content]
+    let isQuiz = copy[this.state.currentSlide].isQuiz
+    if (isQuiz) {
+      let quizId = copy[this.state.currentSlide].quizId
+      $.ajax({
+        url: `./slideshow/Quiz/${quizId}`,
+        type: 'delete',
+        success: () => {
+          console.log("quiz deleted!!!")
+        },
+        error: (req, res) => {
+          console.error(res)
+        }
+      })
+    }
     let newIndex = this.state.currentSlide
     // splice one slide at the current index
     copy.splice(this.state.currentSlide, 1)
@@ -279,6 +338,8 @@ export default class Edit extends Component {
         console.error(req, res.toString());
       }
     })
+
+    i
 
     this.setState({
       content: copy,

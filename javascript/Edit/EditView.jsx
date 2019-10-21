@@ -10,7 +10,7 @@ import QuizView from './Quiz/QuizView.jsx'
 
 import ToolbarC from './Toolbar/Toolbar.jsx'
 import ToolbarQ from './Toolbar/QuizToolbar.jsx'
-import ImageC from '../AddOn/ImageColumn.jsx'
+import ImageC from './AddOn/ImageColumn.jsx'
 import CustomStyleMap from '../Resources/CustomStyleMap.js';
 import decorator from '../Resources/LinkDecorator.js'
 import CustomBlockFn from '../Resources/CustomBlockFn.js'

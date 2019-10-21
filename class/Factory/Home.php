@@ -25,7 +25,7 @@ class Home
         $vars['logged'] = \Current_User::isLogged();
         $vars['admin'] = \Current_User::allow('slideshow');
         $vars['login_url'] = "index.php?module=users&action=user&command=login_page";
-        $vars['home_img'] =  PHPWS_SOURCE_DIR . 'mod/slideshow/img/showimg.png';
+        $vars['home_img'] = 'mod/slideshow/img/campus.jpg';
 
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('slideshow', 'index.html');

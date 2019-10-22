@@ -42,10 +42,6 @@ class Admin extends Base
         return $this->factory->put($request);
     }
 
-    protected function viewJsonCommand(Request $request) {
-        return $this->factory->get($request);
-    }
-
     protected function deleteCommand(Request $request) {
         return $this->factory->delete($request);
     }

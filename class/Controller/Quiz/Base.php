@@ -44,4 +44,8 @@ class Base extends RoleController
     {
         
     }
+
+    protected function viewJsonCommand(Request $request) {
+        return $this->factory->get($request);
+    }
 }

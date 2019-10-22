@@ -9,6 +9,7 @@ import {
   FormControl,
 } from 'react-bootstrap'
 
+import FetchQuiz from '../Resources/FetchQuiz'
 import domtoimage from '../Resources/dom-to-image'
 
 export default class Edit extends Component {
@@ -37,7 +38,7 @@ export default class Edit extends Component {
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
-    this.loadQuiz = this.loadQuiz.bind(this)
+    this.loadQuiz = FetchQuiz.bind(this)
     this.saveDomScreen = this.saveDomScreen.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
@@ -156,31 +157,6 @@ export default class Edit extends Component {
         console.error(response)
       }
     });
-  }
-
-  async loadQuiz(id) {
-    let quizContent = {}
-    await $.ajax({
-      url: './slideshow/Quiz/' + id,
-      type: 'GET',
-      dataType: 'json',
-      success: async (data) => {
-        // Convert array to object
-        data = data[0]
-        quizContent = {
-          question: data['question'],
-          answers: JSON.parse(data['answers']),
-          correct: JSON.parse(data['correct']),
-          type: data['type'],
-          answerFeedback: JSON.parse(data['answerFeedback']),
-          quizId: Number(data['id'])
-        }
-      },
-      error: (req, res) => {
-        console.error(res)
-      }
-    })
-    return quizContent
   }
 
   saveDomScreen(domNode, index) {

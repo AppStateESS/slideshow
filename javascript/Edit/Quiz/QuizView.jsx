@@ -8,16 +8,17 @@ export default class QuizView extends Component {
   }
 
   render() {
-    let questions = undefined
+    let answers = undefined
     if (this.props.quizContent != null) {
       //console.log(this.props.quizContent)
       // TODO: fix bug with icon not changing when correct does. We need to force a rerender 
-      questions = this.props.quizContent.answers.map(function (question, i) {
+      let type = (this.props.quizContent.type === 'select') ? 'square' : 'circle' 
+      answers = this.props.quizContent.answers.map(function (question, i) {
         //let key = question
-        let check = (<i className="fas fa-times-circle" style={{ color: 'red' }}></i>)
+        let check = (<i className={`fas fa-minus-${type}`} style={{ color: 'red' }}></i>)
         if (this.props.quizContent.correct != undefined) {
           if ((this.props.quizContent.correct).includes(i.toString())) {
-            check = (<i className="fas fa-check-circle" style={{ color: 'green' }}></i>)
+            check = (<i className={`fas fa-check-${type}`} style={{ color: 'green' }}></i>)
           }
         }
         return (
@@ -27,13 +28,16 @@ export default class QuizView extends Component {
         )
       }.bind(this))
     }
+    else {
+      answers = (<div><p>This slide may have been corrupted. We apolgize for the error.</p></div>)
+    }
     // TODO: rework this to be more pretty
     // Also need to handle open answers
     let title = (this.props.quizContent == undefined) ? 'No data loaded' : this.props.quizContent.question
     return (
       <div>
         <h1>{title}</h1>
-        {questions}
+        {answers}
       </div>
     )
   }

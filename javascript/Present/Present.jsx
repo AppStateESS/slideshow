@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import PresentView from './PresentView.jsx'
 import './custom.css'
+import FetchQuiz from '../Resources/FetchQuiz'
 import Tippy from '@tippy.js/react';
 
 export default class Present extends Component {
@@ -91,7 +92,7 @@ export default class Present extends Component {
     }
   }
 
-  load() {
+  async load() {
     let time = -1
     $.ajax({
       url: './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
@@ -108,11 +109,11 @@ export default class Present extends Component {
         console.error(req, res.toString())
       }
     })
-    $.ajax({
+    await $.ajax({
       url: './slideshow/Slide/present/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
       dataType: 'json',
-      success: function (data) {
+      success: async function (data) {
         let loaded = data['slides']
         if (loaded != null) {
           let showContent = []
@@ -123,14 +124,14 @@ export default class Present extends Component {
             if (!isQ) {
               saveC = loaded[i].content
             } else {
-              quizC = JSON.parse(loaded[i].content)
+              quizC = await FetchQuiz(loaded[i].quizId)
             }
             showContent.push({
               isQuiz: isQ,
               saveContent: saveC,
               quizContent: quizC,
               backgroundColor: loaded[i].backgroundColor,
-              media: JSON.parse(loaded[i].media || '{}')
+              media: JSON.parse(loaded[i].media || '{}'),
             })
           }
           this.setState({

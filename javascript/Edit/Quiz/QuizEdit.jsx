@@ -57,6 +57,11 @@ export default function QuizEdit(props) {
         console.log('with the correct indexes of : ', correct)
         console.log(question)
         */
+       if (correct.length === 0) {
+           alert("Please select a correct answer.")
+           return
+       }
+       
         let quizContent = {
             'quizId': id,
             'question': question,
@@ -81,16 +86,33 @@ export default function QuizEdit(props) {
     }
 
     function handleAnswerChange(e) {
-        let ids = e.target.id.split('-')
+        const ids = e.target.id.split('-')
+        const type = ids[0]
+        const i = Number(ids[1])
         let a = [...answers]
         let c = [...correct]
-        if (ids[0] == 'text') {
+        if (type == 'text') {
             a[ids[1]] = e.target.value
         }
-        else if (ids[0] == 'check') {
+        else if (type == 'check') {
             // This is multiple choice and there is only one correct answer
-            c[0] = Number(ids[1])
+            c[0] = i
         }
+        else if(type == 'select') {
+            // handle change 
+            // if the is is in the array we need to remove it, if the id is not we add it
+            console.log(ids)
+            if (c.includes(i) || c.includes(i.toString())) {
+                // remove current choice from correct
+                let item = c.findIndex(index => { return index == i })
+			    c.splice(item, 1)
+            }
+            else {
+                // Add new choice to correct
+                c.push(i)
+            }
+        }
+
         setAnswers(a)
         setCorrect(c)
     }
@@ -125,7 +147,7 @@ export default function QuizEdit(props) {
         let i = -1
 		let choices = answers.map((choice) => {
             i++
-		    let checked = correct.includes(i)
+		    let checked = correct.includes(i.toString()) || correct.includes(i)
 			return <MultipleChoice key={i} id={i} onChange={handleAnswerChange} remove={removeAnswer} value={choice} checked={checked} />
 		})
 		choices.push(<button key={'add'} className="btn btn-primary btn-block" onClick={() => addAnswer()} style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }}><i className="fas fa-plus-circle"></i> Add Another Answer</button>)
@@ -147,7 +169,7 @@ export default function QuizEdit(props) {
 		let i = -1
 		let choices = answers.map((choice) => {
 			i++
-			let checked = correct.includes(i)
+			let checked = correct.includes(i.toString()) || correct.includes(i)
 			return <MultipleSelect key={i} id={i} onChange={handleAnswerChange} remove={removeAnswer} value={choice} checked={checked} />
 		})
 		choices.push(<button key={'add'} className="btn btn-primary btn-block" onClick={addAnswer} style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }}><i className="fas fa-plus-circle"></i> Add Another Answer</button>)

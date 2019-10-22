@@ -40,7 +40,7 @@ export default class QuizViewspace extends Component {
     let ids = event.target.id.split('-')
     if (ids[0] === 'check') {
       // MultipleChoice
-      if (this.props.content.quizContent.correctAnswers.includes(ids[1])) {
+      if (this.props.quizContent.correct.includes(ids[1])) {
         this.props.validate()
         this.toggleCorrect()
       }
@@ -87,14 +87,11 @@ export default class QuizViewspace extends Component {
   }
 
   buildAnswerComponent() {
-    if (this.props.content.quizContent != undefined) {
-      let i = -1
-      let a = this.props.content.quizContent.answers.map((answer) => {
-        i += 1
-
+    if (this.props.quizContent != undefined) {
+      let a = this.props.quizContent.answers.map((answer, i) => {
         // Shows a check if the answer has been correctly answered before
-        let c = this.props.content.quizContent.correctAnswerIndex
-        let ans = ((this.props.currentSlide < this.props.highestSlide) && (c == i)) ?
+        const c = this.props.quizContent.correct
+        let ans = ((this.props.currentSlide < this.props.highestSlide) && (c.includes(i) || c.includes(i.toString()))) ?
           (<span>{answer} <i className="fas fa-check-circle" style={{ color: 'green' }}></i></span>) : answer
 
         return (
@@ -118,14 +115,14 @@ export default class QuizViewspace extends Component {
   }
 
   buildSelectComponent() {
-    if (this.props.content.quizContent != undefined) {
+    if (this.props.quizContent != undefined) {
       let i = -1
-      let a = this.props.content.quizContent.answers.map((answer) => {
+      let a = this.props.quizContent.answers.map((answer) => {
         i += 1
 
         // Shows a check if the answer has been correctly answered before
-        let c = this.props.content.quizContent.correctAnswerIndex
-        let ans = ((this.props.currentSlide < this.props.highestSlide) && (c == i)) ?
+        const c = this.props.quizContent.correct
+        let ans = ((this.props.currentSlide < this.props.highestSlide) && (c.includes(i) || c.includes(i.toString()))) ?
           (<span>{answer} <i className="fas fa-check-circle" style={{ color: 'green' }}></i></span>) : answer
 
         return (
@@ -150,10 +147,10 @@ export default class QuizViewspace extends Component {
   }
 
   compareArrays() {
-    if (this.state.checked.length != this.props.content.quizContent.correctAnswers.length) {
+    if (this.state.checked.length != this.props.quizContent.correct.length) {
       return false
     }
-    for (let value of this.props.content.quizContent.correctAnswers) {
+    for (let value of this.props.quizContent.correct) {
       if (!this.state.checked.includes(value)) {
         return false
       }
@@ -162,7 +159,7 @@ export default class QuizViewspace extends Component {
   }
 
   comparePartiallyCorrect() {
-    for (let value of this.props.content.quizContent.correctAnswers) {
+    for (let value of this.props.quizContent.correct) {
       if (this.state.checked.includes(value)) {
         return true
       }
@@ -193,7 +190,7 @@ export default class QuizViewspace extends Component {
     }
     let answersComponent = undefined
     let titleComponent = undefined
-    if (this.props.content.quizContent == undefined) {
+    if (this.props.quizContent == undefined) {
       titleComponent = "Error - Empty Quiz"
       answersComponent = (<div>
         <p style={{ color: 'red' }}>This quiz slide has not been filled with data</p>
@@ -203,13 +200,13 @@ export default class QuizViewspace extends Component {
       alert = undefined
       //this.validate(null) This could allow user to continue
     }
-    else if (this.props.content.quizContent.questionType == 'choice') {
+    else if (this.props.quizContent.type == 'choice') {
       answersComponent = this.buildAnswerComponent()
-      titleComponent = this.props.content.quizContent.questionTitle
+      titleComponent = this.props.quizContent.question
     }
-    else if (this.props.content.quizContent.questionType == 'select') {
+    else if (this.props.quizContent.type == 'select') {
       answersComponent = this.buildSelectComponent()
-      titleComponent = this.props.content.quizContent.questionTitle
+      titleComponent = this.props.quizContent.question
     }
     return (
       <div>

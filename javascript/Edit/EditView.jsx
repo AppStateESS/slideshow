@@ -71,7 +71,6 @@ export default class EditView extends Component {
     // If quiz component updated and the data is there then we switch to view mode else we switch to edit mode.
     if (prevProps.content.quizContent != this.props.content.quizContent) {
       // Yes i understand this would be a good spot to use a ternary operator, but we use that too much. :P
-      console.log(this.props.content)
       if (this.props.content.quizContent != null /*&& this.props.content.quizContent != null*/) {
         this.setState({ quizEditView: false })
       }

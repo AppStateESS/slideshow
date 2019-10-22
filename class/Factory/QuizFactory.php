@@ -81,11 +81,33 @@ class QuizFactory extends Base
         return $resource->id;
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request) 
     {
         $vars = $request->getRequestVars();
-        $quizId = $vars['Quiz'];
+        $id = $vars['Quiz'];
+        
+        $del_type = $request->pullDeleteVarIfSet('type');
+        if ($del_type === 'all') {
+            return $this->deleteAll($id);
+        }
+        else { // If there is no type then the request was made from an individual slide.
+            return $this->deleteOne($id);
+        }
+    }
+
+    private function deleteOne($quizId)
+    {
         $resource = $this->load($quizId);
         return $this->deleteResource($resource) != 0;
     }
+
+    private function deleteAll($showId)
+    {
+        $sql = 'DELETE FROM ss_quiz WHERE EXISTS(SELECT quizId FROM ss_slide WHERE showId=:showId);';
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        return $q->execute(array('showId'=>$showId));
+    }
+
 }

@@ -66,9 +66,9 @@ export default class Edit extends Component {
 
   }
 
-  save() {
+  async save() {
    this.saveDomScreen() 
-    $.ajax({
+    await $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       data: {
         slides: [...this.state.content]

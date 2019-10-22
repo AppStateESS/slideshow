@@ -19,22 +19,21 @@ export default class NavBar extends Component {
     this.handlePresent = this.handlePresent.bind(this)
   }
 
-  returnToShowList() {
-    this.props.saveDB()
-    // This inteval fixes a bug on firefox where the browser loads faster than it can save
-    window.setInterval(()=> {window.location.href = './slideshow/Show/list'}, 100)
+  async returnToShowList() {
+    await this.props.saveDB()
+    window.location.href = './slideshow/Show/list'
 
   }
 
-  handlePresent() {
+  async handlePresent() {
     if (this.props.id == -1) {
       alert("A problem has occurred with your browser's session. This is most likely caused by an attempt to present an empty show.")
       //window.location.href = './slideshow/Show/list'
     }
     else {
-      this.props.saveDB()
+      await this.props.saveDB()
       window.sessionStorage.setItem('id', this.props.id)
-      window.setInterval(() => window.location.href = './slideshow/Slide/Present/?id=' + this.props.id, 100)
+      window.location.href = './slideshow/Slide/Present/?id=' + this.props.id
     }
   }
 

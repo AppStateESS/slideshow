@@ -98,25 +98,24 @@ export default class ShowCard extends Component {
  }
 
  handleActivation() {
-   this.state.active > 0 ? this.setState({active: 0}, function(){this.handleSave()}) :
+  this.state.active > 0 ? this.setState({active: 0}, function(){this.handleSave()}) :
                            this.setState({active: 1}, function(){this.handleSave()})
  }
 
- editTransition() {
-   window.sessionStorage.setItem('id', this.state.id)
-   window.setTimeout(() => window.location.href = './slideshow/Slide/Edit/', 200)
+ async editTransition() {
+  await window.sessionStorage.setItem('id', this.state.id)
+  window.location.href = './slideshow/Slide/Edit/'
  }
 
- presentTransition() {
-   window.sessionStorage.setItem('id', this.state.id)
-   window.setTimeout(() => window.location.href = './slideshow/Slide/Present/', 200)
+ async presentTransition() {
+  await window.sessionStorage.setItem('id', this.state.id)
+  window.location.href = './slideshow/Slide/Present/'
  }
 
- sessionTransition() {
-   console.log('success')
-   window.sessionStorage.setItem('id', this.state.id)
-   window.sessionStorage.setItem('title', this.state.title)
-   window.setTimeout(() => window.location.href = './slideshow/Session/table', 200)
+ async sessionTransition() {
+  await window.sessionStorage.setItem('id', this.state.id)
+  window.sessionStorage.setItem('title', this.state.title)
+  window.location.href = './slideshow/Session/table'
  }
 
 

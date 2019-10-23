@@ -2,12 +2,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import {
-  Card,
-  Button,
-  Row
-} from 'react-bootstrap'
-
 
 export default class AnswerTypeCards extends Component {
   constructor() {
@@ -16,17 +10,17 @@ export default class AnswerTypeCards extends Component {
 
   render() {
     return (
-      <div className="row" style={{margin: 10}}>
+      <div className="row">
         <div className="col">
           <div className="card text-center text-white bg-secondary">
             <div className="card-header">Multiple Choice</div>
             <div className="card-body">
               <p className="card-text">Multiple choice options with one possible correct answer</p>
-              <br></br>
               <button className="btn btn-primary btn-block" id="choice" onClick={this.props.switchView}>Select</button>
             </div>
           </div>
         </div>
+        {/* Open Answer
         <div className="col">
           <div className="card text-center text-white bg-secondary">
             <div className="card-header">Open Answer</div>
@@ -37,6 +31,7 @@ export default class AnswerTypeCards extends Component {
             </div>
           </div>
         </div>
+        */}
         <div className="col">
           <div className="card text-center text-white bg-secondary">
             <div className="card-header">Multiple Select</div>

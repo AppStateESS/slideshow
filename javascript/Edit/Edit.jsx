@@ -9,6 +9,7 @@ import {
   FormControl,
 } from 'react-bootstrap'
 
+import FetchQuiz from '../Resources/FetchQuiz'
 import domtoimage from '../Resources/dom-to-image'
 
 export default class Edit extends Component {
@@ -37,6 +38,7 @@ export default class Edit extends Component {
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
+    this.loadQuiz = FetchQuiz.bind(this)
     this.saveDomScreen = this.saveDomScreen.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
@@ -92,26 +94,27 @@ export default class Edit extends Component {
   }
 
 
-  load() {
+  async load() {
     $.ajax({
       url: './slideshow/Slide/edit/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
       dataType: 'json',
-      success: function (data) {
+      success: async function (data) {
         let loaded = data['slides']
         if (loaded[0] != undefined) {
           window.sessionStorage.setItem('slideId', loaded[0].id)
           let showContent = []
           for (let i = 0; i < loaded.length; i++) {
             let saveC = undefined
-            let quizC = undefined
+            let quizC = null
+            let qId = -1
+            // We may not need a quizConv anymore...
             let isQ = this.quizConv(loaded[i].isQuiz)
             if (!isQ) {
               saveC = loaded[i].content
             } else {
-              if (loaded[i].content != undefined) {
-                quizC = JSON.parse(loaded[i].content)
-              }
+              qId = Number(loaded[i].quizId)
+              quizC = await this.loadQuiz(qId)
             }
             showContent.push({
               isQuiz: isQ,
@@ -120,10 +123,10 @@ export default class Edit extends Component {
               backgroundColor: loaded[i].backgroundColor,
               thumb: JSON.parse(loaded[i].thumb || '{}'), // Ensure that this isn't undefined
               slideId: Number(loaded[i].id),
-              media: JSON.parse(loaded[i].media || '{}')
+              media: JSON.parse(loaded[i].media || '{}'),
+              quizId: qId
             })
           }
-
           this.setState({
             content: showContent,
             id: loaded[0].showId
@@ -199,15 +202,18 @@ export default class Edit extends Component {
   }
 
 
-  addNewSlide(quiz) {
-    if (typeof(quiz) != 'boolean') quiz = false // an event is bindinded on some calls which causes errors
+  addNewSlide(quizId) {
+    console.log(typeof(quizId), quizId)
+    if (typeof(quizId) != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
+    console.log(quizId)
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
-        isQuiz: quiz,
+        isQuiz: (quizId !== -1),
         backgroundColor: '#E5E7E9',
+        quizId: quizId
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
@@ -221,7 +227,24 @@ export default class Edit extends Component {
   addNewQuiz() {
     // This method is useless, since we can change this at the call. However, previous code implemented this method seperately
     // and we can simplify this at a later time.
-    this.addNewSlide(true)
+    $.ajax({
+      url: './slideshow/Quiz/',
+      method: 'post',
+      data: {
+        questionTile: 'this is a test title',
+        type: 'open' 
+      },
+      success: (id) => {
+        //console.log(id)
+        sessionStorage.setItem('quizId', id)
+        //console.log(Number(id))
+        //console.log(typeof(Number(id)))
+        this.addNewSlide(Number(id))
+      },
+      error: (req, res) => {
+        console.log(res.toString())
+      }
+    })
   }
 
   // addNewSlide to the end
@@ -243,6 +266,20 @@ export default class Edit extends Component {
 
   deleteCurrentSlide() {
     let copy = [...this.state.content]
+    let isQuiz = copy[this.state.currentSlide].isQuiz
+    if (isQuiz) {
+      let quizId = copy[this.state.currentSlide].quizId
+      $.ajax({
+        url: `./slideshow/Quiz/${quizId}`,
+        type: 'delete',
+        success: () => {
+          console.log("quiz deleted!!!")
+        },
+        error: (req, res) => {
+          console.error(res)
+        }
+      })
+    }
     let newIndex = this.state.currentSlide
     // splice one slide at the current index
     copy.splice(this.state.currentSlide, 1)

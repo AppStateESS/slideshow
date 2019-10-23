@@ -40,4 +40,10 @@ class Tables
         $slide = new \slideshow\Resource\SlideResource;
         return $slide->createTable($this->db);
     }
+
+    public function createQuiz()
+    {
+        $quiz = new \slideshow\Resource\QuizResource;
+        return $quiz->createTable($this->db);
+    }
 }

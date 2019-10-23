@@ -19,7 +19,7 @@ export default class PresentView extends Component {
     if (this.props.content != undefined) {
       let viewspace = (this.parseQ(this.props.content.isQuiz)) ?
         (<QuizViewspace
-          content={this.props.content}
+          quizContent={this.props.content.quizContent}
           currentSlide={this.props.currentSlide}
           highestSlide={this.props.high}
           validate={this.props.validate} />) :

@@ -93,9 +93,7 @@ class SlideFactory extends Base
             $isQuiz = $slide['isQuiz'] == 'true' ? true : false;
             $resource->isQuiz = $isQuiz;
             if ($isQuiz) {
-                if (!empty($slide['quizContent'])) {
-                    $resource->content = json_encode($slide['quizContent']);
-                }
+                $resource->quizId = $slide['quizId'];
             }
             else {
                 if (!empty($slide['saveContent'])) {

@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import './toolbar.css'
 
 import { EditorState, RichUtils} from 'draft-js'
-import decorator from '../../Resources/LinkDecorator'
+import decorator from '../../Resources/Draft/LinkDecorator'
 
 import Tippy from '@tippy.js/react'
 import 'tippy.js/themes/light-border.css'

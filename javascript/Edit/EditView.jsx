@@ -11,9 +11,9 @@ import QuizView from './Quiz/QuizView.jsx'
 import ToolbarC from './Toolbar/Toolbar.jsx'
 import ToolbarQ from './Toolbar/QuizToolbar.jsx'
 import ImageC from './AddOn/ImageColumn.jsx'
-import CustomStyleMap from '../Resources/CustomStyleMap.js';
-import decorator from '../Resources/LinkDecorator.js'
-import CustomBlockFn from '../Resources/CustomBlockFn.js'
+import CustomStyleMap from '../Resources/Draft/CustomStyleMap';
+import decorator from '../Resources/Draft/LinkDecorator'
+import CustomBlockFn from '../Resources/Draft/CustomBlockFn'
 
 export default class EditView extends Component {
 
@@ -242,7 +242,7 @@ export default class EditView extends Component {
         <div style={{minWidth: 700}}>
           {toolbar}
           <span><br /></span>
-          <div id="editor" data-key={this.props.currentSlide} className="jumbotron" style={{ minHeight: 450, position: 'relative', backgroundColor: this.props.content.backgroundColor}}>
+          <div id="editor" data-key={this.props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: this.props.content.backgroundColor}}>
             <div className="row">
               {(this.state.mediaAlign === 'left') ? imgRender : undefined}
               <div className="col">

@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react'
 
 import AnswerTypeCards from './AnswerTypeCards.jsx'
 import QuestionTitle from './QuestionTitleBlock.jsx'
-import MultipleChoice from './MultipleChoiceBlock.jsx'
-import MultipleSelect from './MultipleSelectBlock'
+import AnswerBlock from './AnswerBlock.jsx'
+import SettingsModal from './AnswerSettings'
+
+import Tippy from '@tippy.js/react'
+import { Form } from 'react-bootstrap'
+const { Row, Group } = Form
 
 export default function QuizEdit(props) {
     
@@ -14,13 +18,15 @@ export default function QuizEdit(props) {
     const [feedback, setFeedback] = useState([]) // : string[]
     const [id, setId] = useState(-1)
 
+    const [showModal, setShowModal] = useState(false)
+
     
     useEffect(() => {
         let initQuestion = ''
         let initAnswers = ['', '']
         let initCorrect = []
         let initType = 'showTypes'
-        let initFeedback = []
+        let initFeedback = ['Please try again', 'Correct!']
         let initId = window.sessionStorage.getItem('quizId')
         
         if (props.quizContent != null) {
@@ -29,7 +35,7 @@ export default function QuizEdit(props) {
             initAnswers = props.quizContent.answers
             initCorrect = props.quizContent.correct
             initType = props.quizContent.type
-            initFeedback = props.quizContent.answerFeedback
+            initFeedback = props.quizContent.feedback
             initId = props.quizContent.quizId
         }
         setQuestion(initQuestion)
@@ -45,10 +51,10 @@ export default function QuizEdit(props) {
         console.log(answers)
         console.log(correct)
     }, [answers, correct])
-    */
+
    useEffect(() => {
        console.log(question)
-   }, [question])
+   }, [question])*/
 
     async function save() {
         /* debug
@@ -67,7 +73,8 @@ export default function QuizEdit(props) {
             'question': question,
             'answers': answers,
             'correct': correct,
-            'type': type
+            'type': type,
+            'feedback': feedback
         }
         await $.ajax({
             url: './slideshow/Quiz/' + id,
@@ -94,11 +101,11 @@ export default function QuizEdit(props) {
         if (type == 'text') {
             a[ids[1]] = e.target.value
         }
-        else if (type == 'check') {
+        else if (type === 'choice') {
             // This is multiple choice and there is only one correct answer
             c[0] = i
         }
-        else if(type == 'select') {
+        else if(type === 'select') {
             // handle change 
             // if the is is in the array we need to remove it, if the id is not we add it
             console.log(ids)
@@ -143,15 +150,37 @@ export default function QuizEdit(props) {
         setCorrect(c)
     }
 
-    function buildChoiceBlock() {
+    function buildAnswerBlock(type) {
         let i = -1
 		let choices = answers.map((choice) => {
             i++
 		    let checked = correct.includes(i.toString()) || correct.includes(i)
-			return <MultipleChoice key={i} id={i} onChange={handleAnswerChange} remove={removeAnswer} value={choice} checked={checked} />
-		})
-		choices.push(<button key={'add'} className="btn btn-primary btn-block" onClick={() => addAnswer()} style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }}><i className="fas fa-plus-circle"></i> Add Another Answer</button>)
-		return choices
+            return <AnswerBlock 
+                type={type}
+                key={i} id={i} 
+                onChange={handleAnswerChange} 
+                remove={removeAnswer} 
+                value={choice} 
+                checked={checked} 
+            />
+        })
+        // style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }}
+        let bottomBlock = (
+            <Row style={{marginLeft: '10%'}}>
+                <Group style={{ width: '60%', marginRight: '1rem' }}>
+                    <button key={'add'} className="btn btn-primary btn-block" onClick={() => addAnswer()} ><i className="fas fa-plus-circle"></i> Add Another Answer</button>
+                </Group>
+                <Group >
+                <Tippy content={<div>Answer Settings</div>} arrow={true}>
+                <span className="close card-text" aria-label="Close" onClick={()=> setShowModal(true)}>
+                    <span style={{ fontSize: '32px' }}><i className="fas fa-cog"></i></span>
+                </span>
+                </Tippy>
+                </Group>
+            </Row>
+        )
+        choices.push(bottomBlock)
+        return choices
     }
     
     // we aren't actually using this right now
@@ -164,20 +193,6 @@ export default function QuizEdit(props) {
 		})
 		return choices
 	} */
-
-	function buildMultipleSelectBlock() {
-		let i = -1
-		let choices = answers.map((choice) => {
-			i++
-			let checked = correct.includes(i.toString()) || correct.includes(i)
-			return <MultipleSelect key={i} id={i} onChange={handleAnswerChange} remove={removeAnswer} value={choice} checked={checked} />
-		})
-		choices.push(<button key={'add'} className="btn btn-primary btn-block" onClick={addAnswer} style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }}><i className="fas fa-plus-circle"></i> Add Another Answer</button>)
-		return choices
-    }
-    
-    
-
     let answerTypeBlock = type === 'showTypes' ? (
         <AnswerTypeCards switchView={switchView} selectOne={correct} />
     ) : null
@@ -189,14 +204,10 @@ export default function QuizEdit(props) {
             <button key="3" className="btn btn-primary btn-block" onClick={save}><i className="fas fa-save"></i> Save Quiz Slide</button>
         </span>
 
-    let quizBuild = undefined
-    if (type === 'choice') {
-        quizBuild = buildChoiceBlock()
+    let quizBuild = undefined 
+    if (type === 'choice' || type === 'select') {
+        quizBuild = buildAnswerBlock(type)
     }
-    else if (type === 'select') {
-        quizBuild = buildMultipleSelectBlock()
-    }
-
     return (
         <div>
             <h3 style={{ textAlign: 'center', marginTop: -40 }}>Edit Quiz</h3>
@@ -207,6 +218,12 @@ export default function QuizEdit(props) {
 				{answerTypeBlock}
 				{showAddElement}
             </div>
+            <SettingsModal
+                show={showModal} 
+                onHide={()=> setShowModal(false)}
+                setFeedback={(f) => setFeedback(f)}
+                feedback={feedback} 
+            />
         </div>
     )
 

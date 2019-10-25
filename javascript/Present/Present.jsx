@@ -275,7 +275,7 @@ export default class Present extends Component {
       <div>
         <h1 style={{textDecorationLine: 'underline'}}>{this.state.title}</h1>
         <br></br>
-        <div style={{justifyContent: 'center', display: 'flex'}}>
+        <div style={{marginLeft: 'auto', marginRight: 'auto', justifyContent: 'center', display: 'flex'}}>
           <PresentView
             currentSlide={this.state.currentSlide}
             high={this.state.highestSlide}

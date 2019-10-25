@@ -3,9 +3,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {Editor, EditorState, convertFromRaw} from 'draft-js'
 
-import decorator from '../Resources/LinkDecorator.js'
-import CustomStyleMap from '../Resources/CustomStyleMap.js'
-import CustomBlockFn from '../Resources/CustomBlockFn.js';
+import decorator from '../Resources/Draft/LinkDecorator.js'
+import CustomStyleMap from '../Resources/Draft/CustomStyleMap.js'
+import CustomBlockFn from '../Resources/Draft/CustomBlockFn.js';
 
 import '../Edit/custom.css'
 

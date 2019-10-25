@@ -172,12 +172,12 @@ export default class QuizViewspace extends Component {
 
     if (this.state.correct) {
       alert = (<Alert key={'correct'} variant="success">
-        <span><i className="fas fa-check-circle" style={{ color: "green" }}></i> Correct!</span>
+        <span><i className="fas fa-check-circle" style={{ color: "green" }}></i> {this.props.quizContent.feedback[1]}</span>
       </Alert>)
     }
     else if (this.state.incorrect) {
       alert = (<Alert key={'incorrect'} variant="danger">
-        <span><i className="fas fa-times-circle"></i> Please try again</span>
+        <span><i className="fas fa-times-circle"></i> {this.props.quizContent.feedback[0]}</span>
       </Alert>)
     }
     else if (this.state.partiallyCorrect) {
@@ -210,7 +210,7 @@ export default class QuizViewspace extends Component {
     }
     return (
       <div>
-        <h3>{titleComponent}:</h3>
+        <h3>{titleComponent}</h3>
         {answersComponent}
         {alert}
       </div>)

@@ -97,7 +97,7 @@ class SessionFactory extends Base
     public function getAll(Request $request)
     {
         $vars = $request->getRequestVars();
-        $showId = intval($vars['Session']);
+        $showId = intval($vars['id']);
 
         $sql = "SELECT username, highestSlide, completed FROM ss_session WHERE showId=:showId;";
         $db = Database::getDB();

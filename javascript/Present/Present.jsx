@@ -1,320 +1,145 @@
-'use strict'
-import React, { Component } from 'react'
-import PresentView from './PresentView.jsx'
-import './custom.css'
-import FetchQuiz from '../Resources/FetchQuiz'
-import Tippy from '@tippy.js/react';
+import React, { useState, useEffect } from 'react'
 
-export default class Present extends Component {
-  constructor() {
-    super()
+// Resources for loading from db
+import { fetchShow, fetchSlides, fetchSession, slidesResource } from '../api/slideshow'
 
-    this.state = {
-      currentSlide: 0,
-      highestSlide: 0,
-      content: [
-        {
-          saveContent: undefined,
-          quizContent: undefined,
-          backgroundcolor: '#E5E7E9'
-        }
-      ],
-      slideName: "Present: ",
-      slideTimer: 0,
-      // Flags:
-      prevDisable: true, // Disables prev button
-      nextDisable: true, // Disables next button
-      nextFlag: false, // true if user just changed slide
-      quizNextFlag: false, // the currentSlide is a quiz
-      quizPassed: false,
-      finishFlag: false // true when user has completed the show
-    }
-    this.load = this.load.bind(this)
-    this.updateSession = this.updateSession.bind(this)
+import PresentView from './PresentView'
 
-    this.prev = this._prev.bind(this)
-    this.next = this._next.bind(this)
+import { Progress, Navigation, Skeleton, Finish, SlidesNav } from './Navbar'
+
+export default function Present() {
     
-    this.validate = this.validate.bind(this)
-    this.returnToShowList = this.returnToShowList.bind(this)
-    this.parseBool = this.parseBool.bind(this)
-  }
+    const [showTitle, setShowTitle] = useState('Present: ')
+    const [showTimer, setShowTimer] = useState(0)
 
-  componentDidMount() {
-    this.load()
-    this.loadSession()
-  }
+    const [content, setContent] = useState(slidesResource.content)
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.quizNextFlag && (this.state.quizPassed || this.state.finishFlag)) {
-      // Correct answer chosen
-      this.setState({
-        quizNextFlag: false,
-        nextDisable: false,
-        quizPassed: false,
-      })
-    }
-    else if (this.state.nextFlag && this.state.content != undefined) {
-      // SO this section is a beast -> There is probably a way to structure this better logically.
-      // There are a lot of logical components that are changing and so the structure might not be the cleanest
-      // However, it works!!! I tried my best to comment an explination for how this works - Tyler
+    const [currentSlide, setCurrentSlide] = useState(0)
+    const [highestSlide, setHighestSlide] = useState(0)
 
-      // slide has changed
-      this.updateSession()
-      this.setState({nextDisable: true, prevDisable: true})
+    const [prevDisable, setPrevDisable] = useState(true) // previous button disabled?
+    const [nextDisable, setNextDisable] = useState(true) // next button disabled?
 
-      let isQuiz = this.parseBool(this.state.content[this.state.currentSlide].isQuiz) // Converts boolean if isQuiz is a string
-      //let lastSlide = (this.state.currentSlide + 1 == this.state.content.length) // true if we are on last slide
-      if (isQuiz) {
-        this.setState({quizNextFlag: true}) // we changed to a quiz slide, handle the rest after user selects answer
-      }
-      else if (this.state.currentSlide == this.state.highestSlide && !this.state.finishFlag) { // we are on the highest slide and haven't finished the show yet
-        setTimeout(() => {
-          // Note: when this was declared above, an issue was created where it wasn't being loaded fast enough and it set the last slide to true
-          let lastSlide = this.state.currentSlide + 1 == this.state.content.length
-          this.setState({nextDisable: false, finishFlag: (this.state.finishFlag || lastSlide)}) // on completion of timer, we unlock next and set finishFlag
-        }, this.state.slideTimer)
-      }
-      else if (this.state.currentSlide < this.state.highestSlide || this.state.finishFlag) { // we are on an already completed slide
-        this.setState({nextDisable: false})
-      }
-      if (this.state.currentSlide > 0) { // we are on the first slide
-        this.setState({prevDisable: false})
-      }
-      if (this.state.currentSlide < this.state.highestSlide) { // we have already completed this slide
-        this.setState({nextDisable: false})
-      }
-      // If we are on the last slide
-      if ((this.state.content.length == this.state.currentSlide + 1) && this.state.currentSlide != 0) {
-        this.setState({finishFlag: true}, () => this.updateSession())
-      }
-      this.setState({nextFlag: false}) // we have handled the slide change
-    }
-  }
+    const [loaded, setLoaded] = useState(false) // use to avoid running logic before db calls return
+    const [finalValidate, setFinalValidate] = useState(false) // used if last slide is quiz
 
-  async load() {
-    let time = -1
-    $.ajax({
-      url: './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        time = Number(data[0].slideTimer) * 1000
-        this.setState({
-          title: data[0].title,
-          slideTimer: time
-        })
-      }.bind(this),
-      error: (req, res) => {
-        console.error(req, res.toString())
-      }
-    })
-    await $.ajax({
-      url: './slideshow/Slide/present/?id=' + window.sessionStorage.getItem('id'),
-      type: 'GET',
-      dataType: 'json',
-      success: async function (data) {
-        let loaded = data['slides']
-        if (loaded != null) {
-          let showContent = []
-          for (let i = 0; i < loaded.length; i++) {
-            let saveC = undefined
-            let quizC = undefined
-            let isQ = this.parseBool(loaded[i].isQuiz)
-            if (!isQ) {
-              saveC = loaded[i].content
-            } else {
-              quizC = await FetchQuiz(loaded[i].quizId)
-            }
-            showContent.push({
-              isQuiz: isQ,
-              saveContent: saveC,
-              quizContent: quizC,
-              backgroundColor: loaded[i].backgroundColor,
-              media: JSON.parse(loaded[i].media || '{}'),
-            })
-          }
-          this.setState({
-            content: showContent,
-            slideName: data['title'],
-            quizNextFlag: this.parseBool(showContent[0].isQuiz) // First slide is a quiz
-          }, () => {
-            if (!this.state.quizNextFlag) {
-              // First slide isn't a quiz we set timer on next
-              setTimeout(() => {
-                this.setState({nextDisable: false})
-              }, time)
-            }
-          });
+    /** Component did mount */
+    useEffect(() => {
+        load()
+    }, [])
+
+    useEffect(() => {
+        // "Touple" as array of the values
+        // of [prevDisable, nextDisable, highestSlide]
+        const state = evaluateState()
+        setNextDisable(state[1])
+        setPrevDisable(state[0])
+        setHighestSlide(state[2])
+        //TODO: Update session with new highestSlide / currentSlide (maybe?)
+    }, [currentSlide])
+
+    useEffect(() => {
+        // This will run before the data loads from db this eliminates that run
+        if (!loaded) return
+        const visited = currentSlide < highestSlide
+        const isQuiz = content[currentSlide].isQuiz
+        const final = currentSlide === content.length - 1 
+        if (nextDisable && loaded && !visited && !isQuiz) {
+            window.setTimeout(() => {
+                setNextDisable(final)
+                setFinalValidate(final)
+            }, showTimer)
         }
-      }.bind(this),
-      error: function(req, err) {
-        alert("Failed to load data.")
-        console.error(req, err.toString());
-      }.bind(this)
-    });
-  }
+    }, [nextDisable])
 
-  loadSession() {
-    $.ajax({
-      url: './slideshow/Session/' + window.sessionStorage.getItem('id'),
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        if (data.highestSlide != null) {
-          let high = parseInt(data.highestSlide)
-          let curr = parseInt(data.highestSlide)
-          const finish = this.parseBool(data.completed)
-          if (curr >= this.state.content.length) {
-            curr = this.state.content.length - 1
-          }
-          this.setState({
-            highestSlide: high,
-            currentSlide: curr,
-            finishFlag: finish,
-            nextFlag: true,
-            quizNextFlag: true,
-            quizPassed: true
-          })
+    async function load() {
+        const showId = window.sessionStorage.getItem('id')
+        const show = await fetchShow(showId)
+        const content = await fetchSlides(showId)
+        const session = await fetchSession(showId)
+
+        let current = Number(session.highest)
+        if (session.complete) {
+            current = 0
         }
-      }.bind(this),
-      error: function(req, err) {
-        console.log("Failed to load session from db. This could be due to being logged in as an admin")
-        //console.error(req, err.toString())
-      }.bind(this)
-    })
-  }
+        
+        setShowTitle(show.showTitle)
+        setShowTimer(show.showTimer)
+        setContent(content)
+        setCurrentSlide(current)
+        setHighestSlide(Number(session.highest))
+        setLoaded(true)
 
-  updateSession() {
-    /* Updates the db that saves the users location within the slideshow */
-    $.ajax({
-      url: './slideshow/Session/' + window.sessionStorage.getItem('id'),
-      type: 'PUT',
-      data: {highestSlide: Number(this.state.highestSlide), completed: this.state.finishFlag},
-      dataType: 'json',
-      success: function() {
-        //console.log("session updated successfully")
-      }.bind(this),
-      error: function(req, err) {
-        console.log("Failed to updated user's session data:")
-        console.error(req, err.toString())
-        alert(req.responseText)
-      }.bind(this)
-    })
-  }
-
-  changeSlide(slideNum) {
-    let highest = this.state.highestSlide
-    if (this.state.highestSlide < slideNum) {
-      highest = slideNum
+        let disable = (session.highest != content.length - 1)
+        setNextDisable(disable)
+        window.setTimeout(() => {
+            setNextDisable(false)
+        }, show.showTimer)
     }
-    this.setState({
-      currentSlide: slideNum,
-      highestSlide: highest,
-      nextFlag: true
-    })
-  }
 
-  _prev() {
-    if (this.state.currentSlide != 0) {
-      this.changeSlide(this.state.currentSlide - 1)
+    function evaluateState() {
+        // Handle behavior for next and prev disables
+        let next = true
+        let prev = false
+        let high = highestSlide
+        if (high < currentSlide) high = currentSlide
+        const finished = (highestSlide == content.length-1)
+        const visited = (currentSlide < highestSlide)
+        if (finished || visited) {
+            next = false
+        }
+
+        // Final global check that will exist despite finished
+        if (currentSlide == 0) {
+            // First slide
+            prev = true
+        } 
+        else if (currentSlide == content.length - 1) {
+            // Last slide
+            next = true
+        }
+        return [prev, next, high]
     }
-  }
 
-  _next() {
-    if (this.state.currentSlide != this.state.content.length - 1) {
-      this.changeSlide(this.state.currentSlide + 1)
+    function validate() {
+        // This will be called from subcompents to revalidate the current component
+        let final = false
+        if (currentSlide === content.length - 1) final = true
+        setFinalValidate(final)
+        setNextDisable(final)
+        
     }
-  }
 
-  validate() {
-    /* this function is only called if the correct answer is chosen */
-
-    let finish = this.state.finishFlag
-    if (this.state.content.length == this.state.currentSlide + 1) {
-      finish = true
+    function _next() {
+        let next = currentSlide + 1
+        if (next == content.length) next = currentSlide // set disable
+        setCurrentSlide(next) 
     }
-    this.setState({quizPassed: true, finishFlag: finish}, () => this.updateSession())
-  }
 
-  returnToShowList() {
-    window.location.href = './slideshow/Show/list'
-  }
-
-  parseBool(bool) {
-    if (bool == undefined) return false
-    if (typeof(bool) === "string") return (Number(bool) != 0)
-    if (typeof(bool) === 'number') return (bool != 0)
-    return (typeof(bool) === "boolean") ? bool : JSON.parse(bool)
-  }
-
-  render() {
-    let inc = 0
-    let slidesDropdowns = this.state.content.map(function(slide) {
-      inc += 1
-      if (inc - 1 == this.state.currentSlide) {
-        return (
-          <button className="btn btn-secondary tipp-butt" key={inc}>{inc}</button>
-        )
-      }
-      else if (inc <= this.state.highestSlide + 1 && inc >  this.state.currentSlide - 6) {
-        return (
-          <button className="btn btn-secondary tipp-butt" key={inc} onClick={this.changeSlide.bind(this,inc-1)}>{inc}</button>
-        )
-      }
-    }.bind(this));
-
-    let finButton 
-    if (this.state.finishFlag === true) {
-      finButton = <button key="finish" className="btn btn-success" onClick={this.returnToShowList} disabled={this.state.nextDisable}>Finish</button>
+    function _prev() {
+        let prev = currentSlide - 1 
+        if (prev < 0) prev = 0 // set state to disable
+        setCurrentSlide(prev) 
     }
-    //progress stores % value of progress for bar and % in bar.
-    const progress = String(Math.round(((this.state.highestSlide+1)/this.state.content.length) * 100)) + '%'
-
-    return(
-      <div>
-        <h1 style={{textDecorationLine: 'underline'}}>{this.state.title}</h1>
+    if (!loaded) return <Skeleton />
+    return (
+    <div>
+        <h1 style={{textDecorationLine: 'underline'}}>{showTitle}</h1>
         <br></br>
         <div style={{marginLeft: 'auto', marginRight: 'auto', justifyContent: 'center', display: 'flex'}}>
           <PresentView
-            currentSlide={this.state.currentSlide}
-            high={this.state.highestSlide}
-            content={this.state.content[this.state.currentSlide]}
-            validate={this.validate}
+            currentSlide={currentSlide}
+            high={highestSlide}
+            content={content[currentSlide]}
+            validate={validate}
             />
         </div>
-        <div className="progress">
-          <div className="progress-bar" 
-               role="progressbar" 
-               aria-valuemin="0" 
-               aria-valuemax="100" 
-               key={progress}
-               style={{width: progress}}>
-                 {progress}
-          </div>
-        </div>
-        <div style={{justifyContent: 'center', display: 'flex'}}>
-          <div className="btn-toolbar">
-            <div className="btn-group">
-              <button key="prev-perm" className="btn btn-secondary" onClick={this.prev} disabled={this.state.prevDisable}><i className="fas fa-arrow-circle-left"></i></button>
-              <Tippy 
-                content={slidesDropdowns} 
-                placement="top" 
-                arrow={true}
-                interactive={true}
-                trigger="click"
-                hideOnClick={true}
-                maxWidth={200}>
-                <button className="btn btn-primary">{this.state.currentSlide+1}/{this.state.content.length}</button>
-              </Tippy>
-              <button key="next-perm" className="btn btn-secondary" onClick={this.next} disabled={this.state.nextDisable}><i className="fas fa-arrow-circle-right"></i></button>              
-            </div>
-          </div>
-        </div>
-        <div style={{justifyContent: 'center', display: 'flex', marginBottom: '2rem', marginTop: '5px'}}>
-          {finButton}
-        </div> 
+        <Progress value={String(Math.round(((highestSlide+1)/content.length) * 100)) + '%'} />
+        <SlidesNav currentSlide={currentSlide} max={content.length} high={highestSlide} changeSlide={(slide) => setCurrentSlide(slide)}/>
+        <Navigation next={_next} prev={_prev} nextDisable={nextDisable} prevDisable={prevDisable}/>
+        <Finish visible={finalValidate} />
     </div>
     )
-  }
 }
+
+

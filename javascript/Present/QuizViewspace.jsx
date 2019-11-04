@@ -140,7 +140,7 @@ export default class QuizViewspace extends Component {
       return (
         <Form>
           {a}
-          <Button key={'checkAnswer'} id={'verifySelect'} variant="primary" onClick={this.validate} style={{ marginBottom: '2rem' }}><i size="sm"></i>Click to check answer</Button>
+          <Button key={'checkAnswer'} id={'verifySelect'} variant="primary" onClick={this.validate} style={{ marginBottom: '2rem' }}><i size="sm"></i>Check answer</Button>
         </Form>
       )
     }

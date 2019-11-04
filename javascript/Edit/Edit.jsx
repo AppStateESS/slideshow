@@ -9,7 +9,7 @@ import {
   FormControl,
 } from 'react-bootstrap'
 
-import FetchQuiz from '../Resources/FetchQuiz'
+import FetchQuiz from '../api/FetchQuiz'
 import domtoimage from '../Resources/dom-to-image'
 
 export default class Edit extends Component {

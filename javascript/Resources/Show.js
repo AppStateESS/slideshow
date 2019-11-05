@@ -3,7 +3,8 @@ let Show = {
   active: 0,
   title: undefined,
   content: [],
-  preview: undefined
+  preview: undefined,
+  disabled: false
 }
 
 export default Show

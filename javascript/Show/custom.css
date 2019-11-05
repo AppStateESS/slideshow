@@ -60,3 +60,20 @@ button.drop {
 .remove {
   margin-top: 1rem;
 }
+
+.sortCards {
+  margin-top: 1%;
+  margin-right: 1%;
+  position:absolute;
+  top:0;
+  right:0;
+}
+
+.searchBar {
+  position:absolute;
+  top:0;
+  right:0;
+  margin-right: 53%;
+  margin-top: 4px;
+  width: 400px;
+}

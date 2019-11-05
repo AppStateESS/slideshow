@@ -172,9 +172,14 @@ export default function QuizEdit(props) {
                 </Group>
                 <Group >
                 <Tippy content={<div>Answer Settings</div>} arrow={true}>
-                <span className="close card-text" aria-label="Close" onClick={()=> setShowModal(true)}>
-                    <span style={{ fontSize: '32px' }}><i className="fas fa-cog"></i></span>
-                </span>
+                    <span style={{ fontSize: '32px', color: 'dimgray' }} onClick={()=> setShowModal(true)}><i className="fas fa-cog"></i></span>
+                </Tippy>
+                </Group>
+                <Group>
+                <Tippy content={<div>Custom Answer responses</div>} arrow={true}>
+                    <div style={{marginLeft: 10, padding: '3px'}}>
+                    <span style={{fontSize: '28px', color: 'dimgray'}}><i className="fas fa-comment-alt"></i></span>
+                    </div>
                 </Tippy>
                 </Group>
             </Row>

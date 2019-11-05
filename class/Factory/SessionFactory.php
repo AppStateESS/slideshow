@@ -85,8 +85,9 @@ class SessionFactory extends Base
 
         $highestSlide = $request->pullPutVarIfSet('highestSlide');
         $completed = $request->pullPutVarIfSet('completed') === 'true' ? true : false;
-
-        $resource->highestSlide = $highestSlide;
+        if ($highestSlide > $resource->highestSlide) {
+            $resource->highestSlide = $highestSlide;
+        }
         if (!$resource->completed && $completed) {
             $resource->completed = $completed;
         }

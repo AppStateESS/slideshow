@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 // Resources for loading from db
-import { fetchShow, fetchSlides, fetchSession, slidesResource } from '../api/slideshow'
+import { fetchShow, fetchSlides, fetchSession, updateSession, slidesResource } from '../api/present'
 
 import PresentView from './PresentView'
 
@@ -21,7 +21,7 @@ export default function Present() {
     const [nextDisable, setNextDisable] = useState(true) // next button disabled?
 
     const [loaded, setLoaded] = useState(false) // use to avoid running logic before db calls return
-    const [finalValidate, setFinalValidate] = useState(false) // used if last slide is quiz
+    const [finished, setFinished] = useState(false)
 
     /** Component did mount */
     useEffect(() => {
@@ -34,8 +34,11 @@ export default function Present() {
         const state = evaluateState()
         setNextDisable(state[1])
         setPrevDisable(state[0])
-        setHighestSlide(state[2])
+        const high = state[2]
+        setHighestSlide(high)
         //TODO: Update session with new highestSlide / currentSlide (maybe?)
+        const finish = (high == content.length-1)
+        updateSession(window.sessionStorage.getItem('id'), high, finish)
     }, [currentSlide])
 
     useEffect(() => {
@@ -47,7 +50,7 @@ export default function Present() {
         if (nextDisable && loaded && !visited && !isQuiz) {
             window.setTimeout(() => {
                 setNextDisable(final)
-                setFinalValidate(final)
+                setFinished(final)
             }, showTimer)
         }
     }, [nextDisable])
@@ -62,16 +65,15 @@ export default function Present() {
         if (session.complete) {
             current = 0
         }
-        
         setShowTitle(show.showTitle)
         setShowTimer(show.showTimer)
         setContent(content)
         setCurrentSlide(current)
         setHighestSlide(Number(session.highest))
         setLoaded(true)
+        setFinished(session.complete)
 
-        let disable = (session.highest != content.length - 1)
-        setNextDisable(disable)
+        setNextDisable(!session.complete)
         window.setTimeout(() => {
             setNextDisable(false)
         }, show.showTimer)
@@ -83,7 +85,6 @@ export default function Present() {
         let prev = false
         let high = highestSlide
         if (high < currentSlide) high = currentSlide
-        const finished = (highestSlide == content.length-1)
         const visited = (currentSlide < highestSlide)
         if (finished || visited) {
             next = false
@@ -105,7 +106,6 @@ export default function Present() {
         // This will be called from subcompents to revalidate the current component
         let final = false
         if (currentSlide === content.length - 1) final = true
-        setFinalValidate(final)
         setNextDisable(final)
         
     }
@@ -132,12 +132,13 @@ export default function Present() {
             high={highestSlide}
             content={content[currentSlide]}
             validate={validate}
+            finished={finished}
             />
         </div>
         <Progress value={String(Math.round(((highestSlide+1)/content.length) * 100)) + '%'} />
         <SlidesNav currentSlide={currentSlide} max={content.length} high={highestSlide} changeSlide={(slide) => setCurrentSlide(slide)}/>
         <Navigation next={_next} prev={_prev} nextDisable={nextDisable} prevDisable={prevDisable}/>
-        <Finish visible={finalValidate} />
+        <Finish visible={finished} />
     </div>
     )
 }

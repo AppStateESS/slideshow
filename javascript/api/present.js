@@ -55,6 +55,24 @@ export const fetchSession = async (showId) => {
     return parseSession(loaded)
 }
 
+export const updateSession = (showId, highestSlide, finished) => {
+  /* Updates the db that saves the users location within the slideshow */
+  $.ajax({
+    url: './slideshow/Session/' + showId,
+    type: 'PUT',
+    data: {highestSlide: Number(highestSlide), completed: finished},
+    dataType: 'json',
+    success: function() {
+      //console.log("session updated successfully")
+    }.bind(this),
+    error: function(req, err) {
+      console.log("Failed to updated user's session data:")
+      console.error(req, err.toString())
+      alert(req.responseText)
+    }.bind(this)
+  })
+}
+
   function parseBool(flag) {
       if (typeof(flag) === 'string') {
         return (flag === '0' || flag === 'false') ? false : true
@@ -63,6 +81,7 @@ export const fetchSession = async (showId) => {
         return (flag != 0)
       }
       else {
+        console.log(typeof(flag), typeof(flag) === 'boolean')
         return typeof(flag) === 'boolean' ? flag : JSON.parse(flag)
       }
   }
@@ -92,12 +111,11 @@ export const fetchSession = async (showId) => {
   }
 
   const parseSession = (data) => {
-    data = data[0]
-    let sessionState = {highest: 0, complete: 0}
-    console.log(data)
-    if (data != null) {
+    let sessionState = {highest: 0, complete: false}
+    // Data is present and an object. Data will return true if logged in as an admin
+    if (data != null && typeof(data) == 'object') {
         sessionState.highest = parseInt(data.highestSlide)
-        sessionState.complete = parseInt(data.completed)
+        sessionState.complete = parseBool(data.completed)
     }
     return sessionState
   }

@@ -54,12 +54,13 @@ export const SlidesNav = (props) => {
     }
 
     let closeSlides = []
-    for (let i = props.currentSlide - 3; i < props.currentSlide + 4; i++) {
+    for (let i = props.currentSlide - 2; i < props.currentSlide + 3; i++) {
         if (i < 0 || i > props.high || i > props.max) continue;    
         closeSlides.push(i+1);
     }
     const closeButtonG = closeSlides.map(i => {
-        return <button id={`${i}`} className="btn btn-secondary" key={i} onClick={changeSlide}>{i}</button>
+        let type = (i-1 === props.currentSlide) ? 'primary' : 'secondary'
+        return <button id={`${i}`} className={`btn btn-${type}`} key={i} onClick={changeSlide}>{i}</button>
     })
     const slidesCon = (
         <div style={{padding: 10}}>
@@ -71,10 +72,14 @@ export const SlidesNav = (props) => {
             <p>Return to</p>
             <div className="row">
                 <div className="col">
+                <Tippy content={<div>First Slide</div>} arrow={true} placement={'bottom'}>
                     <button id="first" className="btn btn-secondary btn-block" onClick={changeSlide} style={{width: 100}}>First</button>
+                </Tippy>
                 </div>
                 <div className="col">
-                    <button id="high" className="btn btn-secondary btn-block" onClick={changeSlide} style={{width: 100}}>Highest</button>
+                    <Tippy content={<div>Highest Completed Slide</div>} arrow={true} placement={'bottom'}>
+                        <button id="high" className="btn btn-secondary btn-block" onClick={changeSlide} style={{width: 100}}>Highest</button>
+                    </Tippy>
                 </div>
             </div>
             <hr></hr>

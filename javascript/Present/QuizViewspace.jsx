@@ -91,7 +91,7 @@ export default class QuizViewspace extends Component {
       let a = this.props.quizContent.answers.map((answer, i) => {
         // Shows a check if the answer has been correctly answered before
         const c = this.props.quizContent.correct
-        let ans = ((this.props.currentSlide < this.props.highestSlide) && (c.includes(i) || c.includes(i.toString()))) ?
+        let ans = ((this.props.currentSlide < this.props.highestSlide || this.props.finished) && (c.includes(i) || c.includes(i.toString()))) ?
           (<span>{answer} <i className="fas fa-check-circle" style={{ color: 'green' }}></i></span>) : answer
 
         return (
@@ -122,7 +122,7 @@ export default class QuizViewspace extends Component {
 
         // Shows a check if the answer has been correctly answered before
         const c = this.props.quizContent.correct
-        let ans = ((this.props.currentSlide < this.props.highestSlide) && (c.includes(i) || c.includes(i.toString()))) ?
+        let ans = ((this.props.currentSlide < this.props.highestSlide || this.props.finished) && (c.includes(i) || c.includes(i.toString()))) ?
           (<span>{answer} <i className="fas fa-check-circle" style={{ color: 'green' }}></i></span>) : answer
 
         return (

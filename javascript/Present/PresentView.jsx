@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Viewspace from './Viewspace.jsx'
-import QuizViewspace from './QuizViewspace.jsx'
+import QuizViewspace from './Quiz/QuizViewspace.jsx'
 
 export default class PresentView extends Component {
   constructor(props) {

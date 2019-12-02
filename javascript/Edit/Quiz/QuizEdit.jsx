@@ -5,9 +5,12 @@ import QuestionTitle from './QuestionTitleBlock.jsx'
 import AnswerBlock from './AnswerBlock.jsx'
 import SettingsModal from './AnswerSettings'
 
+import './quiz.css'
+
 import Tippy from '@tippy.js/react'
 import { Form } from 'react-bootstrap'
-const { Row, Group } = Form
+import { saveQuiz } from '../../api/quiz.js'
+const { Row, Group, Check } = Form
 
 export default function QuizEdit(props) {
     
@@ -15,10 +18,12 @@ export default function QuizEdit(props) {
     const [answers, setAnswers] = useState(['', '']) // : string[]
     const [correct, setCorrect] = useState([]) // : number[]
     const [type, setType] = useState('showTypes')
-    const [feedback, setFeedback] = useState([]) // : string[]
+    const [feedback, setFeedback] = useState(['global', 'Correct!', 'Please try again']) // : string[]
     const [id, setId] = useState(-1)
 
     const [showModal, setShowModal] = useState(false)
+    const [showCustom, setShowCustom] = useState(false)
+    const [feedCheck, setFeedCheck] = useState(false)
 
     
     useEffect(() => {
@@ -26,8 +31,10 @@ export default function QuizEdit(props) {
         let initAnswers = ['', '']
         let initCorrect = []
         let initType = 'showTypes'
-        let initFeedback = ['Please try again', 'Correct!']
+        let initFeedback = ['global', 'Correct!', 'Please try again']
         let initId = window.sessionStorage.getItem('quizId')
+
+        let initFeedCheck = false
         
         if (props.quizContent != null) {
             // Hooks are not allowed to be called in conditonals which is why there is this horrible code structure here
@@ -37,6 +44,7 @@ export default function QuizEdit(props) {
             initType = props.quizContent.type
             initFeedback = props.quizContent.feedback
             initId = props.quizContent.quizId
+            initFeedCheck = (initFeedback[0] === 'local')
         }
         setQuestion(initQuestion)
         setAnswers(initAnswers)
@@ -44,25 +52,12 @@ export default function QuizEdit(props) {
         setType(initType)
         setFeedback(initFeedback)
         setId(initId)
+        setFeedCheck(initFeedCheck)
+        setShowCustom(initFeedCheck)
     }, [])
 
-    /* Used for debugging
-    useEffect(() => {
-        console.log(answers)
-        console.log(correct)
-    }, [answers, correct])
-
-   useEffect(() => {
-       console.log(question)
-   }, [question])*/
 
     async function save() {
-        /* debug
-        console.log('saving quiz: ', id)
-        console.log('the answers are: ', answers)
-        console.log('with the correct indexes of : ', correct)
-        console.log(question)
-        */
        if (correct.length === 0) {
            alert("Please select a correct answer.")
            return
@@ -76,19 +71,14 @@ export default function QuizEdit(props) {
             'type': type,
             'feedback': feedback
         }
-        await $.ajax({
-            url: './slideshow/Quiz/' + id,
-            type: 'put',
-            data: quizContent,
-            success: async (res) => {
-                await props.load()
-                //props.toggle()
-            },
-            error: (req, res) => {
-                console.log(req)
-                console.error(res)
-            }
-        })
+        const saved = await saveQuiz(id, quizContent) 
+
+        if (saved) {
+            await props.load()
+        } else {
+            alert("an error has occurred when saving")
+        }
+
         props.toggle()
     }
 
@@ -140,14 +130,26 @@ export default function QuizEdit(props) {
         console.log(id)
         let a = [...answers]
         let c = [...correct]
+        let f = [...feedback]
         // TODO: work needs to be done on this to make it work as expected
         if (c.includes(id)) {
             // this is for muliple choice. This will need to be changed with multiple select
             c = []
         }
         a.splice(id,1)
+        f.splice(id+3, 1)
         setAnswers(a)
         setCorrect(c)
+        setFeedback(f)
+    }
+
+    function toggleFeedCheck() {
+        let f = [...feedback]
+        let fc = (f[0] === 'local')
+        f[0] = (fc) ? 'global' : 'local'
+        setFeedback(f)
+        setFeedCheck(!fc)
+        setShowCustom(!fc)
     }
 
     function buildAnswerBlock(type) {
@@ -161,7 +163,10 @@ export default function QuizEdit(props) {
                 onChange={handleAnswerChange} 
                 remove={removeAnswer} 
                 value={choice} 
-                checked={checked} 
+                checked={checked}
+                custom={showCustom}
+                setFeedback={(f) => setFeedback(f)}
+                feedback={feedback} 
             />
         })
         // style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }}
@@ -176,11 +181,23 @@ export default function QuizEdit(props) {
                 </Tippy>
                 </Group>
                 <Group>
-                <Tippy content={<div>Custom Answer responses</div>} arrow={true}>
-                    <div style={{marginLeft: 10, padding: '3px'}}>
-                    <span style={{fontSize: '28px', color: 'dimgray'}}><i className="fas fa-comment-alt"></i></span>
+                <Tippy content={<div>{!showCustom ? 'Show ' : 'Hide '} Custom Answer responses</div>} arrow={true}>
+                    <div style={{marginLeft: 10, padding: '3px'}} onClick={() => setShowCustom(!showCustom)}>
+                        <span style={{fontSize: '28px', color: 'dimgray'}}><i className="fas fa-comment-alt"></i></span>
                     </div>
                 </Tippy>
+                </Group>
+                <Group className="flexbox-mid">                        
+                    <Check
+                        custom
+                        type='checkbox' 
+                        id='localResponse'
+                        name={'localResponse'}
+                        checked={feedCheck}
+                        label="Use custom responses"
+                        onChange={toggleFeedCheck}/>
+                    {/*<label>Enable Individual Custom Responses</label>*/}
+                    
                 </Group>
             </Row>
         )
@@ -188,16 +205,6 @@ export default function QuizEdit(props) {
         return choices
     }
     
-    // we aren't actually using this right now
-    /*
-    function buildOpenBlock() {
-		let i = -1
-		let choices = this.state.quizContent.openAnswer.map((choice) => {
-			i++
-			return <OpenAnswer key={i} id={i} onChange={this.updateQuizContent} value={choice} />
-		})
-		return choices
-	} */
     let answerTypeBlock = type === 'showTypes' ? (
         <AnswerTypeCards switchView={switchView} selectOne={correct} />
     ) : null
@@ -214,8 +221,8 @@ export default function QuizEdit(props) {
         quizBuild = buildAnswerBlock(type)
     }
     return (
-        <div>
-            <h3 style={{ textAlign: 'center', marginTop: -40 }}>Edit Quiz</h3>
+        <div style={containerStyle}>
+            <h3 style={{ textAlign: 'center'}}>Edit Quiz</h3>
             <div>
                 <QuestionTitle placeholder={'Question Title'} value={question} onChange={(e)=>setQuestion(e.currentTarget.value)} id={0} />
                 <hr style={{ border: '1px solid', width: '50%' }}></hr>
@@ -228,8 +235,15 @@ export default function QuizEdit(props) {
                 onHide={()=> setShowModal(false)}
                 setFeedback={(f) => setFeedback(f)}
                 feedback={feedback} 
+                toggleGlobal={toggleFeedCheck}
             />
         </div>
     )
 
+}
+
+const containerStyle = {
+    marginTop: -40, 
+    padding: '20px',
+    backgroundColor: '#E5E7E9',
 }

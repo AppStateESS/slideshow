@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
 import Tippy from '@tippy.js/react'
 
@@ -7,6 +7,16 @@ const {Header, Body, Footer} = Modal
 export default function AnswerSettings(props) {
 
     const {feedback, setFeedback} = props
+
+    const [localEnable, setLocalEnable] = useState(false)
+
+    useEffect(() => {
+        let disable = false
+        if (feedback[0] === 'local') {
+            disable = true
+        }
+        setLocalEnable(disable)
+    }, [feedback])
 
     async function save() {
         // I have this a seperate function for the case we add more settings here
@@ -25,22 +35,29 @@ export default function AnswerSettings(props) {
     function handleChange(e) {
         // I'm not sure the iterator spread is necessary but from my pointer ptsd imma do it anyway lmao 
         let f = [...feedback]
+        f[0] = 'global'
         if (e.currentTarget.id === 'onCorrect') {
             f[1] = e.currentTarget.value
         }
         else if (e.currentTarget.id === 'onIncorrect') {
-            f[0] = e.currentTarget.value
+            f[2] = e.currentTarget.value
         }
         setFeedback(f)
+    }
+
+    const handleGlobal = function(e) {
+        console.log("test")
+        props.toggleGlobal()
+        setLocalEnable(!localEnable)
     }
 
     const answerFeedbackHelp = (
         <div>
             Allows for custom feedback to be displayed to the user when submititing an answer.
             <br></br> 
-            If they choose the correct answer the on-correct message will appear.
+            If they choose the correct answer the on-correct message will appear and vice-versa
             <br></br>
-            If they choose the incorrect answer, the on-incorrect message will appear.
+            These will not appear if the local custom answer responses are enabled and filled out
         </div>
     )
 
@@ -51,7 +68,11 @@ export default function AnswerSettings(props) {
             </Header>
             <Body>
             <div>
-                <h5>Custom Answer Responses <Tippy content={answerFeedbackHelp} arrow={true}><span><i className="fas fa-question-circle" style={{color: 'gray'}}></i></span></Tippy></h5>
+                <h5>Global Custom Answer Responses <Tippy content={answerFeedbackHelp} arrow={true}><span><i className="fas fa-question-circle" style={{color: 'gray'}}></i></span></Tippy></h5>
+                <div className="custom-control custom-checkbox my-1 mr-sm-2" onClick={handleGlobal}>
+                    <input type="checkbox" className="custom-control-input" id="customControlInline" checked={!localEnable} />
+                    <label className="custom-control-label" >Use Global Responses</label>
+                </div>
                 <hr></hr>
                 <div className="input-group mb-4">
                     <div className="input-group-prepend">
@@ -59,7 +80,7 @@ export default function AnswerSettings(props) {
                         <span className="input-group-text" style={{width: 40}}><i className="fas fa-check" style={{color: 'green'}}></i></span>
                         </Tippy>
                     </div>
-                    <textarea className="form-control" id="onCorrect" rows="1" onChange={handleChange} value={feedback[1]}></textarea>
+                    <textarea className="form-control" id="onCorrect" rows="2" onChange={handleChange} value={feedback[1]} disabled={localEnable}></textarea>
                 </div>
                 <div className="input-group mb-4">
                 <div className="input-group-prepend">
@@ -67,7 +88,7 @@ export default function AnswerSettings(props) {
                         <span className="input-group-text" style={{width: 40}}><i className="fas fa-times" style={{marginLeft: 3, color: '#d9534f'}}></i></span>
                         </Tippy>
                     </div>
-                    <textarea className="form-control" id="onIncorrect" rows="1" onChange={handleChange} value={feedback[0]}></textarea>
+                    <textarea className="form-control" id="onIncorrect" rows="2" onChange={handleChange} value={feedback[2]} disabled={localEnable}></textarea>
                 </div>
             </div>
             </Body>

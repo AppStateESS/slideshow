@@ -69,8 +69,6 @@ class QuizResource extends BaseAbstract
         $this->answers = new \phpws2\Variable\ArrayVar(null, 'answers');
         $this->correct = new \phpws2\Variable\ArrayVar(null, 'correct');
         $this->type = new \phpws2\Variable\StringVar(null, 'type');
-        $this->feedback = new \phpws2\Variable\ArrayVar(null, 'feedback');
+        $this->feedback = new \phpws2\Variable\ArrayVar(null, 'feedback'); // ['global' | 'local', $globalCorrect, $globalIncorrect, $localAnswers]
     }
-
-
 }

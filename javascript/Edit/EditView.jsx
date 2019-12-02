@@ -242,7 +242,7 @@ export default class EditView extends Component {
         <div style={{minWidth: 700}}>
           {toolbar}
           <span><br /></span>
-          <div id="editor" data-key={this.props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: this.props.content.backgroundColor}}>
+          <div id="editor" data-key={this.props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: this.props.content.backgroundColor, overflow:'auto'}}>
             <div className="row">
               {(this.state.mediaAlign === 'left') ? imgRender : undefined}
               <div className="col">

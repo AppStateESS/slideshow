@@ -1,5 +1,5 @@
 import "regenerator-runtime/runtime";
-import FetchQuiz from './FetchQuiz'
+import { fetchQuiz } from './quiz'
 
 export const fetchSlides = async (showId) => {
     let loaded = await $.ajax({
@@ -96,7 +96,7 @@ export const updateSession = (showId, highestSlide, finished) => {
         if (!isQ) {
             saveC = loaded[i].content
         } else {
-            quizC = await FetchQuiz(loaded[i].quizId)
+            quizC = await fetchQuiz(loaded[i].quizId)
             //quizC = undefined
         }
         showContent.push({

@@ -146,6 +146,11 @@ export default function QuizEdit(props) {
     function toggleFeedCheck() {
         let f = [...feedback]
         let fc = (f[0] === 'local')
+        if (type === 'select') {
+            // This shouldn't get triggered since I remove the ui option but I will leave it here in case
+            alert("Custom Local Feedback is not supported for multiple select")
+            fc = true
+        }
         f[0] = (fc) ? 'global' : 'local'
         setFeedback(f)
         setFeedCheck(!fc)
@@ -187,6 +192,7 @@ export default function QuizEdit(props) {
                     </div>
                 </Tippy>
                 </Group>
+                {type === 'choice' ? // Only support custom feedback on multipleChoice for now
                 <Group className="flexbox-mid">                        
                     <Check
                         custom
@@ -198,7 +204,7 @@ export default function QuizEdit(props) {
                         onChange={toggleFeedCheck}/>
                     {/*<label>Enable Individual Custom Responses</label>*/}
                     
-                </Group>
+                </Group> : null }
             </Row>
         )
         choices.push(bottomBlock)

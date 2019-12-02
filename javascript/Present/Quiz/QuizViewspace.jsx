@@ -61,7 +61,10 @@ export default function QuizViewspace(props) {
           }
         }
         let g = 'unchosen'
-        if (correct) g = 'correct'
+        if (correct) {
+          g = 'correct'
+          props.validate()
+        }
         else if (partial) g = 'partial'
         else g  = 'incorrect'
         setGradeState(g)

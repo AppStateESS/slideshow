@@ -14,7 +14,8 @@ export default class QuizView extends Component {
       // TODO: fix bug with icon not changing when correct does. We need to force a rerender 
       let type = (this.props.quizContent.type === 'select') ? 'square' : 'circle' 
       answers = this.props.quizContent.answers.map(function (question, i) {
-        //let key = question
+        // random key to ensure that the icons get rerendered each time
+        const k =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         let check = (<i className={`fas fa-minus-${type}`} style={{ color: 'red' }}></i>)
         if (this.props.quizContent.correct != undefined) {
           if ((this.props.quizContent.correct).includes(i.toString())) {
@@ -23,7 +24,7 @@ export default class QuizView extends Component {
         }
         return (
           <div key={question}>
-            <p>{check} {question}</p>
+            <p key={k}>{check} {question}</p>
           </div>
         )
       }.bind(this))

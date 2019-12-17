@@ -68,6 +68,7 @@ class QuizFactory extends Base
         $resource->answers = $request->pullPutVar('answers');
         $resource->correct = $request->pullPutVar('correct');
         $resource->type = $request->pullPutvar('type');
+        $resource->feedback =  $request->pullPutVar('feedback');
         $this->saveResource($resource);
         return $request;
         

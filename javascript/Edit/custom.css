@@ -35,11 +35,6 @@
   padding: 0rem;
 }
 
-.modal-backdrop
-{
-    opacity:0 !important;
-}
-
 .align-right {
   float: none;
   text-align: right;

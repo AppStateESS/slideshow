@@ -8,7 +8,7 @@ import Tippy from '@tippy.js/react'
 import 'tippy.js/themes/light-border.css'
 import {CirclePicker, ChromePicker} from 'react-color'
 
-import TextColorMap from '../../Resources/TextColorMap.js'
+import TextColorMap from '../../Resources/Draft/TextColorMap'
 
 export default class TextColor extends Component {
   constructor(props) {

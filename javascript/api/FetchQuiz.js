@@ -13,7 +13,7 @@ const FetchQuiz = async function fetchQuiz(id) {
           answers: JSON.parse(data['answers']),
           correct: JSON.parse(data['correct']),
           type: data['type'],
-          answerFeedback: JSON.parse(data['answerFeedback']),
+          feedback: JSON.parse(data['feedback']),
           quizId: Number(data['id'])
         }
       },

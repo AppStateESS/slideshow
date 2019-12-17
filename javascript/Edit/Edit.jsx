@@ -9,7 +9,7 @@ import {
   FormControl,
 } from 'react-bootstrap'
 
-import FetchQuiz from '../Resources/FetchQuiz'
+import { fetchQuiz, postQuiz } from '../api/quiz'
 import domtoimage from '../Resources/dom-to-image'
 
 export default class Edit extends Component {
@@ -38,7 +38,7 @@ export default class Edit extends Component {
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
-    this.loadQuiz = FetchQuiz.bind(this)
+    this.loadQuiz = fetchQuiz.bind(this)
     this.saveDomScreen = this.saveDomScreen.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
@@ -224,27 +224,10 @@ export default class Edit extends Component {
   }
 
 
-  addNewQuiz() {
-    // This method is useless, since we can change this at the call. However, previous code implemented this method seperately
-    // and we can simplify this at a later time.
-    $.ajax({
-      url: './slideshow/Quiz/',
-      method: 'post',
-      data: {
-        questionTile: 'this is a test title',
-        type: 'open' 
-      },
-      success: (id) => {
-        //console.log(id)
-        sessionStorage.setItem('quizId', id)
-        //console.log(Number(id))
-        //console.log(typeof(Number(id)))
-        this.addNewSlide(Number(id))
-      },
-      error: (req, res) => {
-        console.log(res.toString())
-      }
-    })
+  async addNewQuiz() {
+    const id = await postQuiz()
+    sessionStorage.setItem('quizId', id)
+    this.addNewSlide(id)
   }
 
   // addNewSlide to the end

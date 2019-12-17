@@ -45,7 +45,7 @@ class Admin extends Base
     /*
     * This does nothing because if we are an admin we are demoing the show
     */
-    protected function getCommand($request)
+    protected function viewJsonCommand($request)
     {
         return true;
     }
@@ -55,7 +55,7 @@ class Admin extends Base
         return $this->view->sessionTable();
     }
 
-    protected function viewJsonCommand($request)
+    protected function allJsonCommand($request)
     {
         $sessionData = $this->factory->getAll($request);
         return $sessionData;

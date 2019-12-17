@@ -1,6 +1,6 @@
 .progress {
     margin: auto;
-    width: 800px;
+    max-width: 800px;
     margin-bottom: 20px !important;
 }
 .dropdown-menu {

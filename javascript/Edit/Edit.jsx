@@ -11,6 +11,7 @@ import {
 
 import { fetchQuiz, postQuiz } from '../api/quiz'
 import domtoimage from '../Resources/dom-to-image'
+import Skeleton from '../Resources/Components/Skeleton.jsx'
 
 export default class Edit extends Component {
   constructor() {
@@ -33,6 +34,7 @@ export default class Edit extends Component {
         },
       ],
       slideTimer: 2,
+      loaded: false
     }
 
 
@@ -129,7 +131,8 @@ export default class Edit extends Component {
           }
           this.setState({
             content: showContent,
-            id: loaded[0].showId
+            id: loaded[0].showId,
+            loaded: true
           });
         }
         else {
@@ -367,6 +370,7 @@ export default class Edit extends Component {
 
 
   render() {
+    if (!this.state.loaded) return <Skeleton />
     let isQuiz = this.quizConv(this.state.content[this.state.currentSlide].isQuiz)
     let cardTitle;
     if (this.state.editTitleView) {

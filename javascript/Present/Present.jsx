@@ -5,7 +5,8 @@ import { fetchShow, fetchSlides, fetchSession, updateSession, slidesResource } f
 
 import PresentView from './PresentView'
 
-import { Progress, Navigation, Skeleton, Finish, SlidesNav } from './Navbar'
+import { Progress, Navigation, Finish, SlidesNav } from './Navbar'
+import Skeleton from '../Resources/Components/Skeleton'
 
 export default function Present() {
     

@@ -137,6 +137,7 @@ export default class Edit extends Component {
         }
         else {
           this.save()
+          this.setState({loaded: true})
         }
       }.bind(this),
       error: function(req, err) {

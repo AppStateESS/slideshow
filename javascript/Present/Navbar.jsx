@@ -118,23 +118,6 @@ export const Progress = (props) => {
     )
 }
 
-export const Skeleton = () => {
-    return (
-        <div className="text-center" style={spinner}>
-            <p>Loading show...</p>
-            <div className="spinner-border text-primary" style={{width: '3rem', height: '3rem'}} role="status">
-                <span className="sr-only">Loading...</span>
-            </div>
-        </div>
-    )
-}
-
 const buttonGroup = {
     justifyContent: 'center', display: 'flex', marginBottom: '1rem'
-}
-
-const spinner = {
-    marginRight: 'auto',
-    marginLeft: 'auto',
-    marginTop: '10rem',
 }

@@ -68,10 +68,10 @@ export default function AnswerSettings(props) {
             </Header>
             <Body>
             <div>
-                <h5>Global Custom Answer Responses <Tippy content={answerFeedbackHelp} arrow={true}><span><i className="fas fa-question-circle" style={{color: 'gray'}}></i></span></Tippy></h5>
+                <h5>Generic Answer Responses <Tippy content={answerFeedbackHelp} arrow={true}><span><i className="fas fa-question-circle" style={{color: 'gray'}}></i></span></Tippy></h5>
                 <div className="custom-control custom-checkbox my-1 mr-sm-2" onClick={handleGlobal}>
                     <input type="checkbox" className="custom-control-input" id="customControlInline" checked={!localEnable} />
-                    <label className="custom-control-label" >Use Global Responses</label>
+                    <label className="custom-control-label" >Enable Generic Responses</label>
                 </div>
                 <hr></hr>
                 <div className="input-group mb-4">

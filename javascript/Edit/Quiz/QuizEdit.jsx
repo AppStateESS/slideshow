@@ -6,10 +6,10 @@ import AnswerBlock from './AnswerBlock.jsx'
 import SettingsModal from './AnswerSettings'
 
 import './quiz.css'
+import { saveQuiz } from '../../api/quiz.js'
 
 import Tippy from '@tippy.js/react'
 import { Form } from 'react-bootstrap'
-import { saveQuiz } from '../../api/quiz.js'
 const { Row, Group, Check } = Form
 
 export default function QuizEdit(props) {
@@ -58,10 +58,18 @@ export default function QuizEdit(props) {
 
 
     async function save() {
-       if (correct.length === 0) {
+        if (correct.length === 0) {
            alert("Please select a correct answer.")
            return
-       }
+        } else if (type === 'choice' && feedCheck) {
+            // Checks to make sure all of feeback is filled out 
+            for (let i = 2; i < feedback.length; i++) {
+                if (feedback[i] == undefined || feedback[i] == "") {
+                    alert("Please ensure that all custom answers are filled out.")
+                    return
+                }
+            }    
+        }
        
         let quizContent = {
             'quizId': id,
@@ -131,7 +139,7 @@ export default function QuizEdit(props) {
         let a = [...answers]
         let c = [...correct]
         let f = [...feedback]
-        // TODO: work needs to be done on this to make it work as expected
+        // more testing might need to be done on this to make this works as expected
         if (c.includes(id)) {
             // this is for muliple choice. This will need to be changed with multiple select
             c = []
@@ -158,6 +166,7 @@ export default function QuizEdit(props) {
     }
 
     function buildAnswerBlock(type) {
+        if (type !== 'choice' && type != 'select') return undefined
         let i = -1
 		let choices = answers.map((choice) => {
             i++
@@ -174,7 +183,7 @@ export default function QuizEdit(props) {
                 feedback={feedback} 
             />
         })
-        // style={{ marginBottom: '2rem', marginLeft: '10%', width: '54%' }}
+
         let bottomBlock = (
             <Row style={{marginLeft: '10%'}}>
                 <Group style={{ width: '60%', marginRight: '1rem' }}>
@@ -185,13 +194,14 @@ export default function QuizEdit(props) {
                     <span style={{ fontSize: '32px', color: 'dimgray' }} onClick={()=> setShowModal(true)}><i className="fas fa-cog"></i></span>
                 </Tippy>
                 </Group>
+                {type === 'choice' ?
                 <Group>
                 <Tippy content={<div>{!showCustom ? 'Show ' : 'Hide '} Custom Answer responses</div>} arrow={true}>
                     <div style={{marginLeft: 10, padding: '3px'}} onClick={() => setShowCustom(!showCustom)}>
                         <span style={{fontSize: '28px', color: 'dimgray'}}><i className="fas fa-comment-alt"></i></span>
                     </div>
                 </Tippy>
-                </Group>
+                </Group> : null }
                 {type === 'choice' ? // Only support custom feedback on multipleChoice for now
                 <Group className="flexbox-mid">                        
                     <Check
@@ -215,17 +225,16 @@ export default function QuizEdit(props) {
         <AnswerTypeCards switchView={switchView} selectOne={correct} />
     ) : null
 
-    let showAddElement = /*this.state.addElementVisible ||*/ type === 'showTypes' ?
+    let showAddElement = (type === 'showTypes') ?
         undefined :
         <span>
             <button id='showTypes' key="2" className="btn btn-secondary btn-block" onClick={switchView}><i className="fas fa-undo"></i> Change Answer Type</button>
             <button key="3" className="btn btn-primary btn-block" onClick={save}><i className="fas fa-save"></i> Save Quiz Slide</button>
         </span>
 
-    let quizBuild = undefined 
-    if (type === 'choice' || type === 'select') {
-        quizBuild = buildAnswerBlock(type)
-    }
+
+    const quizBuild = buildAnswerBlock(type)
+
     return (
         <div style={containerStyle}>
             <h3 style={{ textAlign: 'center'}}>Edit Quiz</h3>

@@ -82,13 +82,33 @@ class ShowFactory extends Base
     * Creates a new slideshow upon the patch request.
     * @var $showId id of the show to be saved.
     */
-    public function patch($showId, Request $request)
+    public function patch(Request $request)
     {
-      $resource = $this->load($showId);
-      $resource->title = $request->pullPatchVarIfSet('title');
-      $resource->active = $request->pullPatchVarIfSet('active');
-      $this->saveResource($resource);
-      return $resource;
+            // Pull the id from the request:
+        $vars = $request->getRequestVars();
+        $showId = intval($vars['Show']);
+        $resource = $this->load($showId);
+
+        $title = $request->pullPatchVarIfSet('title');
+        if ($title) {
+            $resource->title = $title;
+        }
+
+        $animation = $request->pullPatchVarIfSet('animation');
+        if ($animation) {
+            $resource->animation = $animation;
+        }
+
+        $active;
+        try {
+            $active = $request->pullPatchVar('active');
+        } catch (\phpws2\Exception\ValueNotSet $e) {
+            $active = $resource->active;
+        }
+        $resource->active = $active;
+
+        $this->saveResource($resource);
+        return $resource;
     }
 
     /**
@@ -138,7 +158,7 @@ class ShowFactory extends Base
         if ($showId === null || $showId == -1) {
         throw new \Exception("ShowId is not valid: $showId", 1);
         }
-        $sql = "SELECT title, slideTimer FROM ss_show WHERE id=:showId;";
+        $sql = "SELECT title, slideTimer, animation FROM ss_show WHERE id=:showId;";
         $db = Database::getDB();
         $pdo = $db->getPDO();
         $q = $pdo->prepare($sql);

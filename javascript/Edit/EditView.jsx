@@ -14,6 +14,7 @@ import ImageC from './AddOn/ImageColumn.jsx'
 import CustomStyleMap from '../Resources/Draft/CustomStyleMap';
 import decorator from '../Resources/Draft/LinkDecorator'
 import CustomBlockFn from '../Resources/Draft/CustomBlockFn'
+import 'animate.css'
 
 export default class EditView extends Component {
 
@@ -242,6 +243,10 @@ export default class EditView extends Component {
         <div style={{minWidth: 700}}>
           {toolbar}
           <span><br /></span>
+          {
+            // This code is a little-let's not kid ourselves, it's quite a bit messy. Basicly, I need a different view for quizEdit then the other three views
+            (this.state.quizEditView && this.props.isQuiz) ? quizView : 
+          (
           <div id="editor" data-key={this.props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: this.props.content.backgroundColor, overflow:'auto'}}>
             <div className="row">
               {(this.state.mediaAlign === 'left') ? imgRender : undefined}
@@ -250,7 +255,8 @@ export default class EditView extends Component {
               </div>
               {(this.state.mediaAlign === 'right') ? imgRender : undefined}
               </div>
-          </div>
+          </div>)
+          }
         </div>
       </div>
     )

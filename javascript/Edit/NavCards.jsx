@@ -60,11 +60,12 @@ export default class NavCards extends Component {
       let highlight = (this.props.currentSlide == i) ? ({border: 'solid 3px #337ab7', borderRadius: 3, zIndex: -1}) : {padding: '3px'}
       let top = (this.state.dragItem >= this.state.dragLineIndex)
       let bar = (this.state.dragLineIndex != -1 && i == this.state.dragLineIndex) ? {border: 'solid 1px #337ab7'} : {border: 'solid 1px white'}
+      const imgSrc = (typeof(slide.thumb) == 'string') ? slide.thumb : '/mod/slideshow/img/loading_placeholder.png'
       return (
         <span key={i}>
           {top ? <div key={`a-${i}`} style={bar}></div> : undefined}
           <div id="card" style={cardStyle} onClick={() => this.props.setCurrentSlide(i)} key={i}>
-            <img id={i} className="thumb" key={i} src={slide.thumb} width={175} height={100} alt={"loading..."} style={highlight} draggable={true}></img> 
+            <img id={i} className="thumb" key={i} src={imgSrc} width={175} height={100} alt={"loading..."} style={highlight} draggable={true} ></img> 
           </div>
           {!top ? <div key={`b-${i}`} style={bar}></div> : undefined}
         </span>

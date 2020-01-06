@@ -12,6 +12,7 @@ import {
   Popover,
 } from 'react-bootstrap'
 import { CirclePicker, SketchPicker } from 'react-color';
+import AnimateDropdown from './AddOn/AnimateDropdown'
 import './custom.css'
 
 export default class Settings extends Component {
@@ -149,6 +150,16 @@ export default class Settings extends Component {
                     </a>
                   {colorPick}
                 </Col>
+            </Row>
+            <br></br>
+            <Row>
+              <Col sm={6} className="settings-option">Slide Animation</Col>
+              <Col>
+                    <AnimateDropdown id={this.props.id} animation={this.props.animation} setAnimation={this.props.setAnimation}/>
+              </Col>
+              <Col style={{display: 'flex', alignItems: 'center', marginRight: '12%'}}>
+                <a href={`./slideshow/Slide/Present/?id=${this.props.id}`}>Preview <i className="fas fa-arrow-circle-right"></i></a>
+              </Col>
             </Row>
           </Modal.Body>
         </div>

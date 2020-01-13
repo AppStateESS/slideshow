@@ -59,7 +59,9 @@ export default class NavBar extends Component {
             changeBackground ={this.props.changeBackground}
             id               ={this.props.id}
             currentColor     ={this.props.currentColor}
-            slideTimer       ={this.props.slideTimer}/>
+            slideTimer       ={this.props.slideTimer}
+            animation        ={this.props.animation}
+            setAnimation     ={this.props.setAnimation}/>
       </ButtonToolbar>
     </div>
     )

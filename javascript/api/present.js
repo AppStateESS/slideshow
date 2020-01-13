@@ -31,6 +31,7 @@ export const fetchShow = async (showId) => {
           let time = Number(data[0].slideTimer) * 1000
           show.showTimer = time
           show.showTitle = data[0].title
+          show.animation = data[0].animation
         },
         error: (req, res) => {
           console.error(req, res.toString())

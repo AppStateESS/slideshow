@@ -34,7 +34,8 @@ export default class Edit extends Component {
         },
       ],
       slideTimer: 2,
-      loaded: false
+      loaded: false,
+      animation: 'None'
     }
 
 
@@ -154,6 +155,7 @@ export default class Edit extends Component {
         this.setState({
           slideTimer: Number(data[0].slideTimer),
           showTitle: data[0].title,
+          animation: data[0].animation
         })
       },
       error: (request, response) => {
@@ -207,11 +209,9 @@ export default class Edit extends Component {
 
 
   addNewSlide(quizId) {
-    console.log(typeof(quizId), quizId)
     if (typeof(quizId) != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
-    console.log(quizId)
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
@@ -412,6 +412,8 @@ export default class Edit extends Component {
           changeBackground  ={this.changeBackground}
           currentColor      ={this.state.content[this.state.currentSlide].backgroundColor}
           slideTimer        ={this.state.slideTimer}
+          animation         ={this.state.animation}
+          setAnimation      ={(a) => this.setState({animation: a})}
           />
         <div className="row">
           <NavCards 

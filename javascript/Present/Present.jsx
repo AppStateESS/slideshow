@@ -8,10 +8,13 @@ import PresentView from './PresentView'
 import { Progress, Navigation, Finish, SlidesNav } from './Navbar'
 import Skeleton from '../Resources/Components/Skeleton'
 
+import 'animate.css'
+
 export default function Present() {
     
     const [showTitle, setShowTitle] = useState('Present: ')
     const [showTimer, setShowTimer] = useState(0)
+    const [showAnimation, setShowAnimation] = useState('None')
 
     const [content, setContent] = useState(slidesResource.content)
 
@@ -68,6 +71,7 @@ export default function Present() {
         }
         setShowTitle(show.showTitle)
         setShowTimer(show.showTimer)
+        setShowAnimation(show.animation)
         setContent(content)
         setCurrentSlide(current)
         setHighestSlide(Number(session.highest))
@@ -127,7 +131,7 @@ export default function Present() {
     <div>
         <h1 style={{textDecorationLine: 'underline'}}>{showTitle}</h1>
         <br></br>
-        <div style={{marginLeft: 'auto', marginRight: 'auto', justifyContent: 'center', display: 'flex'}}>
+        <div key={currentSlide} className={`animated ${showAnimation} faster`} style={{marginLeft: 'auto', marginRight: 'auto', justifyContent: 'center', display: 'flex'}}>
           <PresentView
             currentSlide={currentSlide}
             high={highestSlide}

@@ -8,6 +8,7 @@ import SettingsModal from './AnswerSettings'
 import './quiz.css'
 import { saveQuiz } from '../../api/quiz.js'
 
+import 'animate.css'
 import Tippy from '@tippy.js/react'
 import { Form } from 'react-bootstrap'
 const { Row, Group, Check } = Form
@@ -24,6 +25,8 @@ export default function QuizEdit(props) {
     const [showModal, setShowModal] = useState(false)
     const [showCustom, setShowCustom] = useState(false)
     const [feedCheck, setFeedCheck] = useState(false)
+
+    const [animationType, setAnimation] = useState('animated slideInRight faster')
 
     
     useEffect(() => {
@@ -86,7 +89,7 @@ export default function QuizEdit(props) {
         } else {
             alert("an error has occurred when saving")
         }
-
+        
         props.toggle()
     }
 
@@ -236,7 +239,7 @@ export default function QuizEdit(props) {
     const quizBuild = buildAnswerBlock(type)
 
     return (
-        <div style={containerStyle}>
+        <div className={animationType} style={containerStyle}>
             <h3 style={{ textAlign: 'center'}}>Edit Quiz</h3>
             <div>
                 <QuestionTitle placeholder={'Question Title'} value={question} onChange={(e)=>setQuestion(e.currentTarget.value)} id={0} />
@@ -258,7 +261,7 @@ export default function QuizEdit(props) {
 }
 
 const containerStyle = {
-    marginTop: -40, 
     padding: '20px',
     backgroundColor: '#E5E7E9',
+    borderRadius: 3
 }

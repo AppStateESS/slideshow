@@ -12,7 +12,7 @@ export default class ImageColumn extends Component {
     const settingsButtons = (
       <div style={{width: 200}}>
         <button className="btn btn-danger btn-block" onClick={this.props.remove}>Remove Image <i className="fas fa-trash"></i></button>
-        <button className="btn btn-primary btn-block" onClick={this.props.align}>
+        <button className="btn btn-primary btn-block" onClick={(event) => this.props.align(this.props.mediaAlign === 'right' ? 'left' : 'right')}>
           {(this.props.mediaAlign === 'right') ? left : right}
         </button>
       </div>

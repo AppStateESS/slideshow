@@ -372,7 +372,8 @@ export default class Edit extends Component {
 
   render() {
     if (!this.state.loaded) return <Skeleton />
-    let isQuiz = this.quizConv(this.state.content[this.state.currentSlide].isQuiz)
+    //console.log(this.state.content[this.state.currentSlide].isQuiz)
+    let isQuiz = this.state.content[this.state.currentSlide].isQuiz
     let cardTitle;
     if (this.state.editTitleView) {
       cardTitle = <InputGroup>
@@ -427,7 +428,6 @@ export default class Edit extends Component {
           <EditView
             currentSlide    ={this.state.currentSlide}
             content         ={this.state.content[this.state.currentSlide]}
-            isQuiz          ={isQuiz}
             deleteElement   ={this.deleteFromStack}
             saveContentState={this.saveContentState}
             saveQuizContent ={this.saveQuizContent}

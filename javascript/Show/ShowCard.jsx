@@ -110,8 +110,8 @@ export default class ShowCard extends Component {
  }
 
  handleActivation() {
-  this.state.active > 0 ? this.setState({active: 0}, function(){this.handleSave()}) :
-                           this.setState({active: 1}, function(){this.handleSave()})
+  this.state.active > 0 ? this.setState({active: 0}, () => {this.handleSave()}) :
+                           this.setState({active: 1}, () => {this.handleSave()})
  }
 
  async editTransition() {

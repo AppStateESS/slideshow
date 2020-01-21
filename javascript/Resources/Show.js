@@ -1,6 +1,6 @@
 let Show = {
   id: -1,
-  active: 0,
+  active: false,
   title: undefined,
   content: [],
   preview: undefined,

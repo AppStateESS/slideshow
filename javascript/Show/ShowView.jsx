@@ -18,7 +18,9 @@ export default class ShowView extends Component {
       newShowFocus: false,
       alphaFilter: true,
       activeFilter: false,
-      newFilter: false
+      newFilter: false,
+      inv: ['a-z', ''], //last modified is the first spot, second index is last click 
+      loaded: false
     }
 
     this.getData = this.getData.bind(this)
@@ -36,6 +38,16 @@ export default class ShowView extends Component {
   componentDidMount() {
     this.getData()
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.inv[1] != '') {
+      this.sortShow()
+      console.log(this.state)
+    }
+    
+  }
+
+  
 
   saveNewShow() {
     if (this.state.resource.title != undefined) {
@@ -81,7 +93,15 @@ export default class ShowView extends Component {
       type: 'GET',
       dataType: 'json',
       success: function (data) {
-        this.setState({ showData: data['listing'] });
+        let inver = (this.state.loaded) ? 'active' : 'a-z'
+        if (this.state.loaded) {
+          if (this.state.inv[0] === 'active') {
+            inver = 'active'
+          } else if (this.state.inv[0] === 'inactive') {
+            inver = 'inactive'
+          }
+        }
+        this.setState({ showData: data['listing'], loaded: true, inv: [inver, '']}, ()=> this.sortShow());   
       }.bind(this),
       error: function (req, err) {
         alert("Failed to grab data")
@@ -96,51 +116,60 @@ export default class ShowView extends Component {
     }
   }
 
-  sortShow(inv, id) {
+  sortShow() {
     let showD = [...this.state.showData]
-    if (!inv) {
-      if (id == 5) {
+    if (this.state.inv[0] !== this.state.inv[1]) {
+      console.log(this.state, "state first")
+      if (this.state.inv[1] === 'newest') {
         showD.sort((a, b) => b.id - a.id)
-      } else if (id == 1) {
+      } else if (this.state.inv[1] === 'a-z') {
         showD.sort((a, b) => a.title.localeCompare(b.title))
-      } else if (id == 3) {
+      } else if (this.state.inv[1] === 'active' || this.state.inv[0] === 'active') {
+        console.log('active ran')
         showD.sort((a, b) => b.active - a.active)
-      }
-
-    } else {
-      if (id == 6) {
-        showD.sort((a, b) => a.id - b.id)
-      } else if (id == 2) {
-        showD.sort((a, b) => b.title.localeCompare(a.title))
-      } else if (id == 4) {
+      } else if (this.state.inv[0] === "inactive") {
+        console.log('inactive ran')
         showD.sort((a, b) => a.active - b.active)
       }
-      this.setState({ newFilter: false, activeFilter: false, alphaFilter: false })
+      this.setState({inv: [this.state.inv[1], '']})
+    } else {
+      console.log("second")
+      if (this.state.inv[0] === 'oldest') {
+        showD.sort((a, b) => a.id - b.id)
+      } else if (this.state.inv[0] === 'z-a') {
+        showD.sort((a, b) => b.title.localeCompare(a.title))
+      } else if (this.state.inv[0] === 'inactive') {
+        showD.sort((a, b) => a.active - b.active)
+      }
+      this.setState({ newFilter: false, activeFilter: false, alphaFilter: false, inv: [this.state.inv[0], '']})
     }
-    this.setState({ showData: showD })
+    this.setState({ showData: showD }, ()=>{console.log(this.state, ' sortshow')})
+    
   }
 
   handleAlpha(event) {
-    if (event.target.id == 1) {
-      this.sortShow(true, 2)
+    console.log(event.target.id)
+    if(event.target.id !== 'a-z') {
+      this.setState({ alphaFilter: true, newFilter: false, activeFilter: false, inv: [this.state.inv[0], 'a-z'] })
     } else {
-      this.setState({ alphaFilter: true, newFilter: false, activeFilter: false }, this.sortShow(false, 1))
+      this.setState({ alphaFilter: true, newFilter: false, activeFilter: false, inv: ['z-a', 'z-a'] })
     }
+    
   }
 
   handleActive(event) {
-    if (event.target.id == 3) {
-      this.sortShow(true, 4)
+    if(event.target.id === 'inactive') {
+      this.setState({ alphaFilter: false, newFilter: false, activeFilter: true, inv: [this.state.inv[0], 'active'] })
     } else {
-      this.setState({ activeFilter: true, alphaFilter: false, newFilter: false }, this.sortShow(false, 3))
+      this.setState({ alphaFilter: false, newFilter: false, activeFilter: true, inv: ['inactive', 'inactive'] })
     }
   }
 
   handleNew(event) {
-    if (event.target.id == 5) {
-      this.sortShow(true, 6)
+    if(event.target.id !== 'newest') {
+      this.setState({ alphaFilter: false, newFilter: true, activeFilter: false, inv: [this.state.inv[0], 'newest'] })
     } else {
-      this.setState({ newFilter: true, alphaFilter: false, activeFilter: false }, this.sortShow(false, 5))
+      this.setState({ alphaFilter: false, newFilter: true, activeFilter: false, inv: ['oldest', 'oldest'] })
     }
   }
 
@@ -154,9 +183,11 @@ export default class ShowView extends Component {
       let b = showD[f].title.toUpperCase()
 
       const weight = fuzzySearch(a, b)
-      if (weight != null && weight.score >= -45) {
+      if (weight != null && weight.score >= -60) {
         showD[f].disabled = false
       } else if (a.length == 0) {
+        showD[f].disabled = false
+      } else if(a.length == 1 && weight != null && weight.score >= -70) {
         showD[f].disabled = false
       }
     }
@@ -166,7 +197,6 @@ export default class ShowView extends Component {
   }
 
   render() {
-
     const modal = (
       <Modal
         show={this.state.modalOpen}
@@ -190,7 +220,7 @@ export default class ShowView extends Component {
         </Modal.Body>
       </Modal>
     )
-
+        
     if (this.state.showData === null) {
       return (<div></div>)
     } else {
@@ -210,9 +240,9 @@ export default class ShowView extends Component {
 
       let dropDownItems = (
         <div>
-          <button id={this.state.alphaFilter ? 1 : 2} className="dropdown-item" onClick={this.handleAlpha} type="button">{this.state.alphaFilter ? 'Z-A' : 'A-Z'}</button>
-          <button id={this.state.activeFilter ? 3 : 4} className="dropdown-item" onClick={this.handleActive} type="button">{this.state.activeFilter ? 'Inactive' : 'Active'}</button>
-          <button id={this.state.newFilter ? 5 : 6} className="dropdown-item" onClick={this.handleNew} type="button">{this.state.newFilter ? 'Oldest' : 'Newest'}</button>
+          <button id={this.state.alphaFilter ? 'a-z' : 'z-a'} className="dropdown-item" onClick={this.handleAlpha} type="button">{this.state.alphaFilter ? 'Z-A' : 'A-Z'}</button>
+          <button id={this.state.activeFilter ? 'active' : 'inactive'} className="dropdown-item" onClick={this.handleActive} type="button">{this.state.activeFilter ? 'Inactive' : 'Active'}</button>
+          <button id={this.state.newFilter ? 'newest' : 'oldest'} className="dropdown-item" onClick={this.handleNew} type="button">{this.state.newFilter ? 'Oldest' : 'Newest'}</button>
         </div>
       )
 
@@ -220,7 +250,7 @@ export default class ShowView extends Component {
         <div>
           <h2>Shows</h2>
           <div className="input-group mb-3 searchBar">
-            <input type="text" className="form-control" onChange={this.searchTitle} placeholder="Search a slide show title" aria-label="Search a Slide name" aria-describedby="button-addon2"></input>
+            <input type="text" className="form-control" onChange={this.searchTitle} placeholder="Search a title" aria-label="Search a Slide name" aria-describedby="button-addon2"></input>
           </div>
           <div className="jumbotron">
             <div className="dropdown sortCards">

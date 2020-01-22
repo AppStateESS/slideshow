@@ -17,7 +17,7 @@ export default function EditView(props) {
         <div className="col" style={{marginTop: 12}}>
             <ToolbarQ toggleQuizEdit={() => setEditView(!editView)} view={editView} />
             <span id="space_between_the_toolbar" style={{padding: 1}} ></span>
-            <QuizEdit quizContent={props.content.quizContent} saveQuizContent={props.saveQuizContent} toggle={() => setEditView(!editView)} load={props.load}/>
+            <QuizEdit quizContent={props.content.quizContent} saveQuizContent={props.saveQuizContent} toggle={() => setEditView(false)} load={props.load}/>
         </div>)
     return (
         <div className="col" style={{ paddingTop: 12}}>
@@ -28,7 +28,7 @@ export default function EditView(props) {
                     <div className="row">
                     {(mediaAlign === 'left') ? imgRender : undefined}
                     <div className="col">
-                        <QuizView quizContent={props.content.quizContent} toggle={() => setEditView(!editView)}/>
+                        <QuizView quizContent={props.content.quizContent} toggle={() => setEditView(true)}/>
                     </div>
                     {(mediaAlign === 'right') ? imgRender : undefined}
                     </div>

@@ -209,7 +209,6 @@ export default class Edit extends Component {
 
 
   addNewSlide(quizId) {
-    console.log(quizId)
     if (typeof(quizId) != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
@@ -225,7 +224,7 @@ export default class Edit extends Component {
     this.setState({
       //currentSlide: index,
       content: copy,
-    }, () => this.setCurrentSlide(index))
+    }, () => {this.save(); this.setCurrentSlide(index)})
   }
 
 

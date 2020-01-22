@@ -38,8 +38,8 @@ export default function QuizEdit(props) {
         let initId = window.sessionStorage.getItem('quizId')
 
         let initFeedCheck = false
-        
-        if (props.quizContent != null) {
+        // This will only be true if the slide is empty
+        if (props.quizContent.correct != null) {
             // Hooks are not allowed to be called in conditonals which is why there is this horrible code structure here
             initQuestion = props.quizContent.question
             initAnswers = props.quizContent.answers
@@ -85,6 +85,7 @@ export default function QuizEdit(props) {
         const saved = await saveQuiz(id, quizContent) 
 
         if (saved) {
+            props.saveQuizContent(quizContent)
             await props.load()
         } else {
             alert("an error has occurred when saving")

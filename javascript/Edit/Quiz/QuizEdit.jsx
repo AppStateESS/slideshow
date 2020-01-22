@@ -38,8 +38,8 @@ export default function QuizEdit(props) {
         let initId = window.sessionStorage.getItem('quizId')
 
         let initFeedCheck = false
-        
-        if (props.quizContent != null) {
+        // This will only be true if the slide is empty
+        if (props.quizContent.correct != null) {
             // Hooks are not allowed to be called in conditonals which is why there is this horrible code structure here
             initQuestion = props.quizContent.question
             initAnswers = props.quizContent.answers
@@ -85,6 +85,7 @@ export default function QuizEdit(props) {
         const saved = await saveQuiz(id, quizContent) 
 
         if (saved) {
+            props.saveQuizContent(quizContent)
             await props.load()
         } else {
             alert("an error has occurred when saving")
@@ -136,16 +137,14 @@ export default function QuizEdit(props) {
     }
 
     function removeAnswer(id) {
-        // Note: When deleting an element that is above a slected correct answer
-        // The correct answer will not move with the element. It will stay at it's current index
-        console.log(id)
+
         let a = [...answers]
         let c = [...correct]
         let f = [...feedback]
-        // more testing might need to be done on this to make this works as expected
-        if (c.includes(id)) {
-            // this is for muliple choice. This will need to be changed with multiple select
-            c = []
+
+        if (c.includes(id.toString())) {
+            const index = c.indexOf(id.toString())
+            c.splice(index, 1)
         }
         a.splice(id,1)
         f.splice(id+3, 1)

@@ -9,7 +9,7 @@ export default class QuizView extends Component {
 
   render() {
     let answers = undefined
-    if (this.props.quizContent != null) {
+    if (this.props.quizContent.answers != null) {
       //console.log(this.props.quizContent)
       // TODO: fix bug with icon not changing when correct does. We need to force a rerender 
       let type = (this.props.quizContent.type === 'select') ? 'square' : 'circle' 
@@ -34,7 +34,7 @@ export default class QuizView extends Component {
     }
     // TODO: rework this to be more pretty
     // Also need to handle open answers
-    let title = (this.props.quizContent == undefined) ? 'No data loaded' : this.props.quizContent.question
+    let title = (!this.props.quizContent.question.length > 0) ? 'No data loaded' : this.props.quizContent.question
     return (
       <div>
         <h1>{title}</h1>

@@ -126,8 +126,13 @@ export default function DraftEditor(props) {
         })
       }
 
-    /* Image Column Initalization Begin */
-    const imgC = <ImageC key={props.content.media.imgUrl} src={props.content.media.imgUrl} remove={props.removeMedia} align={(a) => props.saveMedia(props.content.media.imgUrl, a)} mediaAlign={props.content.media.align} height={'100%'} width={'100%'}/>
+    /* Image Column Initalization */
+    let imgC = undefined
+    let imgAlign = undefined
+    if (props.content.media != undefined) {
+        imgC = <ImageC key={props.content.media.imgUrl} src={props.content.media.imgUrl} remove={props.removeMedia} align={(a) => props.saveMedia(props.content.media.imgUrl, a)} mediaAlign={props.content.media.align} height={'100%'} width={'100%'}/>
+        imgAlign = props.content.media.align
+    }
     
     return (
         <div className="col" style={{marginTop: 15}}>
@@ -135,7 +140,7 @@ export default function DraftEditor(props) {
             <br></br>
             <div id="editor" data-key={props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: props.content.backgroundColor, overflow:'auto'}}>
                 <div className="row">
-                {(props.content.media.align === 'left') ? imgC : undefined}
+                {(imgAlign === 'left') ? imgC : undefined}
                 <div className="col">
                 <div className="cust-col-11" style={{ padding: '5px' }}>
                     <Editor
@@ -152,7 +157,7 @@ export default function DraftEditor(props) {
                     />
                 </div>
                 </div>
-                    {(props.content.media.align === 'right') ? imgC : undefined}
+                    {(imgAlign === 'right') ? imgC : undefined}
                 </div>
             </div>
       </div>

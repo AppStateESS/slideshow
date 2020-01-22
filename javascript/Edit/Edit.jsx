@@ -170,7 +170,7 @@ export default class Edit extends Component {
       domNode = document.getElementById('editor')
       index = domNode.getAttribute('data-key')
     }
-    
+    if (domNode == null) return
     if (domNode.getAttribute('data-key') == index) {
       domtoimage.toPng(domNode).then((dataUrl) => {
         let img = new Image()
@@ -209,6 +209,7 @@ export default class Edit extends Component {
 
 
   addNewSlide(quizId) {
+    console.log(quizId)
     if (typeof(quizId) != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1

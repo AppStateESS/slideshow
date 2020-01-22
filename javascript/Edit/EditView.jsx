@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import QuizEdit from './Quiz/QuizEdit.jsx'
 import QuizView from './Quiz/QuizView.jsx'
@@ -13,7 +13,7 @@ export default function EditView(props) {
 
     let imgRender = undefined // Note This does nothing for now, but when we want to add support for images on quizzes this will be here.
     if (!props.content.isQuiz) return <Editor key={props.currentSlide} content={props.content} saveContentState={props.saveContentState} currentSlide={props.currentSlide} saveMedia={props.saveMedia} removeMedia={props.removeMedia}/>
-    if (editView) return (
+    if (editView || props.content.quizContent == null) return (
         <div className="col" style={{marginTop: 12}}>
             <ToolbarQ toggleQuizEdit={() => setEditView(!editView)} view={editView} />
             <span id="space_between_the_toolbar" style={{padding: 1}} ></span>
@@ -28,9 +28,7 @@ export default function EditView(props) {
                     <div className="row">
                     {(mediaAlign === 'left') ? imgRender : undefined}
                     <div className="col">
-                        {(editView) ? 
-                            <QuizEdit quizContent={props.content.quizContent} saveQuizContent={props.saveQuizContent} toggle={() => setEditView(!editView)}/> :
-                            <QuizView quizContent={props.content.quizContent} toggle={() => setEditView(!editView)}/>}
+                        <QuizView quizContent={props.content.quizContent} toggle={() => setEditView(!editView)}/>
                     </div>
                     {(mediaAlign === 'right') ? imgRender : undefined}
                     </div>

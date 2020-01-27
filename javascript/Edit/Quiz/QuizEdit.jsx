@@ -39,7 +39,7 @@ export default function QuizEdit(props) {
 
         let initFeedCheck = false
         // This will only be true if the slide is empty
-        if (props.quizContent.correct != null) {
+        if (props.quizContent != null && props.quizContent.correct != null) {
             // Hooks are not allowed to be called in conditonals which is why there is this horrible code structure here
             initQuestion = props.quizContent.question
             initAnswers = props.quizContent.answers

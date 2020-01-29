@@ -110,8 +110,8 @@ export default class ShowCard extends Component {
  }
 
  handleActivation() {
-  this.state.active > 0 ? this.setState({active: 0}, function(){this.handleSave()}) :
-                           this.setState({active: 1}, function(){this.handleSave()})
+  this.state.active > 0 ? this.setState({active: 0}, () => {this.handleSave()}) :
+                           this.setState({active: 1}, () => {this.handleSave()})
  }
 
  async editTransition() {
@@ -188,6 +188,8 @@ export default class ShowCard extends Component {
     let activeLabel = (this.state.active !== 0) ? "Active" : "Inactive"
     let activeBtnType = (this.state.active !== 0) ? "btn btn-outline-success" : "btn btn-outline-danger"
 
+    if (this.props.disabled) return null
+    
     return (
       <div style={{paddingBottom: "25px"}}>
         <div className="card">

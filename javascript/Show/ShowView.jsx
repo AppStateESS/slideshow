@@ -42,7 +42,6 @@ export default class ShowView extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state.inv[1] != '') {
       this.sortShow()
-      console.log(this.state)
     }
     
   }
@@ -119,21 +118,17 @@ export default class ShowView extends Component {
   sortShow() {
     let showD = [...this.state.showData]
     if (this.state.inv[0] !== this.state.inv[1]) {
-      console.log(this.state, "state first")
       if (this.state.inv[1] === 'newest') {
         showD.sort((a, b) => b.id - a.id)
       } else if (this.state.inv[1] === 'a-z') {
         showD.sort((a, b) => a.title.localeCompare(b.title))
       } else if (this.state.inv[1] === 'active' || this.state.inv[0] === 'active') {
-        console.log('active ran')
         showD.sort((a, b) => b.active - a.active)
       } else if (this.state.inv[0] === "inactive") {
-        console.log('inactive ran')
         showD.sort((a, b) => a.active - b.active)
       }
       this.setState({inv: [this.state.inv[1], '']})
     } else {
-      console.log("second")
       if (this.state.inv[0] === 'oldest') {
         showD.sort((a, b) => a.id - b.id)
       } else if (this.state.inv[0] === 'z-a') {
@@ -143,12 +138,11 @@ export default class ShowView extends Component {
       }
       this.setState({ newFilter: false, activeFilter: false, alphaFilter: false, inv: [this.state.inv[0], '']})
     }
-    this.setState({ showData: showD }, ()=>{console.log(this.state, ' sortshow')})
+    this.setState({ showData: showD })
     
   }
 
   handleAlpha(event) {
-    console.log(event.target.id)
     if(event.target.id !== 'a-z') {
       this.setState({ alphaFilter: true, newFilter: false, activeFilter: false, inv: [this.state.inv[0], 'a-z'] })
     } else {

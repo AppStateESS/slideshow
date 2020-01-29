@@ -26,7 +26,7 @@ export default class SessionTable extends Component {
 
   getSessionInfo() {
     $.ajax({
-      url: './slideshow/Session/' + window.sessionStorage.getItem('id'),
+      url: './slideshow/Session/all?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
       dataType: 'json',
       success: function (data) {

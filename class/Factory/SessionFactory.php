@@ -85,8 +85,9 @@ class SessionFactory extends Base
 
         $highestSlide = $request->pullPutVarIfSet('highestSlide');
         $completed = $request->pullPutVarIfSet('completed') === 'true' ? true : false;
-
-        $resource->highestSlide = $highestSlide;
+        if ($highestSlide > $resource->highestSlide) {
+            $resource->highestSlide = $highestSlide;
+        }
         if (!$resource->completed && $completed) {
             $resource->completed = $completed;
         }
@@ -97,7 +98,7 @@ class SessionFactory extends Base
     public function getAll(Request $request)
     {
         $vars = $request->getRequestVars();
-        $showId = intval($vars['Session']);
+        $showId = intval($vars['id']);
 
         $sql = "SELECT username, highestSlide, completed FROM ss_session WHERE showId=:showId;";
         $db = Database::getDB();

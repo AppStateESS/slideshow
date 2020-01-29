@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Viewspace from './Viewspace.jsx'
-import QuizViewspace from './QuizViewspace.jsx'
+import QuizViewspace from './Quiz/QuizViewspace.jsx'
 
 export default class PresentView extends Component {
   constructor(props) {
@@ -22,10 +22,11 @@ export default class PresentView extends Component {
           quizContent={this.props.content.quizContent}
           currentSlide={this.props.currentSlide}
           highestSlide={this.props.high}
-          validate={this.props.validate} />) :
+          validate={this.props.validate}
+          finished={this.props.finished} />) :
         <Viewspace content={this.props.content} />
       return (
-          <div className="jumbotron" style={{minHeight: 400, minWidth: 800, backgroundColor: this.props.content.backgroundColor}}>
+          <div className="jumbotron" style={{minHeight: 500, minWidth: 300, height: '10rem', width: '60rem', backgroundColor: this.props.content.backgroundColor}}>
             {viewspace}
           </div>
       )

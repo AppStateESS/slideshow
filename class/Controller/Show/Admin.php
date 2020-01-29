@@ -96,6 +96,11 @@ class Admin extends Base
         return $shows;
     }
 
+    protected function jsonPatchCommand(Request $request)
+    {
+      return $this->factory->patch($request);
+    }
+
     protected function previewPostCommand(Request $request) 
     {
       return $this->factory->postPreviewImage($request);

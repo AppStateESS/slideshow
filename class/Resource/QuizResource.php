@@ -58,7 +58,7 @@ class QuizResource extends BaseAbstract
      * Answer feedback
      * @var \phpws2\Variable\ArrayVar
      */
-    protected $answerFeedback;
+    protected $feedback;
     
     protected $table = 'ss_quiz';
 
@@ -69,8 +69,6 @@ class QuizResource extends BaseAbstract
         $this->answers = new \phpws2\Variable\ArrayVar(null, 'answers');
         $this->correct = new \phpws2\Variable\ArrayVar(null, 'correct');
         $this->type = new \phpws2\Variable\StringVar(null, 'type');
-        $this->answerFeedback = new \phpws2\Variable\ArrayVar(null, 'answerFeedback');
+        $this->feedback = new \phpws2\Variable\ArrayVar(null, 'feedback'); // ['global' | 'local', $globalCorrect, $globalIncorrect, $localAnswers]
     }
-
-
 }

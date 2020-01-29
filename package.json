@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@tippy.js/react": "^2.2.2",
+    "animate.css": "^3.7.2",
     "canopy-react-buttongroup": "^0.1.5",
     "draft-js": "^0.10.5",
     "draft-js-linkify-plugin": "^2.0.1",

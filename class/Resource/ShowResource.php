@@ -51,6 +51,12 @@ class ShowResource extends BaseAbstract
      */
     protected $useThumb;
 
+    /**
+     * CSS Animation classname that renders an animation for all slides within the given show
+     * @var \phpws2\Variable\StringVar
+     */
+    protected $animation;
+
     protected $table = 'ss_show';
 
     public function __construct()
@@ -62,6 +68,7 @@ class ShowResource extends BaseAbstract
         $this->slideTimer = new \phpws2\Variable\SmallInteger(2, 'slideTimer');
         $this->preview = new \phpws2\Variable\StringVar(null, 'preview');
         $this->useThumb = new \phpws2\Variable\BooleanVar(false, 'useThumb');
+        $this->animation = new \phpws2\Variable\StringVar('None', 'animation');
     }
 
     public function getImagePath()

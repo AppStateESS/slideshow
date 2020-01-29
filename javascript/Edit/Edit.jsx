@@ -9,8 +9,9 @@ import {
   FormControl,
 } from 'react-bootstrap'
 
-import FetchQuiz from '../Resources/FetchQuiz'
+import { fetchQuiz, postQuiz } from '../api/quiz'
 import domtoimage from '../Resources/dom-to-image'
+import Skeleton from '../Resources/Components/Skeleton.jsx'
 
 export default class Edit extends Component {
   constructor() {
@@ -33,12 +34,14 @@ export default class Edit extends Component {
         },
       ],
       slideTimer: 2,
+      loaded: false,
+      animation: 'None'
     }
 
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
-    this.loadQuiz = FetchQuiz.bind(this)
+    this.loadQuiz = fetchQuiz.bind(this)
     this.saveDomScreen = this.saveDomScreen.bind(this)
     this.setCurrentSlide = this.setCurrentSlide.bind(this)
     this.addNewSlide = this.addNewSlide.bind(this)
@@ -129,11 +132,13 @@ export default class Edit extends Component {
           }
           this.setState({
             content: showContent,
-            id: loaded[0].showId
+            id: loaded[0].showId,
+            loaded: true
           });
         }
         else {
           this.save()
+          this.setState({loaded: true})
         }
       }.bind(this),
       error: function(req, err) {
@@ -150,6 +155,7 @@ export default class Edit extends Component {
         this.setState({
           slideTimer: Number(data[0].slideTimer),
           showTitle: data[0].title,
+          animation: data[0].animation
         })
       },
       error: (request, response) => {
@@ -164,7 +170,7 @@ export default class Edit extends Component {
       domNode = document.getElementById('editor')
       index = domNode.getAttribute('data-key')
     }
-    
+    if (domNode == null) return
     if (domNode.getAttribute('data-key') == index) {
       domtoimage.toPng(domNode).then((dataUrl) => {
         let img = new Image()
@@ -203,11 +209,9 @@ export default class Edit extends Component {
 
 
   addNewSlide(quizId) {
-    console.log(typeof(quizId), quizId)
     if (typeof(quizId) != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
-    console.log(quizId)
     const newSlide = {
         saveContent: undefined,
         quizContent: undefined,
@@ -220,31 +224,14 @@ export default class Edit extends Component {
     this.setState({
       //currentSlide: index,
       content: copy,
-    }, () => this.setCurrentSlide(index))
+    }, () => {this.save(); this.setCurrentSlide(index)})
   }
 
 
-  addNewQuiz() {
-    // This method is useless, since we can change this at the call. However, previous code implemented this method seperately
-    // and we can simplify this at a later time.
-    $.ajax({
-      url: './slideshow/Quiz/',
-      method: 'post',
-      data: {
-        questionTile: 'this is a test title',
-        type: 'open' 
-      },
-      success: (id) => {
-        //console.log(id)
-        sessionStorage.setItem('quizId', id)
-        //console.log(Number(id))
-        //console.log(typeof(Number(id)))
-        this.addNewSlide(Number(id))
-      },
-      error: (req, res) => {
-        console.log(res.toString())
-      }
-    })
+  async addNewQuiz() {
+    const id = await postQuiz()
+    sessionStorage.setItem('quizId', id)
+    this.addNewSlide(id)
   }
 
   // addNewSlide to the end
@@ -384,7 +371,9 @@ export default class Edit extends Component {
 
 
   render() {
-    let isQuiz = this.quizConv(this.state.content[this.state.currentSlide].isQuiz)
+    if (!this.state.loaded) return <Skeleton />
+    //console.log(this.state.content[this.state.currentSlide].isQuiz)
+    let isQuiz = this.state.content[this.state.currentSlide].isQuiz
     let cardTitle;
     if (this.state.editTitleView) {
       cardTitle = <InputGroup>
@@ -424,6 +413,8 @@ export default class Edit extends Component {
           changeBackground  ={this.changeBackground}
           currentColor      ={this.state.content[this.state.currentSlide].backgroundColor}
           slideTimer        ={this.state.slideTimer}
+          animation         ={this.state.animation}
+          setAnimation      ={(a) => this.setState({animation: a})}
           />
         <div className="row">
           <NavCards 
@@ -437,7 +428,6 @@ export default class Edit extends Component {
           <EditView
             currentSlide    ={this.state.currentSlide}
             content         ={this.state.content[this.state.currentSlide]}
-            isQuiz          ={isQuiz}
             deleteElement   ={this.deleteFromStack}
             saveContentState={this.saveContentState}
             saveQuizContent ={this.saveQuizContent}

@@ -48,7 +48,7 @@ export default function Present() {
     useEffect(() => {
         // This will run before the data loads from db this eliminates that run
         if (!loaded) return
-        const visited = currentSlide < highestSlide
+        const visited = currentSlide <= highestSlide
         const isQuiz = content[currentSlide].isQuiz
         const final = currentSlide === content.length - 1 
         if (nextDisable && loaded && !visited && !isQuiz) {

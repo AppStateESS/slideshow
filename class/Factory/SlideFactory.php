@@ -100,7 +100,7 @@ class SlideFactory extends Base
                     $resource->content = $slide['saveContent'];
                 }
             }
-            $resource->backgroundColor = $slide['backgroundColor'];
+            $resource->background = $slide['background'];
             $resource->media = "";
             if (!empty($slide['media'])) {    
                 $resource->media = json_encode($slide['media']);

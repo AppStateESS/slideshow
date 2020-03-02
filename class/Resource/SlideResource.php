@@ -50,10 +50,10 @@ class SlideResource extends BaseAbstract
     protected $isQuiz;
 
     /**
-    * Slide backgroundColor
+    * Slide background -> Either a color or and image location
     * @var phpws2\Variable\StringVar
     */
-    protected $backgroundColor;
+    protected $background;
 
     /**
     * Media Resource Location
@@ -81,7 +81,7 @@ class SlideResource extends BaseAbstract
         $this->slideIndex = new \phpws2\Variable\SmallInteger(0, 'slideIndex');
         $this->content = new \phpws2\Variable\StringVar(null, 'content');
         $this->isQuiz = new \phpws2\Variable\BooleanVar(0, 'isQuiz');
-        $this->backgroundColor = new \phpws2\Variable\StringVar('#E5E7E9', 'backgroundColor');
+        $this->background = new \phpws2\Variable\StringVar('#E5E7E9', 'background');
         $this->media = new \phpws2\Variable\StringVar(null, 'media');
         $this->thumb = new \phpws2\Variable\StringVar(null, 'thumb');
         $this->quizId = new \phpws2\Variable\SmallInteger(0, 'quizId');

@@ -24,7 +24,7 @@ export default function EditView(props) {
             <div style={{minWidth: 700}}>
                 <ToolbarQ toggleQuizEdit={() => setEditView(!editView)} view={editView} />
                 <span id="space_between_the_toolbar" style={{padding: 1}} ></span>
-                <div id="editor" data-key={props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: props.content.backgroundColor, overflow:'auto'}}>
+                <div id="editor" data-key={props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: props.content.background, overflow:'auto'}}>
                     <div className="row">
                     {(mediaAlign === 'left') ? imgRender : undefined}
                     <div className="col">

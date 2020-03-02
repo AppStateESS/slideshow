@@ -27,7 +27,7 @@ export default class Edit extends Component {
           saveContent: undefined,
           quizContent: undefined,
           isQuiz: false,
-          backgroundColor: '#E5E7E9',
+          background: '#E5E7E9',
           media: {imgUrl: '', align: ''},
           slideId: 0,
           thumb: undefined
@@ -123,7 +123,7 @@ export default class Edit extends Component {
               isQuiz: isQ,
               saveContent: saveC,
               quizContent: quizC,
-              backgroundColor: loaded[i].backgroundColor,
+              background: loaded[i].background,
               thumb: JSON.parse(loaded[i].thumb || '{}'), // Ensure that this isn't undefined
               slideId: Number(loaded[i].id),
               media: JSON.parse(loaded[i].media || '{}'),
@@ -216,7 +216,7 @@ export default class Edit extends Component {
         saveContent: undefined,
         quizContent: undefined,
         isQuiz: (quizId !== -1),
-        backgroundColor: '#E5E7E9',
+        background: '#E5E7E9',
         quizId: quizId
     }
     let copy = [...this.state.content]
@@ -241,7 +241,7 @@ export default class Edit extends Component {
         saveContent: undefined,
         quizContent: undefined,
         isQuiz: false,
-        backgroundColor: '#E5E7E9',
+        background: '#E5E7E9',
     }
     let copy = [...this.state.content]
     copy.push(newSlide)
@@ -273,7 +273,7 @@ export default class Edit extends Component {
     // Current slide is the first slide and there are no other slides
     if (this.state.currentSlide === 0 && this.state.content.length == 1) {
       // set the array to an empty slide
-      copy = [{saveContent: undefined, isQuiz: false, backgroundColor: '#E5E7E9'}]
+      copy = [{saveContent: undefined, isQuiz: false, background: '#E5E7E9'}]
     }
     // If we are deleting the last slide
     if (this.state.currentSlide == copy.length) {
@@ -365,7 +365,7 @@ export default class Edit extends Component {
 
   changeBackground(newColor) {
     let c = [...this.state.content]
-    c[this.state.currentSlide].backgroundColor = newColor
+    c[this.state.currentSlide].background = newColor
     this.setState({content: c}, () => this.save())
   }
 
@@ -411,7 +411,7 @@ export default class Edit extends Component {
           insertQuiz        ={this.addNewQuiz}
           saveDB            ={this.save}
           changeBackground  ={this.changeBackground}
-          currentColor      ={this.state.content[this.state.currentSlide].backgroundColor}
+          currentColor      ={this.state.content[this.state.currentSlide].background}
           slideTimer        ={this.state.slideTimer}
           animation         ={this.state.animation}
           setAnimation      ={(a) => this.setState({animation: a})}

@@ -13,12 +13,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- *
+ * @author Tyler Craig <craigta1@appstate.edu>
  * @author Matthew McNaney <mcnaneym@appstate.edu>
  * @license http://opensource.org/licenses/gpl-3.0.html
  */
 $proper_name = 'Slideshow';
-$version = '1.4.1';
+$version = '1.4.2';
 $register = false;
 $unregister = false;
 $import_sql = false;

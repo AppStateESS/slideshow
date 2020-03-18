@@ -12,7 +12,7 @@ export default function EditView(props) {
     const [mediaAlign, setMediaAlign] = useState('right')
 
     let imgRender = undefined // Note This does nothing for now, but when we want to add support for images on quizzes this will be here.
-    if (!props.content.isQuiz) return <Editor key={props.currentSlide} content={props.content} saveContentState={props.saveContentState} currentSlide={props.currentSlide} saveMedia={props.saveMedia} removeMedia={props.removeMedia}/>
+    if (!props.content.isQuiz) return <Editor key={props.currentSlide} content={props.content} saveContentState={props.saveContentState} currentSlide={props.currentSlide} saveMedia={props.saveMedia} removeMedia={props.removeMedia} saveBackground={props.saveBackground}/>
     if (editView || props.content.quizContent == null) return (
         <div className="col" style={{marginTop: 12}}>
             <ToolbarQ toggleQuizEdit={() => setEditView(!editView)} view={editView} />

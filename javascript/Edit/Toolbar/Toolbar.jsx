@@ -136,7 +136,7 @@ export default function Toolbar(props) {
         <span className="separator"></span>
         <Alignment setEditorState={props.setEditorState} getEditorState={props.getEditorState} />
         <span className="separator"></span>
-        <Background />
+        <Background changeBackground={props.saveBackground}/>
         <Media saveMedia={props.saveMedia}/>
         <Link setEditorState={props.setEditorState} getEditorState={props.getEditorState} />
       </div>

@@ -6,17 +6,18 @@ import Dropzone from 'react-dropzone-uploader'
 
 const { Header, Body } = Modal
 
-export default function Background() {
+export default function Background(props) {
 
     const [modalView, setModal] = useState(false)
 
-    function changeColor(e) {
-        console.log(e.hex)
+    function changeColor(color) {
+        props.changeBackground(color.hex)
     }
 
 
-    function insertMedia() {
-
+    function insertMedia(fileWithMeta) {
+        console.log(fileWithMeta)
+        let formData = new FormData()
     }
 
     function validate({meta}) {
@@ -27,7 +28,7 @@ export default function Background() {
 
     const modalRender = (
         <Modal show={modalView} onHide={() => setModal(false)}>
-            <Header>
+            <Header closeButton>
                 <h5>Change Background</h5>
             </Header>
             <Body>

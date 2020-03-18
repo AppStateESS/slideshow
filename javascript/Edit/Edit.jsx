@@ -54,7 +54,7 @@ export default class Edit extends Component {
     this.saveQuizContent = this.saveQuizContent.bind(this)
     this.saveMedia = this.saveMedia.bind(this)
     this.removeMedia = this.removeMedia.bind(this)
-    this.changeBackground = this.changeBackground.bind(this)
+    this.saveBackground = this.saveBackground.bind(this)
   }
 
   componentDidMount() {
@@ -354,6 +354,12 @@ export default class Edit extends Component {
     this.setState({content: c})
   }
 
+  saveBackground(newBackground) {
+    let c = [...this.state.content]
+    c[this.state.currentSlide].background = newBackground
+    this.setState({content: c}, () => this.save())
+  }
+
   quizConv(quizT) {
     // When we load from the data base the isQuiz boolean
     // is loaded in as a string or a number
@@ -363,11 +369,6 @@ export default class Edit extends Component {
     return (typeof(JSON.parse(quizT)) === "boolean") ? quizT : JSON.parse(quizT)
   }
 
-  changeBackground(newColor) {
-    let c = [...this.state.content]
-    c[this.state.currentSlide].background = newColor
-    this.setState({content: c}, () => this.save())
-  }
 
 
   render() {
@@ -410,7 +411,7 @@ export default class Edit extends Component {
           currentSlide      ={this.state.currentSlide}
           insertQuiz        ={this.addNewQuiz}
           saveDB            ={this.save}
-          changeBackground  ={this.changeBackground}
+          saveBackground  ={this.saveBackground}
           currentColor      ={this.state.content[this.state.currentSlide].background}
           slideTimer        ={this.state.slideTimer}
           animation         ={this.state.animation}
@@ -433,6 +434,7 @@ export default class Edit extends Component {
             saveQuizContent ={this.saveQuizContent}
             saveMedia       ={this.saveMedia}
             removeMedia     ={this.removeMedia}
+            saveBackground  ={this.saveBackground}
             saveDB          ={this.save}
             load            ={this.load}
             />

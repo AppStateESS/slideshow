@@ -136,7 +136,7 @@ export default function DraftEditor(props) {
     
     return (
         <div className="col" style={{marginTop: 15}}>
-            {props.readOnly ? undefined : <Toolbar setEditorState={(eState) => setEditorState(eState)} getEditorState={() => editorState} saveMedia={props.saveMedia}/>}
+            {props.readOnly ? undefined : <Toolbar setEditorState={(eState) => setEditorState(eState)} getEditorState={() => editorState} saveMedia={props.saveMedia} saveBackground={props.saveBackground}/>}
             <br></br>
             <div id="editor" data-key={props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: props.content.background, overflow:'auto'}}>
                 <div className="row">

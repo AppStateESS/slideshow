@@ -43,7 +43,7 @@ export default class Settings extends Component {
   }
 
   handleColorChange(color) {
-    this.props.changeBackground(color.hex)
+    this.props.saveBackground(color.hex)
   }
 
   changeTime(event) {

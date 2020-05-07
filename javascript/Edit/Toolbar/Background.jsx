@@ -17,7 +17,8 @@ export default function Background(props) {
         const showId = Number(window.sessionStorage.getItem('id'))
         const slideId = Number(window.sessionStorage.getItem('slideId'));
         let fMeta = fileWithMeta[0]
-        formData.append('background', fMeta.file)
+        console.log(fMeta.file)
+        formData.append('backgroundMedia', fMeta.file)
         formData.append('slideId', slideId)
         formData.append('id', showId)
 

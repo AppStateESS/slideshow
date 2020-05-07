@@ -144,20 +144,19 @@ class SlideFactory extends Base
     public function postThumb(Request $request)
     {
         $resourceId = intval($request->pullPostVar('slideId'));
-        var_dump($resourceId);
         try {
             $resource = $this->load($resourceId);
         }
         catch (\Exception $e) {
             // Resource doesn't exist
-            $resource = $this->build();
-            $this->saveResource($resource);
-            $resourceId = $resource->id;
+            //$resource = $this->build();
+            //$this->saveResource($resource);
+            //$resourceId = $resource->id;
+            return;
         }
 
         $file_string_data = file_get_contents("data://".$request->pullPostVar('thumb'));
         $target = $resourceId . "/thumb/";
-        //var_dump($target);
         
         $path = $this->upload($file_string_data, $target);
         if ($path != null) {
@@ -170,7 +169,7 @@ class SlideFactory extends Base
     public function postBackground(Request $request)
     {
         $resourceId = intval($request->pullPostVar('slideId'));
-        var_dump('resource ID: ' . $resourceId);
+        #var_dump('resource ID: ' . $resourceId);
         try {
             $resource = $this->load($resourceId);
         }
@@ -180,9 +179,9 @@ class SlideFactory extends Base
             //$resourceId = $resource->id;
             return;
         }
-
-        $file_string_data = file_get_contents("data://".$request->pullPostVar('background'));
-        $resourcePath = $resourceId . "/background";
+        var_dump($request->getRequestVars());
+        $file_string_data = file_get_contents("data://".$request->pullPostVar('backgroundMedia'));
+        $resourcePath = $resourceId . "/background/";
 
         $path = $this->upload($file_string_data, $resourcePath);
         if ($path != null) {
@@ -370,7 +369,7 @@ class SlideFactory extends Base
                 return './' . $slideshow_path .  basename($file['name']);
             } // If returns false then error occurred.
             echo("not uploaded and error occured");
-            var_dump($file);
+            //var_dump($file);
             var_dump($target);
             return null;
         }
@@ -379,7 +378,7 @@ class SlideFactory extends Base
             $time = time();
             $filename = $time . '.png';
             $dest = $canopy_path . $filename;
-            var_dump($dest);
+            //var_dump($dest);
             $status = file_put_contents($dest, $file);
             if (!$status) {
                 // error has occured

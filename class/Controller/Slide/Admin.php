@@ -75,5 +75,10 @@ class Admin extends Base
  {
      return $this->factory->postThumb($request);
  }
+
+ protected function backgroundPostCommand(Request $request)
+ {
+     return $this->factory->postBackground($request);
+ }
  
 }

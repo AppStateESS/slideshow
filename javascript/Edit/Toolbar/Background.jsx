@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Tippy from '@tippy.js/react'
 import { Modal, Row, Col } from 'react-bootstrap'
 import { CirclePicker } from 'react-color'
+import ColorSelect from '../AddOn/ColorSelect'
 import Dropzone from 'react-dropzone-uploader'
 
 const { Header, Body } = Modal
@@ -10,14 +11,29 @@ export default function Background(props) {
 
     const [modalView, setModal] = useState(false)
 
-    function changeColor(color) {
-        props.changeBackground(color.hex)
-    }
-
-
     function insertMedia(fileWithMeta) {
         console.log(fileWithMeta)
         let formData = new FormData()
+        const showId = Number(window.sessionStorage.getItem('id'))
+        const slideId = Number(window.sessionStorage.getItem('slideId'));
+        let fMeta = fileWithMeta[0]
+        formData.append('background', fMeta.file)
+        formData.append('slideId', slideId)
+        formData.append('id', showId)
+
+        $.ajax({
+            url: './slideshow/Slide/background/' + slideId,
+            type: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (imageUrl) => {
+                console.log(imageUrl)
+            },
+            error: (req, res) => {
+                console.log(res)
+            }
+        })
     }
 
     function validate({meta}) {
@@ -27,12 +43,12 @@ export default function Background(props) {
     }
 
     const modalRender = (
-        <Modal show={modalView} onHide={() => setModal(false)}>
+        <Modal show={modalView} onHide={() => setModal(false)} size="lg">
             <Header closeButton>
                 <h5>Change Background</h5>
             </Header>
             <Body>
-                <Row flex="space-apart">
+                {/*<Row flex="space-apart">
                 <Col>
                     <h6>Color</h6>
                 </Col>
@@ -43,7 +59,8 @@ export default function Background(props) {
                         onChangeComplete={changeColor}
                     />
                 </Col>
-                </Row>
+    </Row>*/}
+        <ColorSelect changeBackground={props.changeBackground} />
                 <Row><Col><h6>Image</h6></Col></Row>
                 <div className="card">
                     <div className="card-header text-center" >

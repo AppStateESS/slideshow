@@ -3,7 +3,7 @@
 /*
 * The MIT License
 *
-* Copyright 2019 Tyler Craig <craigta1@appstate.edu>.
+* Copyright 2020 Tyler Craig <craigta1@appstate.edu>.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -130,8 +130,9 @@ class SlideFactory extends Base
             $resourceId = $resource->id;
         }
         
-        $target = $resourceId . '/';
-        $path = $this->upload($_FILES['media'], $target, $resourceId);
+        $target = $resourceId . '/media/';
+
+        $path = $this->upload($_FILES['media'], $target);
         if ($path != null) {
             $media = array('imgUrl' => $path, 'align' => 'right');
             $resource->media = json_encode($media);
@@ -143,7 +144,7 @@ class SlideFactory extends Base
     public function postThumb(Request $request)
     {
         $resourceId = intval($request->pullPostVar('slideId'));
-
+        var_dump($resourceId);
         try {
             $resource = $this->load($resourceId);
         }
@@ -155,11 +156,37 @@ class SlideFactory extends Base
         }
 
         $file_string_data = file_get_contents("data://".$request->pullPostVar('thumb'));
-        $target = $resourceId . "/";
+        $target = $resourceId . "/thumb/";
+        //var_dump($target);
         
-        $path = $this->upload($file_string_data, $target, $resourceId);
+        $path = $this->upload($file_string_data, $target);
         if ($path != null) {
             $resource->thumb = json_encode($path);
+        }
+        $this->saveResource($resource);
+        return $path;
+    }
+
+    public function postBackground(Request $request)
+    {
+        $resourceId = intval($request->pullPostVar('slideId'));
+        var_dump('resource ID: ' . $resourceId);
+        try {
+            $resource = $this->load($resourceId);
+        }
+        catch (\Exception $e) {
+            //$resource = $this->build();
+            //$this->saveResource($resource);
+            //$resourceId = $resource->id;
+            return;
+        }
+
+        $file_string_data = file_get_contents("data://".$request->pullPostVar('background'));
+        $resourcePath = $resourceId . "/background";
+
+        $path = $this->upload($file_string_data, $resourcePath);
+        if ($path != null) {
+            $resource->background = json_encode($path);
         }
         $this->saveResource($resource);
         return $path;
@@ -273,8 +300,11 @@ class SlideFactory extends Base
         return $slides;
     }
 
-    private function upload($file, $path, $slideId)
+    private function Oldupload($file, $path, $slideId)
     {
+        # TODO: handle upload of background
+        # My idea is that I leave the upload process to the path 
+        # and depending on the path, I will upload respectivly
         $target = SLIDESHOW_MEDIA_DIRECTORY . $path;
         $dir = PHPWS_HOME_DIR . $target;
 
@@ -294,7 +324,7 @@ class SlideFactory extends Base
             }
             return null;
         }
-        else if (gettype($file) === 'string') { // file is a thumbnail
+        else if (gettype($file) === 'string') { // file is a thumbnail or a background img
             $dir .= 'thumb/';
             if (is_dir($dir)) {
                 // If directory exists then we dump it
@@ -314,7 +344,50 @@ class SlideFactory extends Base
             return './' . $target . 'thumb/' . $filename;
         }
         return null;
-        
+    }
+
+    /**
+     * Uploads a file to a given path
+     * @var mixed - of type array or file string data
+     * @var string -  if path doesn't exist it will recursivly created also it will get dumped if it does exist.
+     * @return string - filepath of new file
+     */
+    private function upload($file, $path) {
+        $slideshow_path = SLIDESHOW_MEDIA_DIRECTORY . $path;
+        $canopy_path = PHPWS_HOME_DIR . $slideshow_path;
+
+        if (!is_dir($canopy_path)) {
+            mkdir($canopy_path, 0755, true);
+        } else {
+            system('rm -rf ' . escapeshellarg($canopy_path), $ret);
+            if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+            mkdir($canopy_path, 0755, true);
+        }
+
+        if (gettype($file) === 'array') {
+            $dest = $canopy_path . basename($file['name']);
+            if (move_uploaded_file($file['tmp_name'], $dest)) {
+                return './' . $slideshow_path .  basename($file['name']);
+            } // If returns false then error occurred.
+            echo("not uploaded and error occured");
+            var_dump($file);
+            var_dump($target);
+            return null;
+        }
+        else if (gettype($file) === 'string') {
+            // We will name the file based on timestamp 
+            $time = time();
+            $filename = $time . '.png';
+            $dest = $canopy_path . $filename;
+            var_dump($dest);
+            $status = file_put_contents($dest, $file);
+            if (!$status) {
+                // error has occured
+                throw new Exception('Slideshow: File failed to upload');
+                return null;
+            }
+            return './' . $slideshow_path . $filename;
+        }
     }
 
     private function removeUpload($slideId, $path) {

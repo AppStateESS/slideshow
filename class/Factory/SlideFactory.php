@@ -169,7 +169,7 @@ class SlideFactory extends Base
     public function postBackground(Request $request)
     {
         $resourceId = intval($request->pullPostVar('slideId'));
-        #var_dump('resource ID: ' . $resourceId);
+        
         try {
             $resource = $this->load($resourceId);
         }
@@ -179,11 +179,10 @@ class SlideFactory extends Base
             //$resourceId = $resource->id;
             return;
         }
-        var_dump($request->getRequestVars());
-        $file_string_data = file_get_contents("data://".$request->pullPostVar('backgroundMedia'));
+
         $resourcePath = $resourceId . "/background/";
 
-        $path = $this->upload($file_string_data, $resourcePath);
+        $path = $this->upload($_FILES['backgroundMedia'], $resourcePath);
         if ($path != null) {
             $resource->background = json_encode($path);
         }

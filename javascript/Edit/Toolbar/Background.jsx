@@ -29,10 +29,11 @@ export default function Background(props) {
             processData: false,
             contentType: false,
             success: (imageUrl) => {
-                console.log(imageUrl)
+                props.changeBackground(imageUrl)
             },
             error: (req, res) => {
-                console.log(res)
+                console.error(res)
+                alert("An error has occured with this image. Please try a different image.")
             }
         })
     }
@@ -49,18 +50,6 @@ export default function Background(props) {
                 <h5>Change Background</h5>
             </Header>
             <Body>
-                {/*<Row flex="space-apart">
-                <Col>
-                    <h6>Color</h6>
-                </Col>
-                <Col>
-                    <CirclePicker
-                        colors = {["#CD6155", "#EC7063", "#AF7AC5", "#A569BD", "#5499C7", "#5DADE2", "#48C9B0", "#45B39D",
-                        "#52BE80", "#58D68D", "#F4D03F", "#F5B041", "#FAD7A0", "#EB984E", "#DC7633", "#AAB7B8", "#CACFD2", "#E5E7E9"]}
-                        onChangeComplete={changeColor}
-                    />
-                </Col>
-    </Row>*/}
         <ColorSelect changeBackground={props.changeBackground} />
                 <Row><Col><h6>Image</h6></Col></Row>
                 <div className="card">

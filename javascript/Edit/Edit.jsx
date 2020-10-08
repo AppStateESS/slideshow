@@ -411,7 +411,7 @@ export default class Edit extends Component {
           currentSlide      ={this.state.currentSlide}
           insertQuiz        ={this.addNewQuiz}
           saveDB            ={this.save}
-          saveBackground  ={this.saveBackground}
+          saveBackground    ={this.saveBackground}
           currentColor      ={this.state.content[this.state.currentSlide].background}
           slideTimer        ={this.state.slideTimer}
           animation         ={this.state.animation}

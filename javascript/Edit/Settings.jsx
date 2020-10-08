@@ -14,6 +14,7 @@ import {
 import { CirclePicker, SketchPicker } from 'react-color';
 import AnimateDropdown from './AddOn/AnimateDropdown'
 import './custom.css'
+import ColorSelect from './AddOn/ColorSelect'
 
 export default class Settings extends Component {
   constructor(props) {
@@ -151,6 +152,7 @@ export default class Settings extends Component {
                   {colorPick}
                 </Col>
             </Row>
+            {/*<ColorSelect changeBackground={this.handleColorChange} />*/}
             <br></br>
             <Row>
               <Col sm={6} className="settings-option">Slide Animation</Col>

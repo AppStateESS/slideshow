@@ -56,7 +56,7 @@ export default class NavBar extends Component {
            <Button variant="secondary" onClick={this.handlePresent}>Preview</Button>
         </ButtonGroup>
           <Settings
-            changeBackground ={this.props.changeBackground}
+            saveBackground   ={this.props.saveBackground}
             id               ={this.props.id}
             currentColor     ={this.props.currentColor}
             slideTimer       ={this.props.slideTimer}
@@ -75,6 +75,6 @@ NavBar.propTypes = {
   currentSlide: PropTypes.number,
   saveDB: PropTypes.func,
   id: PropTypes.number,
-  changeBackground: PropTypes.func,
+  saveBackground: PropTypes.func,
   currentColor: PropTypes.string,
 }

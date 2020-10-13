@@ -168,6 +168,20 @@ class slideshowUpdate
         $this->addContent('1.4.1', $changes);
     }
 
+    private function v1_4_2()
+    {
+        $db = \phpws2\Database::getDB();
+        $tbl = $db->addTable('ss_slide');
+
+        $sql = "ALTER TABLE ss_slide CHANGE COLUMN backgroundColor background varchar(255) DEFAULT '#E5E7E9';";
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        $q->execute();
+
+        $changes[] = 'Background Image Support';
+        $this->addContent('1.4.2', $changes);
+    }
+
     private function addContent($version, array $changes)
     {
         $changes_string = implode("\n+ ", $changes);

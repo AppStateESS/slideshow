@@ -125,6 +125,11 @@ export default function DraftEditor(props) {
           }
         })
       }
+      //background styling check image or color
+      let backgroundStyle = {minHeight: 500, minWidth: 300, height: '8rem', overflow:'auto', backgroundImage: `url(${props.content.background})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}
+      if (props.content.background.charAt(0) === '#') {
+          backgroundStyle = {minHeight: 500, minWidth: 300, height: '8rem', overflow:'auto', backgroundColor: props.content.background}
+      }
 
     /* Image Column Initalization */
     let imgC = undefined
@@ -136,9 +141,9 @@ export default function DraftEditor(props) {
     
     return (
         <div className="col" style={{marginTop: 15}}>
-            {props.readOnly ? undefined : <Toolbar setEditorState={(eState) => setEditorState(eState)} getEditorState={() => editorState} saveMedia={props.saveMedia}/>}
+            {props.readOnly ? undefined : <Toolbar setEditorState={(eState) => setEditorState(eState)} getEditorState={() => editorState} saveMedia={props.saveMedia} saveBackground={props.saveBackground}/>}
             <br></br>
-            <div id="editor" data-key={props.currentSlide} className="jumbotron" style={{ minHeight: 500, minWidth: 300, height: '8rem', backgroundColor: props.content.backgroundColor, overflow:'auto'}}>
+            <div id="editor" data-key={props.currentSlide} className="jumbotron" style={backgroundStyle}>
                 <div className="row">
                 {(imgAlign === 'left') ? imgC : undefined}
                 <div className="col">

@@ -8,6 +8,7 @@ import Link from './Link'
 
 import { EditorState, RichUtils, Modifier } from 'draft-js'
 import Tippy from '@tippy.js/react'
+import Background from './Background'
 
 /** In this file, I have most of the buttons as function components. At the bottom, I have a final composite Toolbar component. */
 
@@ -135,6 +136,7 @@ export default function Toolbar(props) {
         <span className="separator"></span>
         <Alignment setEditorState={props.setEditorState} getEditorState={props.getEditorState} />
         <span className="separator"></span>
+        <Background changeBackground={props.saveBackground}/>
         <Media saveMedia={props.saveMedia}/>
         <Link setEditorState={props.setEditorState} getEditorState={props.getEditorState} />
       </div>

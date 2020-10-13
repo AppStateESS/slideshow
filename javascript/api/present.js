@@ -104,7 +104,7 @@ export const updateSession = (showId, highestSlide, finished) => {
             isQuiz: isQ,
             saveContent: saveC,
             quizContent: quizC,
-            backgroundColor: loaded[i].backgroundColor,
+            background: loaded[i].background,
             media: JSON.parse(loaded[i].media || '{}'),
         })
     }
@@ -126,7 +126,7 @@ export const updateSession = (showId, highestSlide, finished) => {
         saveContent: undefined,
         quizContent: undefined,
         isQuiz: false,
-        backgroundColor: '#E5E7E9',
+        background: '#E5E7E9',
         media: {imgUrl: '', align: ''},
         slideId: 0,
         thumb: undefined

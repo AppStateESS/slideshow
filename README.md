@@ -8,6 +8,9 @@ Slideshow is a quiz-integrated presentation-based web application designed and m
 * run `git clone https://github.com/AppStateESS/slideshow.git` in Canopy's `mod` directory
 * head into Canopy and install the module through Boost
 * in the `slideshow` directory, run `npm install`
+### Helpful Links
+* [Canopy Setup Wiki](https://github.com/AppStateESS/slideshow/wiki/Canopy-Installation)
+* [Connecting to the Database Wiki](https://github.com/AppStateESS/slideshow/wiki/Connecting-to-the-database-to-view-your-tables.)
 ## Contributing
 Feel free to fork and open a pull request
 ## Authors
@@ -17,7 +20,8 @@ This project was originally in development by Matthew McNaney from the [core tea
 ### Student Rewrite Developers
 * [Tyler Craig](https://github.com/AppStateESS/slideshow/commits?author=tylercraig9332)
 * [Eric Cambel](https://github.com/AppStateESS/slideshow/commits?author=cambelem)
-* [Zack Noble](https://github.com/AppStateESS/slideshow/commits?author=zanoble) 
+* [Zack Noble](https://github.com/AppStateESS/slideshow/commits?author=zanoble)
+* [Connor Plunkett](https://github.com/connorp987)
 ## License
 Copyright 2019 Electronic Student Services @ Appalachian State University
 

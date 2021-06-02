@@ -8,10 +8,10 @@ Slideshow is a quiz-integrated presentation-based web application designed and m
 * run `git clone https://github.com/AppStateESS/slideshow.git` in Canopy's `mod` directory
 * head into Canopy and install the module through Boost
 * in the `slideshow` directory, run `npm install`
+* Create a `defines.php` based on `defines.dist.php` under `slideshow/config/`. Then change SLIDESHOW_REACT_DEV to `true` and SS_FRIENDLY_ERROR to `false`.
 ### Helpful Info
 * [Canopy Setup Wiki](https://github.com/AppStateESS/slideshow/wiki/Canopy-Installation)
 * [Connecting to the Database Wiki](https://github.com/AppStateESS/slideshow/wiki/Connecting-to-the-database-to-view-your-tables.)
-* If installed correctly without any errors and still slideshow isn't showing up. Try changing defines.dist.php under `slideshow/config/` from `define('SLIDESHOW_REACT_DEV', false);` to `define('SLIDESHOW_REACT_DEV', true);`
 ## Contributing
 Feel free to fork and open a pull request
 ## Authors

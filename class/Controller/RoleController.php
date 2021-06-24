@@ -77,7 +77,7 @@ abstract class RoleController
             $method_name = $command . 'PostCommand';
         }
         if (!method_exists($this, $method_name)) {
-            throw new BadCommand($method_name);
+            throw new BadCommand($this->role->getName() . ':' . $method_name);
         }
 
         $content = $this->$method_name($request);
@@ -100,14 +100,12 @@ abstract class RoleController
             $vars = $request->getRequestVars();
             if (empty($vars['id'])) {
                 throw new \slideshow\Exception\MissingRequestId($id);
-            }
-            else {
+            } else {
                 $this->id = intval($vars['id']);
             }
-        }
-        else {
+        } else {
             $this->id = $id;
-        }   
+        }
     }
 
     public function put(Request $request)
@@ -122,7 +120,7 @@ abstract class RoleController
         }
 
         if (!method_exists($this, $method_name)) {
-            throw new BadCommand($method_name);
+            throw new BadCommand($this->role->getName() . ':' . $method_name);
         }
 
         $content = $this->$method_name($request);
@@ -143,7 +141,7 @@ abstract class RoleController
             if ($this->id && method_exists($this, 'viewHtmlCommand')) {
                 $method_name = 'viewHtmlCommand';
             } else {
-                throw new BadCommand($method_name);
+                throw new BadCommand($this->role->getName() . ':' . $method_name);
             }
         }
 
@@ -163,7 +161,7 @@ abstract class RoleController
         $method_name = $command . 'JsonCommand';
 
         if (!method_exists($this, $method_name)) {
-            throw new BadCommand($method_name);
+            throw new BadCommand($this->role->getName() . ':' . $method_name);
         }
 
         $json = $this->$method_name($request);
@@ -208,7 +206,7 @@ abstract class RoleController
         $this->loadRequestId($request);
 
         if (!method_exists($this, 'deleteCommand')) {
-            throw new BadCommand('deleteCommand');
+            throw new BadCommand($this->role->getName() . ':' . 'deleteCommand');
         }
 
         $content = $this->deleteCommand($request);

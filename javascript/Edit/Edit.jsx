@@ -382,8 +382,8 @@ export default class Edit extends Component {
 
   render() {
     if (!this.state.loaded) return <Skeleton />
-    //console.log(this.state.content[this.state.currentSlide].isQuiz)
-    let isQuiz = this.state.content[this.state.currentSlide].isQuiz
+    // below never used
+    //let isQuiz = this.state.content[this.state.currentSlide].isQuiz
     let cardTitle
     if (this.state.editTitleView) {
       cardTitle = (

@@ -20,36 +20,37 @@ namespace slideshow\Resource;
 
 class SessionResource extends BaseAbstract
 {
+
     /**
-    * User id
-    * @var phpws2\Variable\IntegerVar
-    */
+     * User id
+     * @var phpws2\Variable\IntegerVar
+     */
     protected $userId;
 
     /**
-    * username
-    * @var phpws2\Variable\StringVar
-    */
+     * username
+     * @var phpws2\Variable\StringVar
+     */
     protected $username;
 
     /**
-    * SlideShow id
-    * @var phpws2\Variable\IntegerVar
-    */
+     * SlideShow id
+     * @var phpws2\Variable\IntegerVar
+     */
     protected $showId;
 
     /**
-    * Users highest slide completed
-    * @var phpws2\Variable\SmallInteger
-    */
+     * Users highest slide completed
+     * @var phpws2\Variable\SmallInteger
+     */
     protected $highestSlide;
 
     /**
-    * True if user has completed the slideshow
-    * @var phpws2\Variable\BooleanVar
-    */
+     * True if user has completed the slideshow
+     * @var phpws2\Variable\BooleanVar
+     */
     protected $completed;
-
+    protected $ip;
     protected $table = 'ss_session';
 
     public function __construct()
@@ -60,6 +61,8 @@ class SessionResource extends BaseAbstract
         $this->showId = new \phpws2\Variable\IntegerVar(0, 'showId');
         $this->highestSlide = new \phpws2\Variable\SmallInteger(0, 'highestSlide');
         $this->completed = new \phpws2\Variable\BooleanVar(false, 'completed');
+        $this->ip = new \phpws2\Variable\Ip(null, 'ip');
+        $this->ip->allowNull(true);
     }
 
 }

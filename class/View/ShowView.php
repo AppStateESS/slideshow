@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MIT License
  * Copyright (c) 2018 Electronic Student Services @ Appalachian State University
@@ -10,32 +11,21 @@
  * @license https://opensource.org/licenses/MIT
  */
 
- namespace slideshow\View;
+namespace slideshow\View;
 
- use slideshow\Factory\NavBar;
+use slideshow\Factory\NavBar;
 
- class ShowView extends BaseView
- {
+class ShowView extends BaseView
+{
 
-   public function show()
-   {
-       return $this->scriptView('view');
-   }
-
-   public function adminShow()
-   {
-     // Removed this until fixed or implemented or deleted..idk
-     //$this->createShowButton();
-     return $this->scriptView('shows');
-   }
-
-   /* DEPRECATED
-   private function createShowButton()
+    public function show()
     {
-        $nav = new NavBar();
-        $create = <<<EOF
-<button class="btn btn-success navbar-btn" id="createShow"><i class="fa fa-plus"></i> Create New SlideShow</button>
-EOF;
-        $nav->addItem($create);
-    } */
- }
+        return $this->scriptView('view');
+    }
+
+    public function adminShow()
+    {
+        return $this->scriptView('shows');
+    }
+
+}

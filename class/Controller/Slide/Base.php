@@ -27,13 +27,13 @@ class Base extends RoleController
 {
 
     /**
-     * @var slideshow\Factory\SlideFactory
+     * @var \slideshow\Factory\SlideFactory
      */
     protected $factory;
 
     /**
-    * @var slideshow\View\SlideView
-    */
+     * @var \slideshow\View\SlideView
+     */
     protected $view;
 
     protected function loadFactory()
@@ -47,16 +47,16 @@ class Base extends RoleController
     }
 
     /**
-    * Renders the view for edit
-    */
+     * Renders the view for edit
+     */
     protected function editHtmlCommand(Request $request)
     {
         return $this->view->edit();
     }
 
     /**
-    * Renders the view for present
-    */
+     * Renders the view for present
+     */
     protected function presentHtmlCommand(Request $request)
     {
         return $this->view->present();

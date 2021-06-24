@@ -18,7 +18,32 @@
 
 namespace slideshow\Controller\Show;
 
-class User extends Logged
+use Canopy\Request;
+
+class User extends Base
 {
+
+    /**
+     * @var slideshow\Factory\ShowFactory
+     */
+    protected $factory;
+
+    /**
+     * @var slideshow\View\ShowView
+     */
+    protected $view;
+
+    /**
+     * Handles the request to render the list page.
+     */
+    protected function listHtmlCommand(Request $request)
+    {
+        return $this->view->show();
+    }
+
+    protected function listJsonCommand(Request $request)
+    {
+        return array('listing' => $this->factory->listing(true));
+    }
 
 }

@@ -24,13 +24,9 @@
  * THE SOFTWARE.
  */
 
-  namespace slideshow\Controller\Slide;
+namespace slideshow\Controller\Slide;
 
-  use Canopy\Request;
-  use slideshow\Factory\SlideFactory;
-  use slideshow\View\SlideView;
+class Logged extends User
+{
 
-  class Logged extends Base
-  {
-
-  }
+}

@@ -15,9 +15,9 @@
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
-namespace slideshow\Controller\Show;
+namespace slideshow\Controller\Slide;
 
-class User extends Logged
+class User extends Base
 {
 
 }

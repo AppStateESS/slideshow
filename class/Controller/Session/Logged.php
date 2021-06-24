@@ -21,22 +21,12 @@ namespace slideshow\Controller\Session;
 use Canopy\Request;
 use slideshow\Factory\SessionFactory;
 
-class Logged extends Base
+class Logged extends User
 {
+
     /**
-     * @var slideshow\Factory\SessionFactory
+     * @var \slideshow\Factory\SessionFactory
      */
     protected $factory;
-
-    protected function putCommand($request)
-    {
-        $this->factory->put($request);
-        return true;
-    }
-
-    protected function viewJsonCommand($request)
-    {
-        return $this->factory->get($request);
-    }
 
 }

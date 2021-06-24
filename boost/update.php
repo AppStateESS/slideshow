@@ -45,6 +45,8 @@ class slideshowUpdate
                 $this->update('1.4.2');
             case $this->compare('1.4.3');
                 $this->update('1.4.3');
+            case $this->compare('1.4.4');
+                $this->update('1.4.4');
         }
     }
 
@@ -61,7 +63,7 @@ class slideshowUpdate
 
     private function v1_1_0()
     {
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
         $t = $db->addTable('ss_show');
         $dt = new \phpws2\Database\Datatype\Varchar($t, 'content');
         $dt->setDefault(null);
@@ -74,7 +76,7 @@ class slideshowUpdate
 
     private function v1_2_0()
     {
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
 
         $session = new \slideshow\Resource\SessionResource;
         $session->createTable($db);
@@ -85,7 +87,7 @@ class slideshowUpdate
 
     private function v1_3_0()
     {
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
 
         // A fresh install is needed, so a drop will be completed lol
         $db->buildTable('ss_show')->drop();
@@ -102,7 +104,7 @@ class slideshowUpdate
 
     private function v1_3_1()
     {
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
 
         $tbl = $db->addTable('ss_show');
         $dt = new \phpws2\Variable\SmallInteger($tbl, 'slideTimer');
@@ -119,10 +121,10 @@ class slideshowUpdate
 
     private function v1_3_2()
     {
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
 
         $t = $db->addTable('ss_slide');
-        $dt = new \phpws2\Database\Datatype\Varchar($t, 'media');
+        $dt = new Database\Datatype\Varchar($t, 'media');
         $dt->setDefault(null);
         $dt->add();
 
@@ -132,10 +134,10 @@ class slideshowUpdate
 
     private function v1_3_3()
     {
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
 
         $t = $db->addTable('ss_slide');
-        $dt = new \phpws2\Database\Datatype\Varchar($t, 'thumb');
+        $dt = new Database\Datatype\Varchar($t, 'thumb');
         $dt->setDefault(null);
         $dt->add();
 
@@ -145,14 +147,14 @@ class slideshowUpdate
 
     private function v1_3_4()
     {
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
 
         $t = $db->addTable('ss_show');
-        $dt = new \phpws2\Database\Datatype\Varchar($t, 'preview');
+        $dt = new Database\Datatype\Varchar($t, 'preview');
         $dt->setDefault(null);
         $dt->add();
 
-        $dt = new \phpws2\Database\Datatype\Boolean($t, 'useThumb');
+        $dt = new Database\Datatype\Boolean($t, 'useThumb');
         $dt->setDefault(false);
         $dt->add();
 
@@ -163,7 +165,7 @@ class slideshowUpdate
     private function v1_4_1()
     {
 
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
 
         $quiz = new \slideshow\Resource\QuizResource;
         $quiz->createTable($db);
@@ -174,7 +176,7 @@ class slideshowUpdate
 
     private function v1_4_2()
     {
-        $db = \phpws2\Database::getDB();
+        $db = Database::getDB();
         $tbl = $db->addTable('ss_slide');
 
         $sql = "ALTER TABLE ss_slide CHANGE COLUMN backgroundColor background varchar(255) DEFAULT '#E5E7E9';";
@@ -190,6 +192,17 @@ class slideshowUpdate
     {
         $changes[] = 'Updated packages. Fixed some errors.';
         $this->addContent('1.4.3', $changes);
+    }
+
+    private function v1_4_4()
+    {
+        $db = Database::getDB();
+        $t = $db->addTable('ss_session');
+        $dt = new \phpws2\Database\Datatype\Varchar($t, 'ip', 20);
+        $dt->setDefault(null);
+        $dt->add();
+        $changes[] = 'Allowing unlogged users';
+        $this->addContent('1.4.4', $changes);
     }
 
     private function addContent($version, array $changes)

@@ -3,14 +3,12 @@ import PropTypes from 'prop-types'
 import './custom.css'
 
 import ShowLogo from '../../img/showimg.png'
-//const ShowLo = require('../../assets/linux_logo.jpg')
 import PreviewUpload from './PreviewUpload'
 import SessionTool from './SessionTool'
 import DeleteShowTool from './DeleteShowTool'
 import Tippy from '@tippyjs/react'
 
 /* global $ */
-
 export default class ShowCard extends Component {
   constructor(props) {
     super(props)
@@ -111,13 +109,15 @@ export default class ShowCard extends Component {
   }
 
   handleActivation() {
-    this.state.active > 0
-      ? this.setState({active: 0}, () => {
-          this.handleSave()
-        })
-      : this.setState({active: 1}, () => {
-          this.handleSave()
-        })
+    if (this.state.active > 0) {
+      this.setState({active: 0}, () => {
+        this.handleSave()
+      })
+    } else {
+      this.setState({active: 1}, () => {
+        this.handleSave()
+      })
+    }
   }
 
   async editTransition() {
@@ -273,8 +273,10 @@ export default class ShowCard extends Component {
 }
 
 ShowCard.propTypes = {
-  //id: PropTypes.number,
+  id: PropTypes.string,
   title: PropTypes.string,
-  //active: PropTypes.string,
-  //load: PropTypes.function
+  active: PropTypes.string,
+  img: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  load: PropTypes.func,
+  disabled: PropTypes.bool,
 }

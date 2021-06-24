@@ -30,19 +30,6 @@ class SessionFactory extends Base
         return new Resource;
     }
 
-    protected function post(Request $request, $showId)
-    {
-        $resource = $this->build();
-
-        $resource->highestSlide = 0;
-        $resource->completed = false;
-        $resource->showId = $showId;
-
-        $this->saveResource($resource, 'ss_session');
-
-        return $resource;
-    }
-
     public function get(Request $request)
     {
         $vars = $request->getRequestVars();
@@ -55,7 +42,7 @@ class SessionFactory extends Base
         $q = $pdo->prepare($sql);
         $q->execute(array(':userId' => $userId, ':showId' => $showId));
         $result = $q->fetch();
-        //var_dump($result);
+
         if (empty($result)) {
             $this->post($request, $showId);
             $this->get($request);
@@ -63,35 +50,60 @@ class SessionFactory extends Base
         return array('highestSlide' => $result[1], 'completed' => $result[2]);
     }
 
+    protected function getSessionByUserId(int $showId, int $userId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('ss_session');
+        $tbl->addFieldConditional('userId', $userId);
+        $tbl->addFieldConditional('showId', $showId);
+        return $db->selectOneRow();
+    }
+
+    protected function getSessionByIp(int $showId, string $ip)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('ss_session');
+        $tbl->addFieldConditional('showId', $showId);
+        $tbl->addFieldConditional('ip', $ip);
+        return $db->selectOneRow();
+    }
+
     public function put(Request $request)
     {
-        $vars = $request->getRequestVars();
-        $showId = intval($vars['Session']);
-        $userId = \Current_User::getId();
+        $showId = $request->pullGetInteger('Session');
+        $highestSlide = (int) $request->pullPutInteger('highestSlide', true);
+        $completed = (bool) $request->pullPutInteger('completed', true);
 
-        $sql = "SELECT id, highestSlide, completed FROM ss_session WHERE userId=:userId AND showId=:showId;";
-        $db = Database::getDB();
-        $pdo = $db->getPDO();
-        $q = $pdo->prepare($sql);
-        $q->execute(array(':userId' => $userId, ':showId' => $showId));
-        $result = $q->fetch();
-        if (empty($result)) {
-            return $this->post($request, $showId);
+        $userId = \Current_User::getId();
+        $ip = \Canopy\Server::getUserIp();
+        $resource = $this->build();
+
+        if ($userId > 0) {
+            $result = $this->getSessionByUserId($showId, $userId);
+        } else {
+            $result = $this->getSessionByIp($showId, $ip);
         }
 
-        // Builds resource based on the corresponding slideshow id and user id
-        $resource = $this->load($result['id']);
-
-
-        $highestSlide = $request->pullPutVarIfSet('highestSlide');
-        $completed = $request->pullPutVarIfSet('completed') === 'true' ? true : false;
+        if (empty($result)) {
+            $resource->showId = $showId;
+            $resource->userId = $userId;
+            $resource->ip = $userId == 0 ? $ip : null;
+            $resource->username = $userId > 0 ? \Current_User::getUsername() : 'anonymous';
+        } else {
+            $resource->setVars($result);
+        }
         if ($highestSlide > $resource->highestSlide) {
             $resource->highestSlide = $highestSlide;
         }
         if (!$resource->completed && $completed) {
             $resource->completed = $completed;
         }
-        $this->saveResource($resource);
+
+        if ($resource->userId > 0 || strlen($resource->ip) > 0) {
+            $this->saveResource($resource);
+        } else {
+            throw new \Exception('Cannot save session to database without identifier');
+        }
         return $resource;
     }
 

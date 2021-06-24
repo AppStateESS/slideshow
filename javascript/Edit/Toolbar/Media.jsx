@@ -1,16 +1,14 @@
 'use strict'
-import React, { Component } from 'react'
-
-import {
-  Modal
-} from 'react-bootstrap'
-
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
+import {Modal} from 'react-bootstrap'
+import Tippy from '@tippyjs/react'
+import Dropzone from 'react-dropzone-uploader'
 import './toolbar.css'
 import 'react-dropzone-uploader/dist/styles.css'
+import 'tippy.js/themes/light-border.css'
 
-import Tippy from '@tippyjs/react'
-
-import Dropzone from 'react-dropzone-uploader'
+/* global $ */
 
 export default class Media extends Component {
   constructor(props) {
@@ -18,7 +16,7 @@ export default class Media extends Component {
 
     this.state = {
       mediaView: false,
-      imageUrl: ''
+      imageUrl: '',
     }
 
     this.insertMedia = this.insertMedia.bind(this)
@@ -29,7 +27,7 @@ export default class Media extends Component {
 
   insertMedia(fileWithMeta) {
     let showId = Number(window.sessionStorage.getItem('id'))
-    let slideId = Number(window.sessionStorage.getItem('slideId'));
+    let slideId = Number(window.sessionStorage.getItem('slideId'))
     // Handle AJAX
     let fMeta = fileWithMeta[0]
     let formData = new FormData()
@@ -49,15 +47,17 @@ export default class Media extends Component {
       error: (req, res) => {
         console.log(req)
         console.error(res)
-        alert("An error has occured with this image. Please try a different image.")
-      }
+        alert(
+          'An error has occured with this image. Please try a different image.'
+        )
+      },
     })
     this.setState({mediaView: false})
   }
 
   validate({meta}) {
     if (meta.status === 'rejected_file_type') {
-      alert("Sorry, this file type is not supported")
+      alert('Sorry, this file type is not supported')
     }
   }
 
@@ -70,7 +70,6 @@ export default class Media extends Component {
   }
 
   render() {
-
     let mediaModal = (
       <Modal show={this.state.mediaView} onHide={this.mediaCancel}>
         <Modal.Header closeButton>
@@ -78,9 +77,7 @@ export default class Media extends Component {
         </Modal.Header>
         <Modal.Body>
           <div className="card">
-            <div className="card-header text-center" >
-              Upload
-            </div>
+            <div className="card-header text-center">Upload</div>
             <Dropzone
               accept="image/jpeg,image/png,image/gif"
               maxFiles={1}
@@ -91,7 +88,10 @@ export default class Media extends Component {
               onSubmit={this.insertMedia}
               submitButtonContent={'Insert'}
               inputContent={''}
-              classNames={{submitButton: 'btn btn-secondary btn-block drop', dropzone: 'drop'}}
+              classNames={{
+                submitButton: 'btn btn-secondary btn-block drop',
+                dropzone: 'drop',
+              }}
             />
           </div>
         </Modal.Body>
@@ -102,12 +102,18 @@ export default class Media extends Component {
       <span>
         {mediaModal}
         <Tippy
+          theme="light-border"
           content={<div>Insert Image</div>}
-          arrow={true}
-        >
-          <button className="toolbar" onClick={this.mediaModal}><i className="fas fa-images"></i></button>
+          arrow={true}>
+          <button className="toolbar" onClick={this.mediaModal}>
+            <i className="fas fa-images"></i>
+          </button>
         </Tippy>
       </span>
     )
   }
+}
+
+Media.propTypes = {
+  saveMedia: PropTypes.func,
 }

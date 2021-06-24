@@ -1,17 +1,15 @@
 'use strict'
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import NavCards from './NavCards.jsx'
-import {
-  Button,
-  InputGroup,
-  FormControl,
-} from 'react-bootstrap'
+import {Button, InputGroup, FormControl} from 'react-bootstrap'
 
-import { fetchQuiz, postQuiz } from '../api/quiz'
+import {fetchQuiz, postQuiz} from '../api/quiz'
 import domtoimage from '../Resources/dom-to-image'
 import Skeleton from '../Resources/Components/Skeleton.jsx'
+
+/* global $ */
 
 export default class Edit extends Component {
   constructor() {
@@ -30,14 +28,13 @@ export default class Edit extends Component {
           background: '#E5E7E9',
           media: {imgUrl: '', align: ''},
           slideId: 0,
-          thumb: undefined
+          thumb: undefined,
         },
       ],
       slideTimer: 2,
       loaded: false,
-      animation: 'None'
+      animation: 'None',
     }
-
 
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
@@ -61,20 +58,12 @@ export default class Edit extends Component {
     this.load()
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    // This is used for debugging
-    if (this.state.currentSlide != prevState.currentSlide) {
-
-    }
-
-  }
-
   async save() {
-   this.saveDomScreen() 
+    this.saveDomScreen()
     await $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       data: {
-        slides: [...this.state.content]
+        slides: [...this.state.content],
       },
       type: 'put',
       dataType: 'json',
@@ -85,17 +74,19 @@ export default class Edit extends Component {
           c[i].slideId = id
         })
         this.setState({content: c}, () => {
-          window.sessionStorage.setItem('slideId', this.state.content[this.state.currentSlide].slideId)
+          window.sessionStorage.setItem(
+            'slideId',
+            this.state.content[this.state.currentSlide].slideId
+          )
         })
       },
       error: (req, err) => {
-        alert("Failed to save show " + window.sessionStorage.getItem('id'))
+        alert('Failed to save show ' + window.sessionStorage.getItem('id'))
         document.write(req.responseJSON.backtrace[0].args[1].xdebug_message)
-        console.error(req, err.toString());
-      }
+        console.error(req, err.toString())
+      },
     })
   }
-
 
   async load() {
     $.ajax({
@@ -127,106 +118,116 @@ export default class Edit extends Component {
               thumb: JSON.parse(loaded[i].thumb || '{}'), // Ensure that this isn't undefined
               slideId: Number(loaded[i].id),
               media: JSON.parse(loaded[i].media || '{}'),
-              quizId: qId
+              quizId: qId,
             })
           }
           this.setState({
             content: showContent,
             id: loaded[0].showId,
-            loaded: true
-          });
-        }
-        else {
+            loaded: true,
+          })
+        } else {
           this.save()
           this.setState({loaded: true})
         }
       }.bind(this),
-      error: function(req, err) {
-        alert("Failed to load data.")
-        console.error(req, err.toString());
-      }.bind(this)
-    });
+      error: function (req, err) {
+        alert('Failed to load data.')
+        console.error(req, err.toString())
+      }.bind(this),
+    })
 
     $.ajax({
-      url: './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
+      url:
+        './slideshow/Show/present/?id=' + window.sessionStorage.getItem('id'),
       type: 'GET',
-      dataType:'json',
+      dataType: 'json',
       success: (data) => {
         this.setState({
           slideTimer: Number(data[0].slideTimer),
           showTitle: data[0].title,
-          animation: data[0].animation
+          animation: data[0].animation,
         })
       },
       error: (request, response) => {
         console.log(request)
         console.error(response)
-      }
-    });
+      },
+    })
   }
 
   saveDomScreen(domNode, index) {
     if (domNode === undefined) {
       domNode = document.getElementById('editor')
-      index = domNode.getAttribute('data-key')
     }
-    if (domNode == null) return
+    if (domNode != null) {
+      index = domNode.getAttribute('data-key')
+    } else {
+      return
+    }
     if (domNode.getAttribute('data-key') == index) {
-      domtoimage.toPng(domNode).then((dataUrl) => {
-        let img = new Image()
-        img.src = dataUrl
-        img.width = 200
-        img.height = 100
-        let fData = new FormData()
-        fData.append('thumb', img.src)
-        fData.append('slideId', this.state.content[index].slideId)
-        $.post({
-          url: './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
-          type: 'POST',
-          data: fData,
-          processData: false,
-          contentType: false,
-          success: (path) => {
-            let c = [...this.state.content]
-            c[index].thumb = JSON.parse(path)
-            this.setState({content: c})
-          },
-          error: (req, res) => {
-            console.log(req)
-            console.error(res)
-          }
+      domtoimage
+        .toPng(domNode)
+        .then((dataUrl) => {
+          let img = new Image()
+          img.src = dataUrl
+          img.width = 200
+          img.height = 100
+          let fData = new FormData()
+          fData.append('thumb', img.src)
+          fData.append('slideId', this.state.content[index].slideId)
+          $.post({
+            url:
+              './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
+            type: 'POST',
+            data: fData,
+            processData: false,
+            contentType: false,
+            success: (path) => {
+              let c = [...this.state.content]
+              c[index].thumb = JSON.parse(path)
+              this.setState({content: c})
+            },
+            error: (req, res) => {
+              console.log(req)
+              console.error(res)
+            },
+          })
         })
-      }).catch(function (error) {
-        console.error(error)
-      })
+        .catch(function (error) {
+          console.error(error)
+        })
     }
   }
-
 
   setCurrentSlide(val) {
     this.setState({currentSlide: val}, () => this.save())
   }
 
-
   addNewSlide(quizId) {
-    if (typeof(quizId) != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
+    if (typeof quizId != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
     const newSlide = {
-        saveContent: undefined,
-        quizContent: undefined,
-        isQuiz: (quizId !== -1),
-        background: '#E5E7E9',
-        quizId: quizId
+      saveContent: undefined,
+      quizContent: undefined,
+      isQuiz: quizId !== -1,
+      background: '#E5E7E9',
+      quizId: quizId,
     }
     let copy = [...this.state.content]
     copy.splice(index, 0, newSlide)
-    this.setState({
-      //currentSlide: index,
-      content: copy,
-    }, () => {this.save(); this.setCurrentSlide(index)})
+    this.setState(
+      {
+        //currentSlide: index,
+        content: copy,
+      },
+      () => {
+        this.save()
+        this.setCurrentSlide(index)
+      }
+    )
   }
-
 
   async addNewQuiz() {
     const id = await postQuiz()
@@ -238,17 +239,20 @@ export default class Edit extends Component {
   pushNewSlide() {
     const index = this.state.content.length
     const newSlide = {
-        saveContent: undefined,
-        quizContent: undefined,
-        isQuiz: false,
-        background: '#E5E7E9',
+      saveContent: undefined,
+      quizContent: undefined,
+      isQuiz: false,
+      background: '#E5E7E9',
     }
     let copy = [...this.state.content]
     copy.push(newSlide)
-    this.setState({
-      //currentSlide: index,
-      content: copy,
-    }, () => this.setCurrentSlide(index))
+    this.setState(
+      {
+        //currentSlide: index,
+        content: copy,
+      },
+      () => this.setCurrentSlide(index)
+    )
   }
 
   deleteCurrentSlide() {
@@ -260,11 +264,11 @@ export default class Edit extends Component {
         url: `./slideshow/Quiz/${quizId}`,
         type: 'delete',
         success: () => {
-          console.log("quiz deleted!!!")
+          console.log('quiz deleted!!!')
         },
         error: (req, res) => {
           console.error(res)
-        }
+        },
       })
     }
     let newIndex = this.state.currentSlide
@@ -283,16 +287,21 @@ export default class Edit extends Component {
     $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       type: 'delete',
-      data: {slideId: this.state.content[this.state.currentSlide].slideId, type: 'slide'},
+      data: {
+        slideId: this.state.content[this.state.currentSlide].slideId,
+        type: 'slide',
+      },
       error: (req, res) => {
-        console.error(req, res.toString());
-      }
+        console.error(req, res.toString())
+      },
     })
 
-    this.setState({
-      content: copy,
-      currentSlide: newIndex
-    }, /*() => this.setCurrentSlide(newIndex)*/)
+    this.setState(
+      {
+        content: copy,
+        currentSlide: newIndex,
+      } /*() => this.setCurrentSlide(newIndex)*/
+    )
   }
 
   moveSlide(fromIndex, toIndex) {
@@ -309,14 +318,14 @@ export default class Edit extends Component {
       data: {title: this.state.showTitle},
       type: 'put',
       dataType: 'json',
-      success: function() {
+      success: function () {
         this.setState({editTitleView: false})
       }.bind(this),
-      error: function(req, err) {
-        alert("Failed to save data.")
-        console.error(req, err.toString());
-      }.bind(this)
-    });
+      error: function (req, err) {
+        alert('Failed to save data.')
+        console.error(req, err.toString())
+      }.bind(this),
+    })
   }
 
   saveContentState(saveContent) {
@@ -339,18 +348,20 @@ export default class Edit extends Component {
     this.setState({content: c}, () => this.save())
   }
 
-
   removeMedia() {
     $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       method: 'delete',
-      data: {type: 'image', slideId: this.state.content[this.state.currentSlide].slideId},
+      data: {
+        type: 'image',
+        slideId: this.state.content[this.state.currentSlide].slideId,
+      },
       error: (req, res) => {
         console.log(res.toString())
-      }
+      },
     })
     let c = [...this.state.content]
-    c[this.state.currentSlide].media = ""
+    c[this.state.currentSlide].media = ''
     this.setState({content: c})
   }
 
@@ -365,79 +376,85 @@ export default class Edit extends Component {
     // is loaded in as a string or a number
     // We need to handle that and bring it back to a boolean
     if (quizT == undefined) return false // initial load
-    if (typeof(JSON.parse(quizT)) === 'number') return (JSON.parse(quizT) != 0)
-    return (typeof(JSON.parse(quizT)) === "boolean") ? quizT : JSON.parse(quizT)
+    if (typeof JSON.parse(quizT) === 'number') return JSON.parse(quizT) != 0
+    return typeof JSON.parse(quizT) === 'boolean' ? quizT : JSON.parse(quizT)
   }
-
-
 
   render() {
     if (!this.state.loaded) return <Skeleton />
     //console.log(this.state.content[this.state.currentSlide].isQuiz)
     let isQuiz = this.state.content[this.state.currentSlide].isQuiz
-    let cardTitle;
+    let cardTitle
     if (this.state.editTitleView) {
-      cardTitle = <InputGroup>
-                    <FormControl
-                      style={{maxWidth: 350}}
-                      value={this.state.showTitle}
-                      onChange={(event) => this.setState({showTitle: event.target.value})}
-                      onKeyDown={(event) => {if (event.key === 'Enter') this.saveTitle()}}
-                    />
-                    <InputGroup.Append>
-                      <Button variant="primary" onClick={this.saveTitle}>Save</Button>
-                    </InputGroup.Append>
-                  </InputGroup>
+      cardTitle = (
+        <InputGroup>
+          <FormControl
+            style={{maxWidth: 350}}
+            value={this.state.showTitle}
+            onChange={(event) => this.setState({showTitle: event.target.value})}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') this.saveTitle()
+            }}
+          />
+          <InputGroup.Append>
+            <Button variant="primary" onClick={this.saveTitle}>
+              Save
+            </Button>
+          </InputGroup.Append>
+        </InputGroup>
+      )
     } else {
-      cardTitle = <div>
-                    <u>
-                    {this.state.showTitle}
-                    </u>
-                    <a onClick={() => this.setState({editTitleView: true})} style={{paddingLeft: "10px", cursor: "pointer"}}>
-                      <i className="fas fa-edit fa-sm"></i>
-                    </a>
-                  </div>
+      cardTitle = (
+        <div>
+          <u>{this.state.showTitle}</u>
+          <a
+            onClick={() => this.setState({editTitleView: true})}
+            style={{paddingLeft: '10px', cursor: 'pointer'}}>
+            <i className="fas fa-edit fa-sm"></i>
+          </a>
+        </div>
+      )
     }
 
     return (
       <div>
-      <h2>{cardTitle}</h2>
+        <h2>{cardTitle}</h2>
         <NavBar
-          id                ={Number(this.state.id)}
-          insertSlide       ={this.addNewSlide}
-          deleteSlide       ={this.deleteCurrentSlide}
-          renameSlide       ={this.renameCurrentSlide}
-          addToStack        ={this.addToStack}
-          currentSlide      ={this.state.currentSlide}
-          insertQuiz        ={this.addNewQuiz}
-          saveDB            ={this.save}
-          saveBackground    ={this.saveBackground}
-          currentColor      ={this.state.content[this.state.currentSlide].background}
-          slideTimer        ={this.state.slideTimer}
-          animation         ={this.state.animation}
-          setAnimation      ={(a) => this.setState({animation: a})}
-          />
+          id={Number(this.state.id)}
+          insertSlide={this.addNewSlide}
+          deleteSlide={this.deleteCurrentSlide}
+          renameSlide={this.renameCurrentSlide}
+          addToStack={this.addToStack}
+          currentSlide={this.state.currentSlide}
+          insertQuiz={this.addNewQuiz}
+          saveDB={this.save}
+          saveBackground={this.saveBackground}
+          currentColor={this.state.content[this.state.currentSlide].background}
+          slideTimer={this.state.slideTimer}
+          animation={this.state.animation}
+          setAnimation={(a) => this.setState({animation: a})}
+        />
         <div className="row">
-          <NavCards 
-            content         ={this.state.content}
-            setCurrentSlide ={this.setCurrentSlide}
-            addNewSlide     ={this.pushNewSlide}
-            currentSlide    ={this.state.currentSlide}
-            moveSlide       ={this.moveSlide}
-            saveDomScreen   ={this.saveDomScreen}
+          <NavCards
+            content={this.state.content}
+            setCurrentSlide={this.setCurrentSlide}
+            addNewSlide={this.pushNewSlide}
+            currentSlide={this.state.currentSlide}
+            moveSlide={this.moveSlide}
+            saveDomScreen={this.saveDomScreen}
           />
           <EditView
-            currentSlide    ={this.state.currentSlide}
-            content         ={this.state.content[this.state.currentSlide]}
-            deleteElement   ={this.deleteFromStack}
+            currentSlide={this.state.currentSlide}
+            content={this.state.content[this.state.currentSlide]}
+            deleteElement={this.deleteFromStack}
             saveContentState={this.saveContentState}
-            saveQuizContent ={this.saveQuizContent}
-            saveMedia       ={this.saveMedia}
-            removeMedia     ={this.removeMedia}
-            saveBackground  ={this.saveBackground}
-            saveDB          ={this.save}
-            load            ={this.load}
-            />
+            saveQuizContent={this.saveQuizContent}
+            saveMedia={this.saveMedia}
+            removeMedia={this.removeMedia}
+            saveBackground={this.saveBackground}
+            saveDB={this.save}
+            load={this.load}
+          />
         </div>
       </div>
     )

@@ -11,6 +11,7 @@ function slideshow_update(&$content, $current_version)
 
 class slideshowUpdate
 {
+
     private $content;
     private $cversion;
 
@@ -40,6 +41,10 @@ class slideshowUpdate
                 $this->update('1.3.4');
             case $this->compare('1.4.1');
                 $this->update('1.4.1');
+            case $this->compare('1.4.2');
+                $this->update('1.4.2');
+            case $this->compare('1.4.3');
+                $this->update('1.4.3');
         }
     }
 
@@ -110,7 +115,6 @@ class slideshowUpdate
         $pdo = $db->getPDO();
         $q = $pdo->prepare($sql);
         $q->execute();
-
     }
 
     private function v1_3_2()
@@ -158,11 +162,11 @@ class slideshowUpdate
 
     private function v1_4_1()
     {
-        
+
         $db = \phpws2\Database::getDB();
-        
+
         $quiz = new \slideshow\Resource\QuizResource;
-        $quiz->createTable($db); 
+        $quiz->createTable($db);
 
         $changes[] = 'add quiz table';
         $this->addContent('1.4.1', $changes);
@@ -182,6 +186,12 @@ class slideshowUpdate
         $this->addContent('1.4.2', $changes);
     }
 
+    private function v1_4_3()
+    {
+        $changes[] = 'Updated packages. Fixed some errors.';
+        $this->addContent('1.4.3', $changes);
+    }
+
     private function addContent($version, array $changes)
     {
         $changes_string = implode("\n+ ", $changes);
@@ -192,6 +202,6 @@ class slideshowUpdate
         + $changes_string
         </pre>
 EOF;
-
     }
+
 }

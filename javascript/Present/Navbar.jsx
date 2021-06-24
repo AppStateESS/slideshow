@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 import 'tippy.js/themes/light-border.css'
 
 export const Navigation = (props) => {

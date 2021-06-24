@@ -5,7 +5,7 @@ import './toolbar.css'
 import { EditorState, RichUtils} from 'draft-js'
 import decorator from '../../Resources/Draft/LinkDecorator'
 
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 import 'tippy.js/themes/light-border.css'
 
 export default class Link extends Component {

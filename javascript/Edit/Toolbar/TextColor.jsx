@@ -4,7 +4,7 @@ import './toolbar.css'
 
 import {EditorState, RichUtils, Modifier, SelectionState} from 'draft-js'
 
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 import 'tippy.js/themes/light-border.css'
 import {CirclePicker, ChromePicker} from 'react-color'
 

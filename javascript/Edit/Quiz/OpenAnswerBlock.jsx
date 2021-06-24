@@ -13,7 +13,7 @@ import {
   FormControl
 } from 'react-bootstrap'
 
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 
 export default class OpenAnswerBlock extends Component {
   constructor(props) {

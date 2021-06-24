@@ -9,7 +9,7 @@ import './quiz.css'
 import { saveQuiz } from '../../api/quiz.js'
 
 import 'animate.css'
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 import { Form } from 'react-bootstrap'
 const { Row, Group, Check } = Form
 

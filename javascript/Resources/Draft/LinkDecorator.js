@@ -1,8 +1,8 @@
 // Link Decorator
 import React from 'react'
 import { CompositeDecorator } from 'draft-js'
-import Tippy from '@tippy.js/react'
-import 'tippy.js/themes/google.css'
+import Tippy from '@tippyjs/react'
+import 'tippy.js/themes/material.css'
 
 function findLinkEntities(contentBlock, callback, contentState) {
     contentBlock.findEntityRanges(

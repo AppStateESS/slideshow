@@ -8,7 +8,7 @@ import {
 import './toolbar.css'
 import 'react-dropzone-uploader/dist/styles.css'
 
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 
 import Dropzone from 'react-dropzone-uploader'
 

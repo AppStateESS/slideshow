@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 import './custom.css'
 
 import AppLogo from "../../img/showimg.png"

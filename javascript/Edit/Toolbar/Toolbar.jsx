@@ -7,7 +7,7 @@ import Media from './Media'
 import Link from './Link'
 
 import { EditorState, RichUtils, Modifier } from 'draft-js'
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 import Background from './Background'
 
 /** In this file, I have most of the buttons as function components. At the bottom, I have a final composite Toolbar component. */

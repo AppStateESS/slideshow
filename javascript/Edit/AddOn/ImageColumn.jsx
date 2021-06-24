@@ -1,6 +1,6 @@
 'use strict'
 import React, { Component } from 'react'
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 import 'tippy.js/themes/light-border.css'
 
 export default class ImageColumn extends Component {

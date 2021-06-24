@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 
 const {Header, Body, Footer} = Modal
 

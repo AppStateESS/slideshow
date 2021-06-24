@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {
   Form
 } from 'react-bootstrap'
-import Tippy from '@tippy.js/react';
+import Tippy from '@tippyjs/react';
 import './quiz.css'
 
 const {Row, Group, Check , Control} = Form

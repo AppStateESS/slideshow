@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Tippy from '@tippy.js/react'
+import Tippy from '@tippyjs/react'
 import { Modal, Row, Col } from 'react-bootstrap'
 import { CirclePicker } from 'react-color'
 import ColorSelect from '../AddOn/ColorSelect'

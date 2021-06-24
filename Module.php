@@ -35,9 +35,6 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
     public function getController(Request $request)
     {
         try {
-            if (!\Current_User::isLogged()) {
-              \Current_User::requireLogin();
-            }
             $controller = new Controller\BaseController($this, $request);
             return $controller;
         } catch (\Exception $e) {
@@ -79,13 +76,9 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
     public function runTime(Request $request)
     {
         if (\PHPWS_Core::atHome()) {
-            if (\Current_User::isLogged()) {
-                Server::forward('./slideshow/Show/');
-            }
             $content = Home::view();
             \Layout::add($content);
-        } 
-        else if ($request->getModule() !== 'slideshow') {
+        } else if ($request->getModule() !== 'slideshow') {
             // PHPCORE::atHome
             $this->showNavBar($request);
         }
@@ -97,7 +90,6 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
             NavBar::view($request);
         }
     }
-
 
     public static function autoloader($class_name)
     {

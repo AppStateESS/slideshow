@@ -1,6 +1,6 @@
 var webpack = require('webpack')
 var setup = require('./exports.js')
-var BrowserSyncPlugin = require('terser-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 
 /* global module */
 

@@ -53,7 +53,7 @@ export const fetchSession = async (showId) => {
       console.log(
         'Failed to load session from db. This could be due to being logged in as an admin'
       )
-      //console.error(req, err.toString())
+      console.error(req, err.toString())
     },
   })
   return parseSession(loaded)
@@ -72,7 +72,6 @@ export const updateSession = (showId, highestSlide, finished) => {
     error: function (req, err) {
       console.log("Failed to updated user's session data:")
       console.error(req, err.toString())
-      alert(req.responseText)
     }.bind(this),
   })
 }

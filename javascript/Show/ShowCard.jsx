@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import './custom.css'
 
 import ShowLogo from '../../img/showimg.png'
 import PreviewUpload from './PreviewUpload'
 import SessionTool from './SessionTool'
 import DeleteShowTool from './DeleteShowTool'
 import Tippy from '@tippyjs/react'
+
+import './custom.css'
+import 'tippy.js/themes/light-border.css'
 
 /* global $ */
 export default class ShowCard extends Component {
@@ -248,8 +250,9 @@ export default class ShowCard extends Component {
               </button>
               <Tippy
                 content={<div>Activate for students</div>}
-                placement="bottom"
-                arrow={true}>
+                theme="light-border"
+                arrow={false}
+                placement="bottom">
                 <button
                   type="button"
                   className={activeBtnType}

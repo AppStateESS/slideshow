@@ -4,6 +4,16 @@ import {Modal} from 'react-bootstrap'
 import Tippy from '@tippyjs/react'
 import Dropzone from 'react-dropzone-uploader'
 import 'react-dropzone-uploader/dist/styles.css'
+import 'tippy.js/themes/light-border.css'
+import PropTypes from 'prop-types'
+
+Media.propTypes = {
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  changePreview: PropTypes.func,
+  useThumb: PropTypes.func,
+}
+
+/* global $ */
 
 export default function Media(props) {
   // This is an example of a hook. Check it out on React's documentation site; they're neat
@@ -22,7 +32,6 @@ export default function Media(props) {
       processData: false,
       contentType: false,
       success: (imageLocation) => {
-        console.log('success')
         props.changePreview(JSON.parse(imageLocation))
       },
       error: (req, res) => {
@@ -109,7 +118,10 @@ export default function Media(props) {
           </div>
         </Modal.Body>
       </Modal>
-      <Tippy content={<div>Change show preview image</div>} arrow={true}>
+      <Tippy
+        theme="light-border"
+        content={<div>Change show preview image</div>}
+        arrow={true}>
         <button className="tool" onClick={() => setModalView(true)}>
           <i className="fas fa-image"></i>
         </button>

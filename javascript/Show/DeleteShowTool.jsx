@@ -1,4 +1,5 @@
-import React, {useState, forwardRef} from 'react'
+import React, {useState} from 'react'
+import PropTypes from 'prop-types'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/themes/light-border.css'
 
@@ -25,11 +26,18 @@ export default function DeleteShowTool(props) {
       }
       visible={deleteAlert}
       interactive={true}>
-      <Tippy content={<div>Delete this show</div>} arrow={true}>
+      <Tippy
+        theme="light-border"
+        content={<div>Delete this show</div>}
+        arrow={false}>
         <button className="tool trash" onClick={() => setDeleteAlert(true)}>
           <i className="fas fa-trash"></i>
         </button>
       </Tippy>
     </Tippy>
   )
+}
+
+DeleteShowTool.propTypes = {
+  delete: PropTypes.func,
 }

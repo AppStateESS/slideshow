@@ -14,17 +14,7 @@ import {
 import {CirclePicker, SketchPicker} from 'react-color'
 import AnimateDropdown from './AddOn/AnimateDropdown'
 import './custom.css'
-
 /* global $ */
-
-Settings.propTypes = {
-  slideTimer: PropTypes.string,
-  saveBackground: PropTypes.func,
-  id: PropTypes.string,
-  currentColor: PropTypes.string,
-  animation: PropTypes.string,
-  setAnimation: PropTypes.func,
-}
 
 export default class Settings extends Component {
   constructor(props) {
@@ -226,4 +216,13 @@ export default class Settings extends Component {
       </ButtonGroup>
     )
   }
+}
+
+Settings.propTypes = {
+  slideTimer: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  saveBackground: PropTypes.func,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  currentColor: PropTypes.string,
+  animation: PropTypes.string,
+  setAnimation: PropTypes.func,
 }

@@ -17,7 +17,22 @@
 
 namespace slideshow\Controller\Slide;
 
+use Canopy\Request;
+
 class User extends Base
 {
+
+    /**
+     * Renders the view for present
+     */
+    protected function presentHtmlCommand(Request $request)
+    {
+        return $this->view->present();
+    }
+
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->get($request, false);
+    }
 
 }

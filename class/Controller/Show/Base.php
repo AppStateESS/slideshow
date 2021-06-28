@@ -46,9 +46,4 @@ class Base extends RoleController
         $this->view = new View;
     }
 
-    protected function presentJsonCommand(Request $request)
-    {
-        return $this->factory->getShowDetails($request);
-    }
-
 }

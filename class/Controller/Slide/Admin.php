@@ -88,4 +88,17 @@ class Admin extends Base
         return $this->factory->postBackground($request);
     }
 
+    /**
+     * Renders the view for present
+     */
+    protected function presentHtmlCommand(Request $request)
+    {
+        return $this->view->present();
+    }
+
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->get($request, true);
+    }
+
 }

@@ -24,7 +24,7 @@ class User extends Base
 {
 
     /**
-     * @var slideshow\Factory\ShowFactory
+     * @var \slideshow\Factory\ShowFactory
      */
     protected $factory;
 
@@ -43,7 +43,17 @@ class User extends Base
 
     protected function listJsonCommand(Request $request)
     {
-        return array('listing' => $this->factory->listing(true));
+        return array('listing' => $this->factory->listing(false));
+    }
+
+    /**
+     * The user list will not return inactive shows.
+     * @param Request $request
+     * @return type
+     */
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->getShowDetails($request, false);
     }
 
 }

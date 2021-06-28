@@ -23,6 +23,7 @@ export default function Present({isAdmin}) {
   const [showTitle, setShowTitle] = useState('Present: ')
   const [showTimer, setShowTimer] = useState(0)
   const [showAnimation, setShowAnimation] = useState('None')
+  const [noShow, setNoShow] = useState(true)
 
   const [content, setContent] = useState(slidesResource.content)
 
@@ -70,26 +71,30 @@ export default function Present({isAdmin}) {
 
   async function load() {
     const show = await fetchShow(showId)
-    const content = await fetchSlides(showId)
-    const session = await fetchSession(showId)
+    if (show.length > 0) {
+      const content = await fetchSlides(showId)
+      const session = await fetchSession(showId)
 
-    let current = Number(session.highest)
-    if (session.complete) {
-      current = 0
+      let current = Number(session.highest)
+      if (session.complete) {
+        current = 0
+      }
+      setNoShow(false)
+      setShowTitle(show.showTitle)
+      setShowTimer(show.showTimer)
+      setShowAnimation(show.animation)
+      setContent(content)
+      setCurrentSlide(current)
+      setHighestSlide(Number(session.highest))
+      setLoaded(true)
+      setFinished(session.complete)
+      setNextDisable(!session.complete)
+      window.setTimeout(() => {
+        setNextDisable(false)
+      }, show.showTimer)
+    } else {
+      setLoaded(true)
     }
-    setShowTitle(show.showTitle)
-    setShowTimer(show.showTimer)
-    setShowAnimation(show.animation)
-    setContent(content)
-    setCurrentSlide(current)
-    setHighestSlide(Number(session.highest))
-    setLoaded(true)
-    setFinished(session.complete)
-
-    setNextDisable(!session.complete)
-    window.setTimeout(() => {
-      setNextDisable(false)
-    }, show.showTimer)
   }
 
   function evaluateState() {
@@ -133,6 +138,14 @@ export default function Present({isAdmin}) {
     setCurrentSlide(prev)
   }
   if (!loaded) return <Skeleton />
+  if (noShow) {
+    return (
+      <div>
+        <h2>Sorry</h2>
+        <p>This show is not available.</p>
+      </div>
+    )
+  }
   return (
     <div>
       {isAdmin ? (

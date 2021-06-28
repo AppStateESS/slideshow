@@ -9,6 +9,8 @@ import {
   slidesResource,
 } from '../api/present'
 
+import {getPageId} from '../api/getPageId'
+
 import PresentView from './PresentView'
 
 import {Progress, Navigation, Finish, SlidesNav} from './Navbar'
@@ -65,14 +67,7 @@ export default function Present() {
   }, [nextDisable])
 
   async function load() {
-    let showId = window.sessionStorage.getItem('id')
-    if (showId == null) {
-      const params = new URLSearchParams(window.location.search)
-      showId = params.get('id')
-      if (showId > 0) {
-        window.sessionStorage.setItem('id', showId)
-      }
-    }
+    const showId = getPageId()
     const show = await fetchShow(showId)
     const content = await fetchSlides(showId)
     const session = await fetchSession(showId)

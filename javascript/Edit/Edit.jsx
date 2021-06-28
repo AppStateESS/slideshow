@@ -4,7 +4,7 @@ import EditView from './EditView.jsx'
 import NavBar from './NavBar.jsx'
 import NavCards from './NavCards.jsx'
 import {Button, InputGroup, FormControl} from 'react-bootstrap'
-
+import {getPageId} from '../api/getPageId'
 import {fetchQuiz, postQuiz} from '../api/quiz'
 import domtoimage from '../Resources/dom-to-image'
 import Skeleton from '../Resources/Components/Skeleton.jsx'
@@ -15,9 +15,11 @@ export default class Edit extends Component {
   constructor() {
     super()
 
+    let showId = getPageId()
+
     this.state = {
       currentSlide: 0,
-      id: window.sessionStorage.getItem('id'),
+      id: showId,
       showTitle: 'Edit:',
       editTitleView: false,
       content: [

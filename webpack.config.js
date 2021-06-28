@@ -63,7 +63,7 @@ module.exports = (env, argv) => {
         notify: false,
         port: 3000,
         files: ['./javascript/dev/*.js'],
-        proxy: 'localhost/canopy',
+        proxy: 'localhost:8080/slideshow',
       })
     )
 

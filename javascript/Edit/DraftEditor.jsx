@@ -146,6 +146,11 @@ export default function DraftEditor(props) {
           getEditorState={() => editorState}
           saveMedia={props.saveMedia}
           saveBackground={props.saveBackground}
+          insertMedia={props.insertMedia}
+          validate={props.validate}
+          mediaView={props.mediaView}
+          mediaCancel={props.mediaCancel}
+          mediaOpen={props.mediaOpen}
         />
       )}
       <br></br>
@@ -187,4 +192,8 @@ DraftEditor.propTypes = {
   removeMedia: PropTypes.func,
   saveMedia: PropTypes.func,
   saveBackground: PropTypes.func,
+  validate: PropTypes.func,
+  mediaView: PropTypes.bool,
+  mediaCancel: PropTypes.func,
+  mediaOpen: PropTypes.func
 }

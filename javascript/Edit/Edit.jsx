@@ -330,7 +330,7 @@ export default class Edit extends Component {
     })
   }
 
-  saveContentState(saveContent) {
+    saveContentState(saveContent) {
     if (saveContent != undefined) {
       let c = [...this.state.content]
       c[this.state.currentSlide].saveContent = saveContent

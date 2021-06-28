@@ -26,7 +26,7 @@ export default class ImageColumn extends Component {
 
     return (
       <div className="col">
-        <Tippy content={settingsButtons} interactive={true} arrow={true} theme="light-border">
+        <Tippy placement={this.props.mediaAlign} content={settingsButtons} interactive={true} arrow={true} theme="light-border">
            <img src={this.props.src} alt={this.props.src} style={imgStyle} ></img>
         </Tippy>
       </div>

@@ -211,7 +211,14 @@ export default function Toolbar(props) {
       />
       <span className="separator"></span>
       <Background changeBackground={props.saveBackground} />
-      <Media saveMedia={props.saveMedia} />
+      <Media 
+        saveMedia={props.saveMedia} 
+        insertMedia={props.insertMedia}
+        validate={props.validate}
+        mediaView={props.mediaView}
+        mediaCancel={props.mediaCancel}
+        mediaOpen={props.mediaOpen}
+      />
       <Link
         setEditorState={props.setEditorState}
         getEditorState={props.getEditorState}
@@ -225,4 +232,9 @@ Toolbar.propTypes = {
   setEditorState: PropTypes.func,
   saveBackground: PropTypes.func,
   saveMedia: PropTypes.func,
+  insertMedia: PropTypes.func,
+  validate: PropTypes.func,
+  mediaView: PropTypes.bool,
+  mediaCancel: PropTypes.func,
+  mediaOpen: PropTypes.func
 }

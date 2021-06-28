@@ -276,9 +276,9 @@ export default class ShowCard extends Component {
 }
 
 ShowCard.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   title: PropTypes.string,
-  active: PropTypes.string,
+  active: PropTypes.number,
   img: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   load: PropTypes.func,
   disabled: PropTypes.bool,

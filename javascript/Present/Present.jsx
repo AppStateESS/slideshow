@@ -148,13 +148,6 @@ export default function Present({isAdmin}) {
   }
   return (
     <div>
-      {isAdmin ? (
-        <a
-          className="btn btn-success float-right"
-          href={`./slideshow/Slide/Edit/${showId}`}>
-          Edit
-        </a>
-      ) : null}
       <h2>{showTitle}</h2>
       <br></br>
       <div
@@ -191,6 +184,15 @@ export default function Present({isAdmin}) {
         nextDisable={nextDisable}
         prevDisable={prevDisable}
       />
+      {isAdmin ? (
+        <div className="text-center">
+          <a
+            className="btn btn-success"
+            href={`./slideshow/Slide/Edit/${showId}`}>
+            Edit
+          </a>
+        </div>
+      ) : null}
       <Finish visible={finished} />
     </div>
   )

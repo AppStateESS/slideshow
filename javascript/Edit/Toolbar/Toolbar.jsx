@@ -24,16 +24,13 @@ function UndoRedo(props) {
 
   return (
     <span>
-      <Tippy theme="light-border" content={<div>Undo</div>} arrow={true}>
-        <button className="toolbar" onClick={_undo.bind(this)}>
-          <i className="fas fa-undo"></i>
-        </button>
-      </Tippy>
-      <Tippy theme="light-border" content={<div>Redo</div>} arrow={true}>
-        <button className="toolbar" onClick={_redo.bind(this)}>
-          <i className="fas fa-redo"></i>
-        </button>
-      </Tippy>
+      <button className="toolbar" onClick={_undo.bind(this)}>
+        <i className="fas fa-undo"></i>
+      </button>
+
+      <button className="toolbar" onClick={_redo.bind(this)}>
+        <i className="fas fa-redo"></i>
+      </button>
     </span>
   )
 }
@@ -54,16 +51,12 @@ function BoldItalic(props) {
 
   return (
     <span>
-      <Tippy theme="light-border" content={<div>Bold</div>} arrow={true}>
-        <button id="BOLD" className="toolbar" onClick={_toggleInlineStyle}>
-          <i className="fas fa-bold"></i>
-        </button>
-      </Tippy>
-      <Tippy theme="light-border" content={<div>Italic</div>} arrow={true}>
-        <button id="ITALIC" className="toolbar" onClick={_toggleInlineStyle}>
-          <i className="fas fa-italic"></i>
-        </button>
-      </Tippy>
+      <button id="BOLD" className="toolbar" onClick={_toggleInlineStyle}>
+        <i className="fas fa-bold"></i>
+      </button>
+      <button id="ITALIC" className="toolbar" onClick={_toggleInlineStyle}>
+        <i className="fas fa-italic"></i>
+      </button>
     </span>
   )
 }
@@ -84,46 +77,36 @@ function Blocks(props) {
 
   return (
     <span>
-      <Tippy theme="light-border" content={<div>Heading 1</div>} arrow={true}>
-        <button
-          id="header-one"
-          className="toolbar"
-          onClick={_toggleBlockType.bind(this)}>
-          <strong>H1</strong>
-        </button>
-      </Tippy>
-      <Tippy theme="light-border" content={<div>Heading 2</div>} arrow={true}>
-        <button
-          id="header-two"
-          className="toolbar"
-          onClick={_toggleBlockType.bind(this)}>
-          <strong>H2</strong>
-        </button>
-      </Tippy>
-      <Tippy theme="light-border" content={<div>Heading 3</div>} arrow={true}>
-        <button
-          id="header-three"
-          className="toolbar"
-          onClick={_toggleBlockType.bind(this)}>
-          <strong>H3</strong>
-        </button>
-      </Tippy>
-      <Tippy theme="light-border" content={<div>Bullet List</div>} arrow={true}>
-        <button
-          id="unordered-list-item"
-          className="toolbar"
-          onClick={_toggleBlockType.bind(this)}>
-          <i className="fas fa-list-ul"></i>
-        </button>
-      </Tippy>
-      <Tippy theme="light-border" content={<div>Number List</div>} arrow={true}>
-        <button
-          id="ordered-list-item"
-          className="toolbar"
-          onClick={_toggleBlockType.bind(this)}>
-          <i className="fas fa-list-ol"></i>
-        </button>
-      </Tippy>
+      <button
+        id="header-one"
+        className="toolbar"
+        onClick={_toggleBlockType.bind(this)}>
+        <strong>H1</strong>
+      </button>
+      <button
+        id="header-two"
+        className="toolbar"
+        onClick={_toggleBlockType.bind(this)}>
+        <strong>H2</strong>
+      </button>
+      <button
+        id="header-three"
+        className="toolbar"
+        onClick={_toggleBlockType.bind(this)}>
+        <strong>H3</strong>
+      </button>
+      <button
+        id="unordered-list-item"
+        className="toolbar"
+        onClick={_toggleBlockType.bind(this)}>
+        <i className="fas fa-list-ul"></i>
+      </button>
+      <button
+        id="ordered-list-item"
+        className="toolbar"
+        onClick={_toggleBlockType.bind(this)}>
+        <i className="fas fa-list-ol"></i>
+      </button>
     </span>
   )
 }
@@ -156,24 +139,15 @@ function Alignment(props) {
 
   return (
     <span>
-      <Tippy theme="light-border" content={<div>Align Left</div>} arrow={true}>
-        <button id="left" className="toolbar" onClick={_alignBlock}>
-          <i className="fas fa-align-left"></i>
-        </button>
-      </Tippy>
-      <Tippy
-        theme="light-border"
-        content={<div>Align Center</div>}
-        arrow={true}>
-        <button id="center" className="toolbar" onClick={_alignBlock}>
-          <i className="fas fa-align-center"></i>
-        </button>
-      </Tippy>
-      <Tippy theme="light-border" content={<div>Align Right</div>} arrow={true}>
-        <button id="right" className="toolbar" onClick={_alignBlock}>
-          <i className="fas fa-align-right"></i>
-        </button>
-      </Tippy>
+      <button id="left" className="toolbar" onClick={_alignBlock}>
+        <i className="fas fa-align-left"></i>
+      </button>
+      <button id="center" className="toolbar" onClick={_alignBlock}>
+        <i className="fas fa-align-center"></i>
+      </button>
+      <button id="right" className="toolbar" onClick={_alignBlock}>
+        <i className="fas fa-align-right"></i>
+      </button>
     </span>
   )
 }

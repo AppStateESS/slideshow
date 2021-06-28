@@ -47,14 +47,6 @@ class Base extends RoleController
     }
 
     /**
-     * Renders the view for edit
-     */
-    protected function editHtmlCommand(Request $request)
-    {
-        return $this->view->edit();
-    }
-
-    /**
      * Renders the view for present
      */
     protected function presentHtmlCommand(Request $request)
@@ -65,6 +57,11 @@ class Base extends RoleController
     protected function presentJsonCommand(Request $request)
     {
         return $this->factory->get($request);
+    }
+
+    protected function editHtmlCommand(Request $request)
+    {
+        \Current_User::requireLogin();
     }
 
 }

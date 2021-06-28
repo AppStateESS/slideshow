@@ -15,6 +15,7 @@ import PresentView from './PresentView'
 
 import {Progress, Navigation, Finish, SlidesNav} from './Navbar'
 import Skeleton from '../Resources/Components/Skeleton'
+import PropTypes from 'prop-types'
 
 import 'animate.css'
 
@@ -180,4 +181,8 @@ export default function Present({isAdmin}) {
       <Finish visible={finished} />
     </div>
   )
+}
+
+Present.propTypes = {
+  isAdmin: PropTypes.string,
 }

@@ -119,10 +119,9 @@ export default class TextColor extends Component {
         <Tippy
           theme="light-border"
           content={colorPopover}
-          placement="bottom"
-          arrow={true}
+          placement="top"
+          arrow={false}
           animation="fade"
-          //trigger="click"
           interactive={true}
           interactiveBorder={10}>
           <button className="toolbar" onClick={this.changeColor}>

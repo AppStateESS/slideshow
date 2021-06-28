@@ -3,5 +3,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Present from './Present.jsx'
 
+/* global isAdmin */
 ReactDOM.render(
-  <Present />, document.getElementById('present'))
+  <Present isAdmin={isAdmin} />,
+  document.getElementById('present')
+)

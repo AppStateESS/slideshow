@@ -18,7 +18,7 @@ import Skeleton from '../Resources/Components/Skeleton'
 
 import 'animate.css'
 
-export default function Present() {
+export default function Present({isAdmin}) {
   const [showTitle, setShowTitle] = useState('Present: ')
   const [showTimer, setShowTimer] = useState(0)
   const [showAnimation, setShowAnimation] = useState('None')
@@ -33,6 +33,7 @@ export default function Present() {
 
   const [loaded, setLoaded] = useState(false) // use to avoid running logic before db calls return
   const [finished, setFinished] = useState(false)
+  const showId = getPageId()
 
   /** Component did mount */
   useEffect(() => {
@@ -67,7 +68,6 @@ export default function Present() {
   }, [nextDisable])
 
   async function load() {
-    const showId = getPageId()
     const show = await fetchShow(showId)
     const content = await fetchSlides(showId)
     const session = await fetchSession(showId)
@@ -134,6 +134,13 @@ export default function Present() {
   if (!loaded) return <Skeleton />
   return (
     <div>
+      {isAdmin ? (
+        <a
+          className="btn btn-success float-right"
+          href={`./slideshow/Slide/Edit/${showId}`}>
+          Edit
+        </a>
+      ) : null}
       <h2>{showTitle}</h2>
       <br></br>
       <div

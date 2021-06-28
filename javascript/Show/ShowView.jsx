@@ -39,7 +39,7 @@ export default class ShowView extends Component {
     this.getData()
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     if (this.state.inv[1] != '') {
       this.sortShow()
     }
@@ -55,7 +55,7 @@ export default class ShowView extends Component {
         dataType: 'json',
         success: function (showId) {
           window.sessionStorage.setItem('id', showId)
-          window.location.href = './slideshow/Slide/Edit'
+          window.location.href = './slideshow/Slide/Edit/' + showId
         }.bind(this),
         error: function (req, err) {
           alert('Failed to save data.')

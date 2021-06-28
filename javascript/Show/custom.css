@@ -68,12 +68,3 @@ button.drop {
   top:0;
   right:0;
 }
-
-.searchBar {
-  position:absolute;
-  top:0;
-  right:0;
-  margin-right: 53%;
-  margin-top: 4px;
-  width: 400px;
-}

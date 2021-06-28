@@ -301,30 +301,36 @@ export default class ShowView extends Component {
       return (
         <div>
           <h2>Shows</h2>
-          <div className="input-group mb-3 searchBar">
-            <input
-              type="text"
-              className="form-control"
-              onChange={this.searchTitle}
-              placeholder="Search a title"
-              aria-label="Search a Slide name"
-              aria-describedby="button-addon2"></input>
-          </div>
-          <div className="jumbotron">
-            <div className="dropdown sortCards">
-              <button
-                className="btn btn-secondary dropdown-toggle"
-                type="button"
-                id="dropdownMenu2"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false">
-                Sort by
-              </button>
-              <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
-                {dropDownItems}
+          <div className="row">
+            <div className="col-sm-6">
+              <div className="input-group mb-3 searchBar">
+                <input
+                  type="text"
+                  className="form-control"
+                  onChange={this.searchTitle}
+                  placeholder="Search a title"
+                  aria-label="Search a Slide name"
+                  aria-describedby="button-addon2"></input>
               </div>
             </div>
+            <div className="col-sm-6">
+              <div className="dropdown sortCards">
+                <button
+                  className="btn btn-secondary dropdown-toggle"
+                  type="button"
+                  id="dropdownMenu2"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false">
+                  Sort by
+                </button>
+                <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
+                  {dropDownItems}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="jumbotron">
             <div className="card-deck d-flex justify-content-center">
               {cards}
             </div>

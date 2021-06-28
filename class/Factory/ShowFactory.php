@@ -48,43 +48,43 @@ class ShowFactory extends Base
 
     public function put(Request $request)
     {
-      // Pull the id from the request:
-      $vars = $request->getRequestVars();
-      $id = intval($vars['Show']);
-      // Load the resource corresponding to the id from the db:
-      $resource = $this->load($id);
+        // Pull the id from the request:
+        $vars = $request->getRequestVars();
+        $id = intval($vars['Show']);
+        // Load the resource corresponding to the id from the db:
+        $resource = $this->load($id);
 
-      // Update/PUT the values that are changed:
-      // pullPutVarIfSet will return false if not set
-      $title = $request->pullPutVarIfSet('title');
-      $active = $resource->active;
-      try {
-          $active = $request->pullPutVar('active');
-      }
-      catch (\phpws2\Exception\ValueNotSet $e) {
-          // putvar was not set for active
-      }
+        // Update/PUT the values that are changed:
+        // pullPutVarIfSet will return false if not set
+        $title = $request->pullPutVarIfSet('title');
+        $active = $resource->active;
+        try {
+            $active = $request->pullPutVar('active');
+        } catch (\phpws2\Exception\ValueNotSet $e) {
+            // putvar was not set for active
+        }
 
-      $slideTimer = intval($request->pullPutVarIfSet('slideTimer'));
-      // if any of the vars are set to false we don't need to update them.
-      if (gettype($title) == "string") {
-        $resource->title = $title;
-      }
+        $slideTimer = intval($request->pullPutVarIfSet('slideTimer'));
+        // if any of the vars are set to false we don't need to update them.
+        if (gettype($title) == "string") {
+            $resource->title = $title;
+        }
 
-      $resource->active = $active;
-      $resource->slideTimer = $slideTimer;
-      // Save the updated resource to the Database
-      $this->saveResource($resource);
-      return $resource;
+        $resource->active = $active;
+        $resource->slideTimer = $slideTimer;
+        // Save the updated resource to the Database
+        $this->saveResource($resource);
+        return $resource;
     }
+
     /**
-    *
-    * Creates a new slideshow upon the patch request.
-    * @var $showId id of the show to be saved.
-    */
+     *
+     * Creates a new slideshow upon the patch request.
+     * @var $showId id of the show to be saved.
+     */
     public function patch(Request $request)
     {
-            // Pull the id from the request:
+        // Pull the id from the request:
         $vars = $request->getRequestVars();
         $showId = intval($vars['Show']);
         $resource = $this->load($showId);
@@ -112,30 +112,31 @@ class ShowFactory extends Base
     }
 
     /**
-    * Selects the details about a show from the db
-    *
-    * @param $show_id
-    */
+     * Selects the details about a show from the db
+     *
+     * @param $show_id
+     */
     public static function getDetails($show_id)
     {
-          if (empty($show_id)) {
+        if (empty($show_id)) {
             throw new \Exception("Invalid show id");
-          }
+        }
 
-          $db = \phpws2\Database::getDB();
-          $tbl = $db->addTable('ss_show');
-          $tbl->addFieldConditional('id', $show_id);
-          $show = $db->selectOneRow();
+        $db = \phpws2\Database::getDB();
+        $tbl = $db->addTable('ss_show');
+        $tbl->addFieldConditional('id', $show_id);
+        $show = $db->selectOneRow();
 
-          return $show;
+        return $show;
     }
 
-    public function getShows() {
-      $db = \phpws2\Database::getDB();
-      $tbl = $db->addTable('ss_show');
-      $shows = $db->fetchAll();
+    public function getShows()
+    {
+        $db = \phpws2\Database::getDB();
+        $tbl = $db->addTable('ss_show');
+        $shows = $db->fetchAll();
 
-      return $shows;
+        return $shows;
     }
 
     /**
@@ -150,20 +151,21 @@ class ShowFactory extends Base
         }
     }
 
-    public function getShowDetails($request)
+    public function getShowDetails($request, $includeInactive = false)
     {
         // Pull the id from the request:
         $vars = $request->getRequestVars();
         $showId = intval($vars['id']);
         if ($showId === null || $showId == -1) {
-        throw new \Exception("ShowId is not valid: $showId", 1);
+            throw new \Exception("ShowId is not valid: $showId", 1);
         }
-        $sql = "SELECT title, slideTimer, animation FROM ss_show WHERE id=:showId;";
         $db = Database::getDB();
-        $pdo = $db->getPDO();
-        $q = $pdo->prepare($sql);
-        $q->execute(array('showId'=>$showId));
-        return $q->fetchAll();
+        $tbl = $db->addTable('ss_show');
+        $tbl->addFieldConditional('id', $showId);
+        if (!$includeInactive) {
+            $tbl->addFieldConditional('active', 1);
+        }
+        return $db->select();
     }
 
     public function listing($showAll = false)
@@ -196,14 +198,13 @@ class ShowFactory extends Base
         return $returnFlag;
     }
 
-    public function postPreviewImage(Request $request) 
+    public function postPreviewImage(Request $request)
     {
         $vars = $request->getRequestVars();
         $showId = $vars['id'];
         if (!empty($showId)) {
             $resource = $this->load($showId);
-        }
-        else {
+        } else {
             throw new \Exception("Error loading slideId");
         }
 
@@ -259,7 +260,7 @@ class ShowFactory extends Base
 
     private function uploadPreview(array $file, $resourceId)
     {
-        
+
         // Check to see if there is a show directory
         $master_dir = PHPWS_HOME_DIR . SLIDESHOW_MEDIA_DIRECTORY . 'show/';
         $resource_dir = $master_dir . $resourceId . '/';
@@ -268,16 +269,16 @@ class ShowFactory extends Base
         if (is_dir($resource_dir)) {
             // If directory exists then we dump it
             system('rm -rf ' . escapeshellarg($resource_dir), $ret);
-            if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+            if ($ret != 0)
+                throw new Exception('Directory Removal Error: ' . $ret);
         }
         mkdir($resource_dir, 0755, true);
 
-        // upload the image 
+        // upload the image
         $dest = $resource_dir . basename($file['name']);
         if (move_uploaded_file($file['tmp_name'], $dest)) {
             return './' . SLIDESHOW_MEDIA_DIRECTORY . 'show/' . $resourceId . '/' . basename($file['name']);
-        }
-        else {
+        } else {
             var_dump($file);
             var_dump($dest);
             return "not uploaded and error occured";
@@ -288,8 +289,10 @@ class ShowFactory extends Base
     {
         $dir = PHPWS_HOME_DIR . SLIDESHOW_MEDIA_DIRECTORY . 'show/' . $resourceId . '/';
         system('rm -rf ' . escapeshellarg($dir), $ret);
-        if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
-        else return true;
+        if ($ret != 0)
+            throw new Exception('Directory Removal Error: ' . $ret);
+        else
+            return true;
     }
 
 }

@@ -84,11 +84,9 @@ export default function Background(props) {
   return (
     <span>
       {modalRender}
-      <Tippy theme="light-border" content={<div>Change Background</div>} arrow>
-        <button className="toolbar" onClick={() => setModal(!modalView)}>
-          <i className="fas fa-image"></i>
-        </button>
-      </Tippy>
+      <button className="toolbar" onClick={() => setModal(!modalView)}>
+        <i className="fas fa-palette"></i>
+      </button>
     </span>
   )
 }

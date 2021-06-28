@@ -39,13 +39,13 @@ class Admin extends Base
     protected $factory;
 
     /**
-    * @var slideshow\View\ShowView
-    */
+     * @var \slideshow\View\ShowView
+     */
     protected $view;
 
     /**
-    * Handles the request to render the list page.
-    */
+     * Handles the request to render the list page.
+     */
     protected function listHtmlCommand(Request $request)
     {
         return $this->view->adminShow();
@@ -58,25 +58,25 @@ class Admin extends Base
 
     protected function patchCommand(Request $request)
     {
-      $show = $this->factory->patch($request);
-      return array('show'=>$show->getStringVars());
+        $show = $this->factory->patch($request);
+        return array('show' => $show->getStringVars());
     }
 
     protected function listJsonCommand(Request $request)
     {
-        return array('listing'=>$this->get($request));
+        return array('listing' => $this->get($request));
     }
 
     protected function deleteCommand(Request $request)
     {
-      switch($request->pullDeleteVar('type')) {
-        case 'preview':
-          return $this->factory->deletePreviewImage($this->id);
-        case 'show':
-          return $this->factory->delete($this->id);
-        default:
-          return $this->factory->delete($this->id);
-      }  
+        switch ($request->pullDeleteVar('type')) {
+            case 'preview':
+                return $this->factory->deletePreviewImage($this->id);
+            case 'show':
+                return $this->factory->delete($this->id);
+            default:
+                return $this->factory->delete($this->id);
+        }
     }
 
     protected function putCommand(Request $request)
@@ -89,39 +89,39 @@ class Admin extends Base
     {
         $shows = $this->factory->listing(true);
         foreach ($shows as &$show) {
-          if ($show['useThumb'] == 1) {
-            $show['preview'] = $this->factory->getFirstPreview($show['id']);
-          }
+            if ($show['useThumb'] == 1) {
+                $show['preview'] = $this->factory->getFirstPreview($show['id']);
+            }
         }
         return $shows;
     }
 
     protected function jsonPatchCommand(Request $request)
     {
-      return $this->factory->patch($request);
+        return $this->factory->patch($request);
     }
 
-    protected function previewPostCommand(Request $request) 
+    protected function previewPostCommand(Request $request)
     {
-      return $this->factory->postPreviewImage($request);
+        return $this->factory->postPreviewImage($request);
     }
 
     protected function useThumbPostCommand(Request $request)
     {
-      return $this->factory->setUseThumb($request->pullPostVarIfSet('value'), $request->getVar('id'));
+        return $this->factory->setUseThumb($request->pullPostVarIfSet('value'), $request->getVar('id'));
     }
 
     protected function getJsonView($data, Request $request)
     {
-      $vars = $request->getRequestVars();
-      $command = '';
-      if (!empty($data['command'])) {
-        $command = $data['command'];
-      }
-      if ($command == 'getDetails' && \Current_User::allow('slideshow', 'edit')) {
-        $result = ShowFactory::getDetails($vars['show_id']);
-      }
-      return new \phpws2\View\JsonView($result);
+        $vars = $request->getRequestVars();
+        $command = '';
+        if (!empty($data['command'])) {
+            $command = $data['command'];
+        }
+        if ($command == 'getDetails' && \Current_User::allow('slideshow', 'edit')) {
+            $result = ShowFactory::getDetails($vars['show_id']);
+        }
+        return new \phpws2\View\JsonView($result);
     }
 
 }

@@ -55,7 +55,7 @@ export default class Viewspace extends Component {
     if (this.props.content.media != undefined) {
       image = (
         <div className="col">
-          <img src={this.props.content.media.imgUrl} alt={this.props.content.media} style={{height: '100%', width: '100%', objectFit: 'scale-down'}}></img>
+          <img src={this.props.content.media.imgUrl} alt={this.props.content.media} style={{maxHeight: '70%', width: '100%', objectFit: 'scale-down'}}></img>
         </div>
       )
       align = this.props.content.media.align

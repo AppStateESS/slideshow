@@ -92,7 +92,7 @@ export default function QuizViewspace(props) {
   if (props.content.media != undefined) {
     image = (
       <div className="col">
-        <img src={props.content.media.imgUrl} alt={props.content.media} style={{ height: '100%', width: '100%', objectFit: 'scale-down' }}></img>
+        <img src={props.content.media.imgUrl} alt={props.content.media} style={{ maxHeight: '70%', width: '100%', objectFit: 'scale-down' }}></img>
       </div>
     )
     align = props.content.media.align
@@ -101,10 +101,10 @@ export default function QuizViewspace(props) {
   return (
     <div className="row">
       {(align === 'left') ? image : undefined}
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'start', height: '100%' }}>
+      <div className="col">
         <h3>{titleComponent}</h3>
         {answersComponent}
-        <span style={{ display: 'flex', alignItems: 'flex-end', width: '100%', height: '100%' }}>
+        <span className="col">
           <Alert feedback={props.quizContent.feedback} state={gradeState} selected={selected} qType={props.quizContent.type} />
         </span>
       </div>

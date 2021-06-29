@@ -7,17 +7,11 @@ import QuizViewspace from './Quiz/QuizViewspace.jsx'
 export default class PresentView extends Component {
   constructor(props) {
     super(props)
-    this.parseQ = this._parseQuizFlag
-  }
-
-  _parseQuizFlag(quizT) {
-    if (quizT == undefined) return false // initial load
-    return (typeof(quizT) === "boolean") ? quizT : JSON.parse(quizT)
   }
 
   render() {
     if (this.props.content != undefined) {
-      let viewspace = (this.parseQ(this.props.content.isQuiz)) ?
+      let viewspace = (this.props.content.isQuiz) ?
         (<QuizViewspace
           quizContent={this.props.content.quizContent}
           content={this.props.content}

@@ -34,7 +34,7 @@ class Admin extends Base
 {
 
     /**
-     * @var slideshow\Factory\ShowFactory
+     * @var \slideshow\Factory\ShowFactory
      */
     protected $factory;
 
@@ -122,6 +122,11 @@ class Admin extends Base
             $result = ShowFactory::getDetails($vars['show_id']);
         }
         return new \phpws2\View\JsonView($result);
+    }
+
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->getShowDetails($request, true);
     }
 
 }

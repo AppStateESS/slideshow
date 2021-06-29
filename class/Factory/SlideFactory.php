@@ -1,28 +1,28 @@
 <?php
 
 /*
-* The MIT License
-*
-* Copyright 2020 Tyler Craig <craigta1@appstate.edu>.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
+ * The MIT License
+ *
+ * Copyright 2020 Tyler Craig <craigta1@appstate.edu>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 namespace slideshow\Factory;
 
@@ -40,12 +40,10 @@ class SlideFactory extends Base
         return new SlideResource;
     }
 
-    public function get(Request $request)
+    public function get(Request $request, $includeInactive = false)
     {
-        $vars = $request->getRequestVars();
-        $showId = $vars['id'];
-
-        $slides = $this->getSlides($showId);
+        $showId = $request->pullGetInteger('id');
+        $slides = $this->getSlides($showId, $includeInactive);
 
         return array(
             'slides' => $slides
@@ -63,14 +61,14 @@ class SlideFactory extends Base
     }
 
     /**
-    * Updates the content of the slide or makes a new one
-    * @return SlideResource
-    */
+     * Updates the content of the slide or makes a new one
+     * @return SlideResource
+     */
     public function put(Request $request)
     {
         // Array to return of all the slideIds
         $ids = array();
-        
+
         // pull showId from $request
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
@@ -82,8 +80,7 @@ class SlideFactory extends Base
             $resource = null;
             if (empty($slide['slideId'])) {
                 $resource = $this->build();
-            }
-            else {
+            } else {
                 $resource = $this->load(intval($slide['slideId']));
             }
 
@@ -94,15 +91,14 @@ class SlideFactory extends Base
             $resource->isQuiz = $isQuiz;
             if ($isQuiz) {
                 $resource->quizId = $slide['quizId'];
-            }
-            else {
+            } else {
                 if (!empty($slide['saveContent'])) {
                     $resource->content = $slide['saveContent'];
                 }
             }
             $resource->background = $slide['background'];
             $resource->media = "";
-            if (!empty($slide['media'])) {    
+            if (!empty($slide['media'])) {
                 $resource->media = json_encode($slide['media']);
             }
             $resource->thumb = "";
@@ -122,14 +118,13 @@ class SlideFactory extends Base
 
         try {
             $resource = $this->load($resourceId);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             // Resource doesn't exist
             $resource = $this->build();
             $this->saveResource($resource);
             $resourceId = $resource->id;
         }
-        
+
         $target = $resourceId . '/media/';
 
         $path = $this->upload($_FILES['media'], $target);
@@ -146,8 +141,7 @@ class SlideFactory extends Base
         $resourceId = intval($request->pullPostVar('slideId'));
         try {
             $resource = $this->load($resourceId);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             // Resource doesn't exist
             //$resource = $this->build();
             //$this->saveResource($resource);
@@ -155,9 +149,9 @@ class SlideFactory extends Base
             return;
         }
 
-        $file_string_data = file_get_contents("data://".$request->pullPostVar('thumb'));
+        $file_string_data = file_get_contents("data://" . $request->pullPostVar('thumb'));
         $target = $resourceId . "/thumb/";
-        
+
         $path = $this->upload($file_string_data, $target);
         if ($path != null) {
             $resource->thumb = json_encode($path);
@@ -169,11 +163,10 @@ class SlideFactory extends Base
     public function postBackground(Request $request)
     {
         $resourceId = intval($request->pullPostVar('slideId'));
-        
+
         try {
             $resource = $this->load($resourceId);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             //$resource = $this->build();
             //$this->saveResource($resource);
             //$resourceId = $resource->id;
@@ -191,14 +184,14 @@ class SlideFactory extends Base
     }
 
     /**
-    * This function handles the deletion of slides
-    * @return boolean true if slide was deleted
-    */
+     * This function handles the deletion of slides
+     * @return boolean true if slide was deleted
+     */
     public function deleteSlide(Request $request)
     {
         $resourceId = $request->pullDeleteVar('slideId');
         $resource = $this->load($resourceId);
-        
+
         $this->deleteSlideDir($resourceId);
 
         return ($this->deleteResource($resource) != 0);
@@ -215,13 +208,14 @@ class SlideFactory extends Base
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
 
-        if (!$this->deleteAllImages($request)) echo("an error has occured\n");
+        if (!$this->deleteAllImages($request))
+            echo("an error has occured\n");
 
         $sql = 'DELETE from ss_slide WHERE showId=:showId;';
         $db = Database::getDB();
         $pdo = $db->getPDO();
         $q = $pdo->prepare($sql);
-        return $q->execute(array('showId'=>$showId));
+        return $q->execute(array('showId' => $showId));
     }
 
     /**
@@ -245,8 +239,9 @@ class SlideFactory extends Base
      * Deletes all images within a specific slideshow given a deletion request with slideId
      * @return boolean true if deletion was successful
      */
-    public function deleteAllImages(Request $request) {
-        
+    public function deleteAllImages(Request $request)
+    {
+
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
 
@@ -254,15 +249,17 @@ class SlideFactory extends Base
         $db = Database::getDB();
         $pdo = $db->getPDO();
         $q = $pdo->prepare($sql);
-        $q->execute(array('showId'=>$showId));
-        if (!$q) return false;
+        $q->execute(array('showId' => $showId));
+        if (!$q)
+            return false;
         $res = $q->fetchAll();
         $flag = false;
         foreach ($res as $r) {
             $media = json_decode($r['media']);
             if ($media != null && !empty($media->imgUrl)) {
                 $flag = $this->removeUpload($r['id'], $media->imgUrl);
-                if (!$flag)  echo("an error has occured");// An error occured
+                if (!$flag)
+                    echo("an error has occured"); // An error occured
             }
             $this->deleteSlideDir($r['id']);
         }
@@ -275,25 +272,32 @@ class SlideFactory extends Base
         if (is_dir($dir)) {
             // If directory exists then we dump it
             system('rm -rf ' . escapeshellarg($dir), $ret);
-            if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
-        }
-        else {
+            if ($ret != 0)
+                throw new Exception('Directory Removal Error: ' . $ret);
+        } else {
             echo("directory already removed");
         }
     }
 
     /**
-    * Returns the slide of the show corresponding to the showId
-    * @var integer showId
-    * @return array of slides
-    */
-    private function getSlides($showId)
+     * Returns the slide of the show corresponding to the showId
+     * @var integer showId
+     * @return array of slides
+     */
+    private function getSlides(int $showId, $includeInactive = false)
     {
         $sql = 'SELECT * FROM ss_slide WHERE showId=:showId ORDER BY ss_slide.slideIndex;';
         $db = Database::getDB();
+        $tbl = $db->addTable('ss_slide');
+        $tbl->addFieldConditional('showId', $showId);
+        if (!$includeInactive) {
+            $tbl2 = $db->addTable('ss_show', null, false);
+            $tbl2->addFieldConditional('active', 1);
+            $tbl->addFieldConditional('showId', $tbl2->getField('id'));
+        }
         $pdo = $db->getPDO();
         $q = $pdo->prepare($sql);
-        $q->execute(array('showId'=>$showId));
+        $q->execute(array('showId' => $showId));
         $slides = $q->fetchAll();
         return $slides;
     }
@@ -301,7 +305,7 @@ class SlideFactory extends Base
     private function Oldupload($file, $path, $slideId)
     {
         # TODO: handle upload of background
-        # My idea is that I leave the upload process to the path 
+        # My idea is that I leave the upload process to the path
         # and depending on the path, I will upload respectivly
         $target = SLIDESHOW_MEDIA_DIRECTORY . $path;
         $dir = PHPWS_HOME_DIR . $target;
@@ -313,21 +317,20 @@ class SlideFactory extends Base
         if (gettype($file) === 'array') {
             $dest = $dir . basename($file['name']);
             if (move_uploaded_file($file['tmp_name'], $dest)) {
-                return './' . $target .  basename($file['name']);
-            }
-            else {
+                return './' . $target . basename($file['name']);
+            } else {
                 echo("not uploaded and error occured");
                 var_dump($file);
                 var_dump($target);
             }
             return null;
-        }
-        else if (gettype($file) === 'string') { // file is a thumbnail or a background img
+        } else if (gettype($file) === 'string') { // file is a thumbnail or a background img
             $dir .= 'thumb/';
             if (is_dir($dir)) {
                 // If directory exists then we dump it
                 system('rm -rf ' . escapeshellarg($dir), $ret);
-                if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+                if ($ret != 0)
+                    throw new Exception('Directory Removal Error: ' . $ret);
             }
             mkdir($dir, 0755, true);
             // image will be named based on timestamp
@@ -350,7 +353,8 @@ class SlideFactory extends Base
      * @var string -  if path doesn't exist it will recursivly created also it will get dumped if it does exist.
      * @return string - filepath of new file
      */
-    private function upload($file, $path) {
+    private function upload($file, $path)
+    {
         $slideshow_path = SLIDESHOW_MEDIA_DIRECTORY . $path;
         $canopy_path = PHPWS_HOME_DIR . $slideshow_path;
 
@@ -358,22 +362,22 @@ class SlideFactory extends Base
             mkdir($canopy_path, 0755, true);
         } else {
             system('rm -rf ' . escapeshellarg($canopy_path), $ret);
-            if ($ret != 0) throw new Exception('Directory Removal Error: ' . $ret);
+            if ($ret != 0)
+                throw new Exception('Directory Removal Error: ' . $ret);
             mkdir($canopy_path, 0755, true);
         }
 
         if (gettype($file) === 'array') {
             $dest = $canopy_path . basename($file['name']);
             if (move_uploaded_file($file['tmp_name'], $dest)) {
-                return './' . $slideshow_path .  basename($file['name']);
+                return './' . $slideshow_path . basename($file['name']);
             } // If returns false then error occurred.
             echo("not uploaded and error occured");
             //var_dump($file);
             var_dump($target);
             return null;
-        }
-        else if (gettype($file) === 'string') {
-            // We will name the file based on timestamp 
+        } else if (gettype($file) === 'string') {
+            // We will name the file based on timestamp
             $time = time();
             $filename = $time . '.png';
             $dest = $canopy_path . $filename;
@@ -388,7 +392,8 @@ class SlideFactory extends Base
         }
     }
 
-    private function removeUpload($slideId, $path) {
+    private function removeUpload($slideId, $path)
+    {
         if (empty($path)) {
             return false;
         }
@@ -396,8 +401,7 @@ class SlideFactory extends Base
             unlink($path);
             $dir = SLIDESHOW_MEDIA_DIRECTORY . $slideId . '/';
             return true;
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             echo("A fatal error has occured: " . $e);
             // uncomment to show stacktrace as an array
             // var_dump($e);

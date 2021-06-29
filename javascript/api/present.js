@@ -20,25 +20,24 @@ export const fetchSlides = async (showId) => {
 }
 
 export const fetchShow = async (showId) => {
-  let show = {
-    showTimer: 0,
-    showTitle: 'Present: ',
-  }
-  await $.ajax({
+  const result = await $.ajax({
     url: './slideshow/Show/present/?id=' + showId,
     type: 'GET',
     dataType: 'json',
     success: (data) => {
-      let time = Number(data[0].slideTimer) * 1000
-      show.showTimer = time
-      show.showTitle = data[0].title
-      show.animation = data[0].animation
+      if (data.length > 0) {
+        let time = Number(data[0].slideTimer) * 1000
+        let show = {}
+        show.showTimer = time
+        show.showTitle = data[0].title
+        show.animation = data[0].animation
+      }
     },
     error: (req, res) => {
       console.error(req, res.toString())
     },
   })
-  return show
+  return result
 }
 
 export const fetchSession = async (showId) => {

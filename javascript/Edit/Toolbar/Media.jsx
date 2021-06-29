@@ -64,14 +64,9 @@ export default class Media extends Component {
     return (
       <span>
         {mediaModal}
-        <Tippy
-          theme="light-border"
-          content={<div>Insert Image</div>}
-          arrow={true}>
-          <button className="toolbar" onClick={this.props.mediaOpen}>
-            <i className="fas fa-images"></i>
-          </button>
-        </Tippy>
+        <button className="toolbar" onClick={this.props.mediaOpen}>
+          <i className="fas fa-image"></i>
+        </button>
       </span>
     )
   }

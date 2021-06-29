@@ -15,13 +15,15 @@ import PresentView from './PresentView'
 
 import {Progress, Navigation, Finish, SlidesNav} from './Navbar'
 import Skeleton from '../Resources/Components/Skeleton'
+import PropTypes from 'prop-types'
 
 import 'animate.css'
 
-export default function Present() {
+export default function Present({isAdmin}) {
   const [showTitle, setShowTitle] = useState('Present: ')
   const [showTimer, setShowTimer] = useState(0)
   const [showAnimation, setShowAnimation] = useState('None')
+  const [noShow, setNoShow] = useState(true)
 
   const [content, setContent] = useState(slidesResource.content)
 
@@ -33,6 +35,7 @@ export default function Present() {
 
   const [loaded, setLoaded] = useState(false) // use to avoid running logic before db calls return
   const [finished, setFinished] = useState(false)
+  const showId = getPageId()
 
   /** Component did mount */
   useEffect(() => {
@@ -67,28 +70,31 @@ export default function Present() {
   }, [nextDisable])
 
   async function load() {
-    const showId = getPageId()
     const show = await fetchShow(showId)
-    const content = await fetchSlides(showId)
-    const session = await fetchSession(showId)
+    if (show.length > 0) {
+      const content = await fetchSlides(showId)
+      const session = await fetchSession(showId)
 
-    let current = Number(session.highest)
-    if (session.complete) {
-      current = 0
+      let current = Number(session.highest)
+      if (session.complete) {
+        current = 0
+      }
+      setNoShow(false)
+      setShowTitle(show.showTitle)
+      setShowTimer(show.showTimer)
+      setShowAnimation(show.animation)
+      setContent(content)
+      setCurrentSlide(current)
+      setHighestSlide(Number(session.highest))
+      setLoaded(true)
+      setFinished(session.complete)
+      setNextDisable(!session.complete)
+      window.setTimeout(() => {
+        setNextDisable(false)
+      }, show.showTimer)
+    } else {
+      setLoaded(true)
     }
-    setShowTitle(show.showTitle)
-    setShowTimer(show.showTimer)
-    setShowAnimation(show.animation)
-    setContent(content)
-    setCurrentSlide(current)
-    setHighestSlide(Number(session.highest))
-    setLoaded(true)
-    setFinished(session.complete)
-
-    setNextDisable(!session.complete)
-    window.setTimeout(() => {
-      setNextDisable(false)
-    }, show.showTimer)
   }
 
   function evaluateState() {
@@ -132,6 +138,14 @@ export default function Present() {
     setCurrentSlide(prev)
   }
   if (!loaded) return <Skeleton />
+  if (noShow) {
+    return (
+      <div>
+        <h2>Sorry</h2>
+        <p>This show is not available.</p>
+      </div>
+    )
+  }
   return (
     <div>
       <h2>{showTitle}</h2>
@@ -170,7 +184,20 @@ export default function Present() {
         nextDisable={nextDisable}
         prevDisable={prevDisable}
       />
+      {isAdmin ? (
+        <div className="text-center">
+          <a
+            className="btn btn-success"
+            href={`./slideshow/Slide/Edit/${showId}`}>
+            Edit
+          </a>
+        </div>
+      ) : null}
       <Finish visible={finished} />
     </div>
   )
+}
+
+Present.propTypes = {
+  isAdmin: PropTypes.string,
 }

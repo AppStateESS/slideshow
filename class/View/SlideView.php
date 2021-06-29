@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MIT License
  * Copyright (c) 2018 Electronic Student Services @ Appalachian State University
@@ -9,19 +10,19 @@
  * @license https://opensource.org/licenses/MIT
  */
 
- namespace slideshow\View;
+namespace slideshow\View;
 
- class SlideView extends BaseView
- {
+class SlideView extends BaseView
+{
 
-     public function edit()
-     {
-         return $this->scriptView('edit');
-     }
+    public function edit()
+    {
+        return $this->scriptView('edit');
+    }
 
-     public function present()
-     {
-         return $this->scriptView('present');
-     }
-     
- }
+    public function present()
+    {
+        return $this->scriptView('present', true, ['isAdmin' => (int) \Current_User::allow('slideshow')]);
+    }
+
+}

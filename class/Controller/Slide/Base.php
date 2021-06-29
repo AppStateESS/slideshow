@@ -46,25 +46,9 @@ class Base extends RoleController
         $this->view = new View;
     }
 
-    /**
-     * Renders the view for edit
-     */
     protected function editHtmlCommand(Request $request)
     {
-        return $this->view->edit();
-    }
-
-    /**
-     * Renders the view for present
-     */
-    protected function presentHtmlCommand(Request $request)
-    {
-        return $this->view->present();
-    }
-
-    protected function presentJsonCommand(Request $request)
-    {
-        return $this->factory->get($request);
+        \Current_User::requireLogin();
     }
 
 }

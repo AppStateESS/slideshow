@@ -1,0 +1,70 @@
+.card-img-caption {
+  border-top-left-radius: calc(.25rem - 1px);
+  border-top-right-radius: calc(.25rem - 1px);
+}
+
+.card-img-top {
+  z-index: 0;
+  max-width: 300px;
+  max-height: 250px;
+  min-width: 300px;
+  min-height: 250px;
+}
+
+.card-img-caption .card-text {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  height: 5px;
+  cursor: pointer;
+}
+
+.alert-delete {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.card-user {
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  height: 20px;
+  color: grey;
+  cursor: pointer;
+}
+
+.tool {
+  background: white;
+  color: #888;
+  font-size: 18px;
+  border: 0;
+  padding-top: 0px;
+  vertical-align: bottom;
+}
+
+.trash:hover {
+  background: white;
+  color: #d9534f;
+  font-size: 18px;
+  border: 0;
+  padding-top: 0px;
+  vertical-align: bottom;
+}
+
+button.drop {
+  width: 90%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.remove {
+  margin-top: 1rem;
+}
+
+.sortCards {
+  margin-top: 1%;
+  margin-right: 1%;
+  position:absolute;
+  top:0;
+  right:0;
+}

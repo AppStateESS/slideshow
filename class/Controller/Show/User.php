@@ -18,7 +18,42 @@
 
 namespace slideshow\Controller\Show;
 
+use Canopy\Request;
+
 class User extends Base
 {
-    
+
+    /**
+     * @var \slideshow\Factory\ShowFactory
+     */
+    protected $factory;
+
+    /**
+     * @var \slideshow\View\ShowView
+     */
+    protected $view;
+
+    /**
+     * Handles the request to render the list page.
+     */
+    protected function listHtmlCommand(Request $request)
+    {
+        return $this->view->show();
+    }
+
+    protected function listJsonCommand(Request $request)
+    {
+        return array('listing' => $this->factory->listing(false));
+    }
+
+    /**
+     * The user list will not return inactive shows.
+     * @param Request $request
+     * @return type
+     */
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->getShowDetails($request, false);
+    }
+
 }

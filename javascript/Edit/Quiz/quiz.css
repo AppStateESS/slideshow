@@ -1,0 +1,41 @@
+.custRow15 {
+    margin-left: 15%;
+}
+
+.custRow10 {
+    margin-left: 10%;
+}
+
+.flexbox {
+    /*border: 1px solid;*/
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+    align-items: end;
+}
+
+.flexbox-mid {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.custResponse {
+    width: 80%;
+    margin-right: 1rem;
+}
+
+.ans {
+    width: 60%;
+    margin-right: 1rem;
+}
+
+.ss-danger {
+    color: #d9534f;
+}
+
+.dg-small {
+    color: dimgray;
+    font-size: 18px;
+}

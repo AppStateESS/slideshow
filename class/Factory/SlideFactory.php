@@ -1,227 +1,412 @@
 <?php
 
 /*
- * See docs/AUTHORS and docs/COPYRIGHT for relevant info.
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2020 Tyler Craig <craigta1@appstate.edu>.
  *
- * @author Matthew McNaney <mcnaney at gmail dot com>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @license http://opensource.org/licenses/lgpl-3.0.html
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 namespace slideshow\Factory;
 
-use slideshow\Resource\SlideResource as Resource;
+use slideshow\Resource\SlideResource;
 use phpws2\Database;
 use Canopy\Request;
+
+define('SLIDESHOW_MEDIA_DIRECTORY', 'images/slideshow/');
 
 class SlideFactory extends Base
 {
 
-    private $saveDirectory = './images/slideshow/';
-
     protected function build()
     {
-        return new Resource;
+        return new SlideResource;
+    }
+
+    public function get(Request $request, $includeInactive = false)
+    {
+        $showId = $request->pullGetInteger('id');
+        $slides = $this->getSlides($showId, $includeInactive);
+
+        return array(
+            'slides' => $slides
+        );
+    }
+
+    public function post(Request $request)
+    {
+        $resource = $this->build();
+
+        $resource->showId = $request->pullPostVarIfSet('id');
+
+        $this->saveResource($resource);
+        return $resource;
     }
 
     /**
-     * 
-     * @param integer $id
-     * @return \slideshow\Resource\SlideResource
+     * Updates the content of the slide or makes a new one
+     * @return SlideResource
      */
-    public function load($id)
+    public function put(Request $request)
     {
-        return parent::load($id);
-    }
-    
-    public function listing($sectionId)
-    {
-        $db = Database::getDB();
-        $tbl = $db->addTable('ss_slide');
-        $tbl->addFieldConditional('sectionId', $sectionId);
-        $tbl->addOrderBy('sorting');
-        return $db->select();
-    }
+        // Array to return of all the slideIds
+        $ids = array();
 
-    public function listingWithDecisions($sectionId)
-    {
-        $slides = $this->listing($sectionId);
-        if (empty($slides)) {
-            return null;
-        }
-        $dFactory = new DecisionFactory;
-        foreach ($slides as &$slide) {
-            $slide['decisions'] = $dFactory->listing($slide['id']);
-            /*
-            $decisions = $dFactory->listing($slide['id']);
-            if (empty($decisions)) {
-                $slide['decisions'] = null;
+        // pull showId from $request
+        $vars = $request->getRequestVars();
+        $showId = intval($vars['Slide']);
+
+        $slides = $request->pullPutVar('slides');
+
+        $slideIndex = 0;
+        foreach ($slides as $slide) {
+            $resource = null;
+            if (empty($slide['slideId'])) {
+                $resource = $this->build();
             } else {
-                $slide['decisions'] = $decisions;
+                $resource = $this->load(intval($slide['slideId']));
             }
-             * 
-             */
+
+            $resource->showId = $showId;
+            $resource->slideIndex = $slideIndex;
+            $resource->content = "";
+            $isQuiz = $slide['isQuiz'] == 'true' ? true : false;
+            $resource->isQuiz = $isQuiz;
+            if ($isQuiz) {
+                $resource->quizId = $slide['quizId'];
+            } else {
+                if (!empty($slide['saveContent'])) {
+                    $resource->content = $slide['saveContent'];
+                }
+            }
+            $resource->background = $slide['background'];
+            $resource->media = "";
+            if (!empty($slide['media'])) {
+                $resource->media = json_encode($slide['media']);
+            }
+            $resource->thumb = "";
+            if (!empty($slide['thumb'])) {
+                $resource->thumb = json_encode($slide['thumb']);
+            }
+            $this->saveResource($resource);
+            array_push($ids, $resource->id);
+            $slideIndex++;
         }
-        return $slides;
+        return $ids;
     }
 
-    public function handlePicturePost($slideId)
+    public function postImage(Request $request)
     {
-        if (!isset($_FILES) || empty($_FILES)) {
-            return array('error' => 'No files uploaded');
-        }
-        $picture = $_FILES['picture'];
-        $slide = $this->load($slideId);
+        $resourceId = intval($request->pullPostVar('slideId'));
+
         try {
-            $size = getimagesize($picture['tmp_name']);
-            $result['width'] = $size[0];
-            $result['height'] = $size[1];
-            $result['path'] = $this->moveImage($picture, $slide);
-            $result['success'] = true;
-        } catch (properties\Exception\FileSaveFailure $e) {
-            $result['success'] = false;
-            $result['error'] = $e->getMessage();
-        } catch (properties\Exception\WrongImageType $e) {
-            $result['success'] = false;
-            $result['error'] = $e->getMessage();
+            $resource = $this->load($resourceId);
         } catch (\Exception $e) {
-            $result['success'] = false;
-            $result['error'] = $e->getMessage();
-        }
-        return $result;
-    }
-
-    public function moveImage($pic, Resource $slide)
-    {
-        if ($pic['error'] !== 0) {
-            throw new \Exception('Upload error');
+            // Resource doesn't exist
+            $resource = $this->build();
+            $this->saveResource($resource);
+            $resourceId = $resource->id;
         }
 
-        if (!in_array($pic['type'],
-                        array('image/jpeg', 'image/gif', 'image/png'))) {
-            throw new \properties\Exception\WrongImageType;
-        }
-        $dest = $slide->getImagePath();
-        if (!is_dir($dest)) {
-            if (!mkdir($dest, 0755)) {
-                throw new \Exception('Could not create directory');
-            }
-        }
+        $target = $resourceId . '/media/';
 
-        $file_name = rand() . time() . '.' . \phpws\PHPWS_File::getFileExtension($pic['name']);
-        $path = $dest . $file_name;
-        if (!move_uploaded_file($pic['tmp_name'], $path)) {
-            throw new properties\Exception\FileSaveFailure($path);
+        $path = $this->upload($_FILES['media'], $target);
+        if ($path != null) {
+            $media = array('imgUrl' => $path, 'align' => 'right');
+            $resource->media = json_encode($media);
         }
+        $this->saveResource($resource);
         return $path;
     }
 
-    public function getCurrentSort($sectionId)
+    public function postThumb(Request $request)
     {
-        $db = Database::getDB();
-        $tbl = $db->addTable('ss_slide');
-        $tbl->addFieldConditional('sectionId', $sectionId);
-        $sorting = $tbl->addField('sorting');
-        $tbl->addOrderBy('sorting', 'desc');
-        $db->setLimit(1);
-        return $db->selectColumn();
+        $resourceId = intval($request->pullPostVar('slideId'));
+        try {
+            $resource = $this->load($resourceId);
+        } catch (\Exception $e) {
+            // Resource doesn't exist
+            //$resource = $this->build();
+            //$this->saveResource($resource);
+            //$resourceId = $resource->id;
+            return;
+        }
+
+        $file_string_data = file_get_contents("data://" . $request->pullPostVar('thumb'));
+        $target = $resourceId . "/thumb/";
+
+        $path = $this->upload($file_string_data, $target);
+        if ($path != null) {
+            $resource->thumb = json_encode($path);
+        }
+        $this->saveResource($resource);
+        return $path;
+    }
+
+    public function postBackground(Request $request)
+    {
+        $resourceId = intval($request->pullPostVar('slideId'));
+
+        try {
+            $resource = $this->load($resourceId);
+        } catch (\Exception $e) {
+            //$resource = $this->build();
+            //$this->saveResource($resource);
+            //$resourceId = $resource->id;
+            return;
+        }
+
+        $resourcePath = $resourceId . "/background/";
+
+        $path = $this->upload($_FILES['backgroundMedia'], $resourcePath);
+        if ($path != null) {
+            $resource->background = json_encode($path);
+        }
+        $this->saveResource($resource);
+        return $path;
     }
 
     /**
-     * Creates an EMPTY slide. Information is added in the PUT.
-     * @param \slideshow\Factory\Request $request
+     * This function handles the deletion of slides
+     * @return boolean true if slide was deleted
      */
-    public function post(Request $request)
+    public function deleteSlide(Request $request)
     {
-        $slide = $this->build();
-        $slide->sectionId = $request->pullPostInteger('sectionId');
-        $slide->content = '<p>Content...</p>';
-        $currentSort = $this->getCurrentSort($slide->sectionId);
-        if ($currentSort === false) {
-            $nextSort = 0;
-        } else {
-            $nextSort = $currentSort + 1;
+        $resourceId = $request->pullDeleteVar('slideId');
+        $resource = $this->load($resourceId);
+
+        $this->deleteSlideDir($resourceId);
+
+        return ($this->deleteResource($resource) != 0);
+    }
+
+    /**
+     * Removes all slides associated with a specfic slideId that is within the request
+     * @param \Canopy\Request request data
+     * @return boolean true if deletion was successful
+     */
+    public function deleteAll(Request $request)
+    {
+        // Remove all slides comes from Showlist
+        $vars = $request->getRequestVars();
+        $showId = intval($vars['Slide']);
+
+        if (!$this->deleteAllImages($request))
+            echo("an error has occured\n");
+
+        $sql = 'DELETE from ss_slide WHERE showId=:showId;';
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        return $q->execute(array('showId' => $showId));
+    }
+
+    /**
+     * Deletes an image given a deletion request with slideId
+     * @return boolean true if deletion was successful
+     */
+    public function deleteImage(Request $request)
+    {
+        $resourceId = $request->pullDeleteVar('slideId');
+        $resource = $this->load($resourceId);
+        $media = json_decode($resource->media);
+        if ($this->removeUpload($resourceId, $media->imgUrl)) {
+            $resource->media = "";
+            $this->saveResource($resource);
+            return true;
         }
-        $slide->sorting = $nextSort;
-        return $slide;
+        return false;
     }
 
-    public function save(Resource $slide)
+    /**
+     * Deletes all images within a specific slideshow given a deletion request with slideId
+     * @return boolean true if deletion was successful
+     */
+    public function deleteAllImages(Request $request)
     {
-        self::saveResource($slide);
-        return $slide->id;
-    }
 
-    public function delete($slideId)
-    {
-        $slide = $this->load($slideId);
-        self::deleteResource($slide);
-        $sortable = new \phpws2\Sortable('ss_slide', 'sorting');
-        $sortable->startAtZero();
-        $sortable->setAnchor('sectionId', $slide->sectionId);
-        $sortable->reorder();
+        $vars = $request->getRequestVars();
+        $showId = intval($vars['Slide']);
 
-        $this->deleteImageDirectory($slide);
-    }
-
-    public function deleteImageDirectory($slide)
-    {
-        $path = $slide->getImagePath();
-        \phpws\PHPWS_File::rmdir($path);
-    }
-
-    public function createImageDirectory($slide)
-    {
-        $path = $slide->getImagePath();
-        if (!is_dir($path)) {
-            mkdir($path);
+        $sql = 'SELECT id, media from ss_slide WHERE showId=:showId;';
+        $db = Database::getDB();
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        $q->execute(array('showId' => $showId));
+        if (!$q)
+            return false;
+        $res = $q->fetchAll();
+        $flag = false;
+        foreach ($res as $r) {
+            $media = json_decode($r['media']);
+            if ($media != null && !empty($media->imgUrl)) {
+                $flag = $this->removeUpload($r['id'], $media->imgUrl);
+                if (!$flag)
+                    echo("an error has occured"); // An error occured
+            }
+            $this->deleteSlideDir($r['id']);
         }
-    }
-
-    public function clearBackgroundImage($slideId)
-    {
-        /* @var $slide \slideshow\Resource\SlideResource */
-        $slide = $this->load($slideId);
-        if (is_file($slide->backgroundImage)) {
-            unlink($slide->backgroundImage);
-        }
-        $slide->backgroundImage = null;
-        $this->save($slide);
-    }
-
-    public function patch($id, $param, $value)
-    {
-        static $allowed_params = array('delay', 'sorting', 'title', 'content', 'backgroundImage');
-
-        if (!in_array($param, $allowed_params)) {
-            throw new \Exception('Parameter may not be patched');
-        }
-        $slide = $this->load($id);
-        $slide->$param = $value;
-        $this->save($slide);
         return true;
     }
 
-    public function getDecisions(Resource $slide)
+    private function deleteSlideDir($resourceId)
     {
-         $dFactory = new DecisionFactory;
-         return $dFactory->listing($slide->id);
+        $dir = SLIDESHOW_MEDIA_DIRECTORY . $resourceId;
+        if (is_dir($dir)) {
+            // If directory exists then we dump it
+            system('rm -rf ' . escapeshellarg($dir), $ret);
+            if ($ret != 0)
+                throw new Exception('Directory Removal Error: ' . $ret);
+        } else {
+            echo("directory already removed");
+        }
     }
-    
-    public function sort($slide, $new_position)
+
+    /**
+     * Returns the slide of the show corresponding to the showId
+     * @var integer showId
+     * @return array of slides
+     */
+    private function getSlides(int $showId, $includeInactive = false)
     {
-        $sortable = new \phpws2\Sortable('ss_slide', 'sorting');
-        $sortable->startAtZero();
-        $sortable->setAnchor('sectionId', $slide->sectionId);
-        $sortable->moveTo($slide->getId(), $new_position);
+        $sql = 'SELECT * FROM ss_slide WHERE showId=:showId ORDER BY ss_slide.slideIndex;';
+        $db = Database::getDB();
+        $tbl = $db->addTable('ss_slide');
+        $tbl->addFieldConditional('showId', $showId);
+        if (!$includeInactive) {
+            $tbl2 = $db->addTable('ss_show', null, false);
+            $tbl2->addFieldConditional('active', 1);
+            $tbl->addFieldConditional('showId', $tbl2->getField('id'));
+        }
+        $pdo = $db->getPDO();
+        $q = $pdo->prepare($sql);
+        $q->execute(array('showId' => $showId));
+        $slides = $q->fetchAll();
+        return $slides;
+    }
+
+    private function Oldupload($file, $path, $slideId)
+    {
+        # TODO: handle upload of background
+        # My idea is that I leave the upload process to the path
+        # and depending on the path, I will upload respectivly
+        $target = SLIDESHOW_MEDIA_DIRECTORY . $path;
+        $dir = PHPWS_HOME_DIR . $target;
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        if (gettype($file) === 'array') {
+            $dest = $dir . basename($file['name']);
+            if (move_uploaded_file($file['tmp_name'], $dest)) {
+                return './' . $target . basename($file['name']);
+            } else {
+                echo("not uploaded and error occured");
+                var_dump($file);
+                var_dump($target);
+            }
+            return null;
+        } else if (gettype($file) === 'string') { // file is a thumbnail or a background img
+            $dir .= 'thumb/';
+            if (is_dir($dir)) {
+                // If directory exists then we dump it
+                system('rm -rf ' . escapeshellarg($dir), $ret);
+                if ($ret != 0)
+                    throw new Exception('Directory Removal Error: ' . $ret);
+            }
+            mkdir($dir, 0755, true);
+            // image will be named based on timestamp
+            $time = time();
+            $filename = $time . '.png';
+            $dest = $dir . $filename;
+            $status = file_put_contents($dest, $file);
+            if (!$status) {
+                // error has occured
+                return null;
+            }
+            return './' . $target . 'thumb/' . $filename;
+        }
+        return null;
+    }
+
+    /**
+     * Uploads a file to a given path
+     * @var mixed - of type array or file string data
+     * @var string -  if path doesn't exist it will recursivly created also it will get dumped if it does exist.
+     * @return string - filepath of new file
+     */
+    private function upload($file, $path)
+    {
+        $slideshow_path = SLIDESHOW_MEDIA_DIRECTORY . $path;
+        $canopy_path = PHPWS_HOME_DIR . $slideshow_path;
+
+        if (!is_dir($canopy_path)) {
+            mkdir($canopy_path, 0755, true);
+        } else {
+            system('rm -rf ' . escapeshellarg($canopy_path), $ret);
+            if ($ret != 0)
+                throw new Exception('Directory Removal Error: ' . $ret);
+            mkdir($canopy_path, 0755, true);
+        }
+
+        if (gettype($file) === 'array') {
+            $dest = $canopy_path . basename($file['name']);
+            if (move_uploaded_file($file['tmp_name'], $dest)) {
+                return './' . $slideshow_path . basename($file['name']);
+            } // If returns false then error occurred.
+            echo("not uploaded and error occured");
+            //var_dump($file);
+            var_dump($target);
+            return null;
+        } else if (gettype($file) === 'string') {
+            // We will name the file based on timestamp
+            $time = time();
+            $filename = $time . '.png';
+            $dest = $canopy_path . $filename;
+            //var_dump($dest);
+            $status = file_put_contents($dest, $file);
+            if (!$status) {
+                // error has occured
+                throw new Exception('Slideshow: File failed to upload');
+                return null;
+            }
+            return './' . $slideshow_path . $filename;
+        }
+    }
+
+    private function removeUpload($slideId, $path)
+    {
+        if (empty($path)) {
+            return false;
+        }
+        try {
+            unlink($path);
+            $dir = SLIDESHOW_MEDIA_DIRECTORY . $slideId . '/';
+            return true;
+        } catch (\Exception $e) {
+            echo("A fatal error has occured: " . $e);
+            // uncomment to show stacktrace as an array
+            // var_dump($e);
+        }
+        return false;
     }
 
 }

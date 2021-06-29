@@ -18,7 +18,7 @@
 
 namespace slideshow\Resource;
 
-class ShowResource extends BaseResource
+class ShowResource extends BaseAbstract
 {
 
     /**
@@ -26,6 +26,37 @@ class ShowResource extends BaseResource
      * @var \phpws2\Variable\StringVar
      */
     protected $title;
+
+    /**
+     *
+     * @var \phpws2\Variable\Boolean
+     */
+    protected $active;
+
+    /**
+     *
+     * @var \phpws2\Variable\SmallInteger
+     */
+    protected $slideTimer;
+
+    /**
+     * Preview image location
+     * @var \phpws2\Variable\StringVar
+     */
+    protected $preview;
+
+    /**
+     * Should preview display the first slide image (thumb)
+     * @var \phpws2\Variable\BooleanVar
+     */
+    protected $useThumb;
+
+    /**
+     * CSS Animation classname that renders an animation for all slides within the given show
+     * @var \phpws2\Variable\StringVar
+     */
+    protected $animation;
+
     protected $table = 'ss_show';
 
     public function __construct()
@@ -33,6 +64,16 @@ class ShowResource extends BaseResource
         parent::__construct();
         $this->title = new \phpws2\Variable\StringVar(null, 'title');
         $this->title->setLimit('255');
+        $this->active = new \phpws2\Variable\BooleanVar(0, 'active');
+        $this->slideTimer = new \phpws2\Variable\SmallInteger(2, 'slideTimer');
+        $this->preview = new \phpws2\Variable\StringVar(null, 'preview');
+        $this->useThumb = new \phpws2\Variable\BooleanVar(false, 'useThumb');
+        $this->animation = new \phpws2\Variable\StringVar('None', 'animation');
+    }
+
+    public function getImagePath()
+    {
+        return './images/slideshow/' . $this->id . '/';
     }
 
 }

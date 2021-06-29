@@ -2,36 +2,38 @@
 
 /**
  * @author Matthew McNaney <mcnaneym at appstate dot edu>
+ * @author Tyler Craig <craigta1 at appstate dot edu>
  */
+
+use phpws2\Database;
+require_once PHPWS_SOURCE_DIR . 'mod/slideshow/boost/Tables.php';
+
 function slideshow_install(&$content)
 {
     $db = \phpws2\Database::getDB();
     $db->begin();
 
+    $show;
+    $session;
+    $slide;
+    $quiz;
     try {
-        $ssUserToSection = $db->buildTable('ss_usertosection');
-        $ssUserToSection->addDataType('userId', 'int')->setIsNull(true);
-        $ssUserToSection->addDataType('showId', 'int')->setIsNull(true);
-        $ssUserToSection->addDataType('sectionId', 'int')->setIsNull(true);
-        $ssUserToSection->addDataType('currentSlide', 'int')->setIsNull(true)->setDefault(1);
-        $ssUserToSection->addDataType('complete', 'int')->setIsNull(true)->setDefault(0);
-        $ssUserToSection->create();
-        
-        $decision = new \slideshow\Resource\DecisionResource;
-        $decision->createTable($db);
+        $tables = new slideshow\Tables;
 
-        $section = new \slideshow\Resource\SectionResource;
-        $section->createTable($db);
+        $show = $tables->createShow();
+        $session = $tables->createSession();
+        $slide = $tables->createSlide();
+        $quiz = $tables->createQuiz();
 
-        $show = new \slideshow\Resource\ShowResource;
-        $show->createTable($db);
-
-        $slide = new \slideshow\Resource\SlideResource;
-        $slide->createTable($db);
-        
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
         $db->rollback();
+
+        //$show->drop(true);
+        //$session->drop(true);
+        //$slide->drop(true);
+        //$quiz->drop(true);
+        
         throw $e;
     }
     $db->commit();

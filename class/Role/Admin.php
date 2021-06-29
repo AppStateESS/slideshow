@@ -21,6 +21,8 @@ namespace slideshow\Role;
 class Admin extends Base
 {
 
+    protected $name = 'Admin';
+
     public function isAdmin()
     {
         return true;

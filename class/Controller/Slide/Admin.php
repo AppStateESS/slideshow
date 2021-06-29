@@ -1,94 +1,104 @@
 <?php
 
 /*
- * See docs/AUTHORS and docs/COPYRIGHT for relevant info.
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 Tyler Craig <craigta1@appstate.edu>.
  *
- * @author Matthew McNaney <mcnaney at gmail dot com>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @license http://opensource.org/licenses/lgpl-3.0.html
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 namespace slideshow\Controller\Slide;
 
 use Canopy\Request;
+use slideshow\Factory\Slide;
 
 class Admin extends Base
 {
 
-    protected function picturePostCommand(Request $request)
+    /**
+     * Renders the view for edit
+     */
+    protected function editHtmlCommand(Request $request)
     {
-        return $this->factory->handlePicturePost($request->pullPostInteger('slideId'));
-    }
-
-    protected function clearPicturePatchCommand(Request $request)
-    {
-        return $this->factory->clearBackgroundImage($this->id);
+        return $this->view->edit();
     }
 
     /**
-     * Creates a new slide. Note, this slide is created without any data and
-     * passed up to the form. This allows an id to be created. If the form is 
-     * abandoned, the slide should be deleted.
-     * @param Request $request
-     * @returns array Array with slide id
+     * Returns the slides of a specific slideshow
+     * @var Canopy\Request
+     * @return array of slides
      */
-    protected function createPostCommand(Request $request)
+    protected function editJsonCommand(Request $request)
     {
-        $slide = $this->factory->post($request);
-        $slideId = $this->factory->save($slide);
-        $this->factory->createImageDirectory($slide);
-        return array('slideId' => $slideId);
+        // TODO: look at editJsonCommand in Show
+        return $this->factory->get($request);
+    }
+
+    /**
+     *  Edits the values for slides -> happens on a save
+     */
+    protected function putCommand(Request $request)
+    {
+        return $this->factory->put($request);
     }
 
     protected function deleteCommand(Request $request)
     {
-        $this->factory->delete($this->id);
+        switch ($request->pullDeleteVar('type')) {
+            case 'all':
+                return $this->factory->deleteAll($request);
+            case 'slide':
+                return $this->factory->deleteSlide($request);
+            case 'image':
+                return $this->factory->deleteImage($request);
+            default:
+                return;
+        }
     }
 
-    protected function jsonPatchCommand(Request $request)
+    protected function imagePostCommand(Request $request)
     {
-        $this->factory->patch($this->id, $request->pullPatchString('varname'),
-                $request->pullPatchVar('value'));
-        $json['success'] = true;
-        return $json;
+        return $this->factory->postImage($request);
     }
 
-    protected function listJsonCommand(Request $request)
+    protected function thumbPostCommand(Request $request)
     {
-        return $this->factory->listingWithDecisions($request->pullGetInteger('sectionId'));
+        return $this->factory->postThumb($request);
     }
 
-    protected function movePatchCommand(Request $request)
+    protected function backgroundPostCommand(Request $request)
     {
-        $slide = $this->factory->load($this->id);
-        $this->factory->sort($slide, $request->pullPatchInteger('newPosition'));
+        return $this->factory->postBackground($request);
     }
 
-    protected function viewJsonCommand(Request $request)
+    /**
+     * Renders the view for present
+     */
+    protected function presentHtmlCommand(Request $request)
     {
-        $slide = $this->factory->load($this->id);
-        $view =  $slide->getStringVars();
-        $view['decisions'] = $this->factory->getDecisions($slide);
-        $view['content'] = '<div class="slide-content">' . $view['content'] . '</div>';
-        return $view;
+        return $this->view->present();
     }
 
-    protected function editHtmlCommand(Request $request)
+    protected function presentJsonCommand(Request $request)
     {
-        $this->loadRequestId($request);
-        $slideId = $this->id;
-        $slideJs = <<<EOF
-<script>const slideId = $slideId;</script>
-EOF;
-        return $slideJs . $this->factory->reactView('Slide');
+        return $this->factory->get($request, true);
     }
 
 }

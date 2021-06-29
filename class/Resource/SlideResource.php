@@ -11,77 +11,80 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * @author Matthew McNaney <mcnaney at gmail dot com>
+ * @author Tyler Craig <craigta1 at appstate dot edu>
  *
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
 namespace slideshow\Resource;
 
-class SlideResource extends BaseResource
+class SlideResource extends BaseAbstract
 {
 
-    /**
-     * Number of seconds until user may click continue
-     * @var \phpws2\Variable\IntegerVar
-     */
-    protected $delay;
+    protected $table = 'ss_slide';
 
     /**
-     * Id of section to which this slide is associated
-     * @var \phpws2\Variable\IntegerVar
-     */
-    protected $sectionId;
+    * SlideShow id
+    * @var phpws2\Variable\IntegerVar
+    */
+    protected $showId;
 
     /**
-     * Display order of slide
-     * @var \phpws2\Variable\SmallInteger 
-     */
-    protected $sorting;
+    * Slide index
+    * Note: think of this as a sequential id for the slides:
+    * If a slide at index 2 gets deleted, then slide at index 3 will not get decremented
+    * @var phpws2\Variable\SmallInteger
+    */
+    protected $slideIndex;
 
     /**
-     * Title or label of slide. Does not display
-     * @var \phpws2\Variable\StringVar
-     */
-    protected $title;
-
-    /**
-     * Content of the slide.
-     * @var \phpws2\Variable\StringVar
-     */
+    * Slide Content
+    * @var phpws2\Variable\StringVar
+    */
     protected $content;
 
     /**
-     * Prevents navigation. Must use Decisions.
-     * @var \phpws2\Variable\BooleanVar
-     */
-    protected $locked;
+    * Slide is a quiz
+    * @var phpws2\Variable\BooleanVar
+    */
+    protected $isQuiz;
 
     /**
-     *
-     * @var \phpws2\Variable\FileVar
-     */
-    protected $backgroundImage;
-    protected $table = 'ss_slide';
+    * Slide background -> Either a color or and image location
+    * @var phpws2\Variable\StringVar
+    */
+    protected $background;
+
+    /**
+    * Media Resource Location
+    * @var phpws2\Variable\StringVar
+    */
+    protected $media;
+
+    /**
+    * Thumbnail for the slide (img preview of the slideshow content)
+    * @var phpws2\Variable\StringVar
+    */
+    protected $thumb;
+
+    /**
+    * quiz's id
+    * default value is -1 if not quiz
+    * @var phpws2\Variable\SmallInteger
+    */
+    protected $quizId;
 
     public function __construct()
     {
         parent::__construct();
-        $this->delay = new \phpws2\Variable\IntegerVar(0, 'delay');
-        $this->sectionId = new \phpws2\Variable\IntegerVar(null, 'sectionId');
-        $this->sorting = new \phpws2\Variable\SmallInteger(0, 'sorting');
-        $this->title = new \phpws2\Variable\TextOnly('Untitled slide', 'title');
-        $this->title->setLimit('255');
+        $this->showId = new \phpws2\Variable\IntegerVar(0, 'showId');
+        $this->slideIndex = new \phpws2\Variable\SmallInteger(0, 'slideIndex');
         $this->content = new \phpws2\Variable\StringVar(null, 'content');
-        $this->locked = new \phpws2\Variable\BooleanVar(false, 'lockout');
-        $this->backgroundImage = new \phpws2\Variable\FileVar(null,
-                'backgroundImage');
-        $this->backgroundImage->allowNull(true);
-    }
-
-    public function getImagePath()
-    {
-        return './images/slideshow/' . $this->sectionId . '/' . $this->id . '/';
+        $this->isQuiz = new \phpws2\Variable\BooleanVar(0, 'isQuiz');
+        $this->background = new \phpws2\Variable\StringVar('#E5E7E9', 'background');
+        $this->media = new \phpws2\Variable\StringVar(null, 'media');
+        $this->thumb = new \phpws2\Variable\StringVar(null, 'thumb');
+        $this->quizId = new \phpws2\Variable\SmallInteger(0, 'quizId');
     }
 
 }

@@ -20,17 +20,19 @@ namespace slideshow\Role;
 
 abstract class Base
 {
+
     /**
      * Id of user role. Anonymous users will have id = null
      * @var integer
      */
     protected $id;
+    protected $name = 'Base';
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
-        $this->id = (int)$id;
+        $this->id = (int) $id;
     }
-    
+
     public function isAdmin()
     {
         return false;
@@ -45,9 +47,15 @@ abstract class Base
     {
         return false;
     }
-    
+
     public function getId()
     {
         return $this->id;
     }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
 }

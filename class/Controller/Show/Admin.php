@@ -1,62 +1,132 @@
 <?php
 
 /*
- * See docs/AUTHORS and docs/COPYRIGHT for relevant info.
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * The MIT License
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright 2018 Matthew McNaney <mcnaneym@appstate.edu>.
  *
- * @author Matthew McNaney <mcnaney at gmail dot com>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @license http://opensource.org/licenses/lgpl-3.0.html
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 namespace slideshow\Controller\Show;
 
 use Canopy\Request;
-use slideshow\Factory\NavBar;
+use slideshow\Factory\ShowFactory;
+use slideshow\View\ShowView;
 
 class Admin extends Base
 {
 
-    public function createPostCommand(Request $request)
+    /**
+     * @var \slideshow\Factory\ShowFactory
+     */
+    protected $factory;
+
+    /**
+     * @var \slideshow\View\ShowView
+     */
+    protected $view;
+
+    /**
+     * Handles the request to render the list page.
+     */
+    protected function listHtmlCommand(Request $request)
+    {
+        return $this->view->adminShow();
+    }
+
+    protected function postCommand(Request $request)
     {
         return $this->factory->post($request);
     }
-    
-    protected function listHtmlCommand(Request $request)
+
+    protected function patchCommand(Request $request)
     {
-        $this->addShowOption();
-        $showForm = $this->factory->reactView('showform');
-        return parent::listHtmlCommand($request) . $showForm;
+        $show = $this->factory->patch($request);
+        return array('show' => $show->getStringVars());
     }
 
-    protected function viewHtmlCommand(Request $request)
+    protected function listJsonCommand(Request $request)
     {
-        $this->addSectionOption($this->id);
-        $showId = <<<EOF
-<script>const showId = {$this->id}</script>
-EOF;
-        $sectionForm = $this->factory->reactView('sectionform');
-        return parent::viewHtmlCommand($request) . $showId . $sectionForm;
+        return array('listing' => $this->get($request));
     }
-    
-    private function addSectionOption($id)
+
+    protected function deleteCommand(Request $request)
     {
-        $item = '<a id="add-section" class="pointer"><i class="fa fa-plus"></i> Add a new section</a>';
-        NavBar::addItem($item);
+        switch ($request->pullDeleteVar('type')) {
+            case 'preview':
+                return $this->factory->deletePreviewImage($this->id);
+            case 'show':
+                return $this->factory->delete($this->id);
+            default:
+                return $this->factory->delete($this->id);
+        }
     }
-    
-    private function addShowOption()
+
+    protected function putCommand(Request $request)
     {
-        $item = '<a id="add-show" class="pointer"><i class="fa fa-plus"></i> Add new show</a>';
-        NavBar::addItem($item);
+        $this->factory->put($request);
+        return true;
     }
-            
+
+    protected function get()
+    {
+        $shows = $this->factory->listing(true);
+        foreach ($shows as &$show) {
+            if ($show['useThumb'] == 1) {
+                $show['preview'] = $this->factory->getFirstPreview($show['id']);
+            }
+        }
+        return $shows;
+    }
+
+    protected function jsonPatchCommand(Request $request)
+    {
+        return $this->factory->patch($request);
+    }
+
+    protected function previewPostCommand(Request $request)
+    {
+        return $this->factory->postPreviewImage($request);
+    }
+
+    protected function useThumbPostCommand(Request $request)
+    {
+        return $this->factory->setUseThumb($request->pullPostVarIfSet('value'), $request->getVar('id'));
+    }
+
+    protected function getJsonView($data, Request $request)
+    {
+        $vars = $request->getRequestVars();
+        $command = '';
+        if (!empty($data['command'])) {
+            $command = $data['command'];
+        }
+        if ($command == 'getDetails' && \Current_User::allow('slideshow', 'edit')) {
+            $result = ShowFactory::getDetails($vars['show_id']);
+        }
+        return new \phpws2\View\JsonView($result);
+    }
+
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->getShowDetails($request, true);
+    }
 
 }

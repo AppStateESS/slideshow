@@ -11,14 +11,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * @author Matthew McNaney <mcnaney at gmail dot com>
  *
  * @license http://opensource.org/licenses/lgpl-3.0.html
  */
 
 namespace slideshow\Controller\Slide;
 
+use Canopy\Request;
+
 class User extends Base
 {
-    
+
+    /**
+     * Renders the view for present
+     */
+    protected function presentHtmlCommand(Request $request)
+    {
+        return $this->view->present();
+    }
+
+    protected function presentJsonCommand(Request $request)
+    {
+        return $this->factory->get($request, false);
+    }
+
 }

@@ -24,7 +24,8 @@ abstract class Base extends \phpws2\ResourceFactory
         $resource = $this->build();
         $resource->setId($id);
         if (!parent::loadByID($resource)) {
-            throw new ResourceNotFound($id);
+            // Make a new one if it doesn't exist
+            return $this->build();
         }
         return $resource;
     }
@@ -40,59 +41,6 @@ abstract class Base extends \phpws2\ResourceFactory
         } else {
             return ucfirst($name);
         }
-    }
-
-    private function getScript($filename)
-    {
-        $root_directory = PHPWS_SOURCE_HTTP . 'mod/slideshow/javascript/';
-        if (SLIDESHOW_REACT_DEV) {
-            $path = "dev/$filename.js";
-        } else {
-            $path = "build/$filename.js";
-        }
-        $script = "<script type='text/javascript' src='{$root_directory}$path'></script>";
-        return $script;
-    }
-
-    public function reactView($view_name)
-    {
-        static $vendor_included = false;
-        if (!$vendor_included) {
-            $script[] = $this->getScript('vendor');
-            $vendor_included = true;
-        }
-        $script[] = $this->getScript($view_name);
-        $react = implode("\n", $script);
-        $content = <<<EOF
-<div id="$view_name"></div>
-$react
-EOF;
-        return $content;
-    }
-    
-    protected function getRootDirectory()
-    {
-        return PHPWS_SOURCE_DIR . 'mod/slideshow/';
-    }
-
-    protected function getRootUrl()
-    {
-        return PHPWS_SOURCE_HTTP . 'mod/slideshow/';
-    }
-
-
-    private function getAssetPath($scriptName)
-    {
-        $rootDirectory = $this->getRootDirectory();
-        if (!is_file($rootDirectory . 'assets.json')) {
-            exit('Missing assets.json file. Run npm run prod in stories directory.');
-        }
-        $jsonRaw = file_get_contents($rootDirectory . 'assets.json');
-        $json = json_decode($jsonRaw, true);
-        if (!isset($json[$scriptName]['js'])) {
-            throw new \Exception('Script file not found among assets.');
-        }
-        return $json[$scriptName]['js'];
     }
 
 }

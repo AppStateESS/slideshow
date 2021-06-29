@@ -20,8 +20,12 @@ namespace slideshow\Role;
 
 class User extends Base
 {
+
+    protected $name = 'User';
+
     public function isUser()
     {
         return true;
     }
+
 }

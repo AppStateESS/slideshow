@@ -1,10 +1,11 @@
+/* global __dirname, exports */
 exports.path = require('path')
 exports.APP_DIR = exports.path.resolve(__dirname, 'javascript')
 
 exports.entry = {
-  vendor: ['react', 'react-dom'],
-  showform: exports.APP_DIR + '/ShowForm/index.jsx',
-  sectionform: exports.APP_DIR + '/SectionForm/index.jsx',
-  Section: exports.APP_DIR + '/Section/index.jsx',
-  Slide: exports.APP_DIR + '/Slide/index.jsx',
+  shows: exports.APP_DIR + '/Show/index.jsx',
+  edit: exports.APP_DIR + '/Edit/index.jsx',
+  present: exports.APP_DIR + '/Present/index.jsx',
+  view: exports.APP_DIR + '/View/index.jsx',
+  session: exports.APP_DIR + '/Session/index.jsx',
 }

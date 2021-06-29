@@ -7,6 +7,7 @@
 namespace slideshow;
 
 use slideshow\Factory\NavBar;
+use slideshow\Factory\Home;
 use Canopy\Request;
 use Canopy\Response;
 use Canopy\Server;
@@ -21,7 +22,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         parent::__construct();
         $this->loadDefines();
         $this->setTitle('slideshow');
-        $this->setProperName('SlideShow');
+        $this->setProperName('Slideshow');
         spl_autoload_register('\slideshow\Module::autoloader', true, true);
     }
 
@@ -39,7 +40,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
         } catch (\Exception $e) {
             if (SS_FRIENDLY_ERROR) {
                 \phpws2\Error::log($e);
-                echo \Layout::wrap('<div class="jumbotron"><h1>Uh oh...</h1><p>An error occurred with SlideShow.</p></div>', 'SlideShow Error', true);
+                echo \Layout::wrap('<div class="jumbotron"><h1>Uh oh...</h1><p>An error occurred with Slideshow.</p></div>', 'Slideshow Error', true);
                 exit();
             } else {
                 throw $e;
@@ -55,8 +56,7 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
 
     public function afterRun(Request $request, Response $response)
     {
-        \Layout::addStyle('slideshow');
-        $this->showNavBar($request);
+
     }
 
     private function loadDefines()
@@ -72,27 +72,11 @@ class Module extends \Canopy\Module implements \Canopy\SettingDefaults
 
     public function runTime(Request $request)
     {
-        if (\Current_User::allow('slideshow')) {
-            NavBar::addItem($this->showList());
+        if (\PHPWS_Core::atHome()) {
+            $view = new \slideshow\View\ShowView;
+            $content = $view->show();
+            \Layout::add($content);
         }
-        if ($request->getModule() !== 'slideshow') {
-            \Layout::addStyle('slideshow');
-            $this->showNavBar($request);
-        }
-    }
-
-    private function showNavBar(Request $request)
-    {
-        if ($request->isGet() && !$request->isAjax() &&
-                (\Current_User::allow('slideshow') || \Current_User::allow('users'))) {
-
-            NavBar::view($request);
-        }
-    }
-
-    private function showList()
-    {
-        return '<a href="./slideshow/Show/list"><i class="fa fa-list"></i> Show list</a>';
     }
 
     public static function autoloader($class_name)

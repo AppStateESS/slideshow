@@ -20,8 +20,12 @@ namespace slideshow\Role;
 
 class Logged extends Base
 {
+
+    protected $name = 'Logged';
+
     public function isLogged()
     {
         return true;
     }
+
 }

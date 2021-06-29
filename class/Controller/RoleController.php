@@ -27,14 +27,18 @@ abstract class RoleController
 {
 
     protected $factory;
+    protected $view;
     protected $role;
     protected $id;
 
     abstract protected function loadFactory();
 
+    abstract protected function loadView();
+
     public function __construct($role)
     {
         $this->loadFactory();
+        $this->loadView();
         $this->role = $role;
     }
 
@@ -68,12 +72,12 @@ abstract class RoleController
         $command = $request->shiftCommand();
 
         if (empty($command)) {
-            $command = 'create';
+            $method_name = 'postCommand';
+        } else {
+            $method_name = $command . 'PostCommand';
         }
-
-        $method_name = $command . 'PostCommand';
         if (!method_exists($this, $method_name)) {
-            throw new BadCommand($method_name);
+            throw new BadCommand(get_class($this) . ':' . $method_name);
         }
 
         $content = $this->$method_name($request);
@@ -93,9 +97,15 @@ abstract class RoleController
     {
         $id = $request->shiftCommand();
         if (!is_numeric($id)) {
-            throw new \slideshow\Exception\MissingRequestId($id);
+            $vars = $request->getRequestVars();
+            if (empty($vars['id'])) {
+                throw new \slideshow\Exception\MissingRequestId($id);
+            } else {
+                $this->id = intval($vars['id']);
+            }
+        } else {
+            $this->id = $id;
         }
-        $this->id = $id;
     }
 
     public function put(Request $request)
@@ -104,12 +114,13 @@ abstract class RoleController
 
         $command = $request->shiftCommand();
         if (empty($command)) {
-            $command = 'update';
+            $method_name = 'putCommand';
+        } else {
+            $method_name = $command . 'PutCommand';
         }
 
-        $method_name = $command . 'PutCommand';
         if (!method_exists($this, $method_name)) {
-            throw new BadCommand($method_name);
+            throw new BadCommand(get_class($this) . ':' . $method_name);
         }
 
         $content = $this->$method_name($request);
@@ -130,7 +141,7 @@ abstract class RoleController
             if ($this->id && method_exists($this, 'viewHtmlCommand')) {
                 $method_name = 'viewHtmlCommand';
             } else {
-                throw new BadCommand($method_name);
+                throw new BadCommand(get_class($this) . ':' . $method_name);
             }
         }
 
@@ -150,7 +161,7 @@ abstract class RoleController
         $method_name = $command . 'JsonCommand';
 
         if (!method_exists($this, $method_name)) {
-            throw new BadCommand($method_name);
+            throw new BadCommand(get_class($this) . ':' . $method_name);
         }
 
         $json = $this->$method_name($request);
@@ -166,7 +177,8 @@ abstract class RoleController
 
     public function jsonResponse($json)
     {
-        $view = new \phpws2\View\JsonView($json);
+        $view = new \phpws2\View\JsonView($json,
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
         $response = new \Canopy\Response($view);
         return $response;
     }
@@ -195,7 +207,7 @@ abstract class RoleController
         $this->loadRequestId($request);
 
         if (!method_exists($this, 'deleteCommand')) {
-            throw new BadCommand('deleteCommand');
+            throw new BadCommand(get_class($this) . ':' . 'deleteCommand');
         }
 
         $content = $this->deleteCommand($request);

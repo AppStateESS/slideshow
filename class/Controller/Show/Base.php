@@ -20,29 +20,30 @@ namespace slideshow\Controller\Show;
 
 use Canopy\Request;
 use slideshow\Factory\ShowFactory as Factory;
+use slideshow\View\ShowView as View;
 use slideshow\Controller\RoleController;
 
 class Base extends RoleController
 {
 
     /**
-     * @var object Factory
+     * @var slideshow\Factory\ShowFactory
      */
     protected $factory;
+
+    /**
+     * @var slideshow\View\ShowView
+     */
+    protected $view;
 
     protected function loadFactory()
     {
         $this->factory = new Factory;
     }
 
-    protected function listHtmlCommand(Request $request)
+    protected function loadView()
     {
-        return $this->factory->listing();
-    }
-
-    protected function viewHtmlCommand(Request $request)
-    {
-        return $this->factory->view($this->id);
+        $this->view = new View;
     }
 
 }

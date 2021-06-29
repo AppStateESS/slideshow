@@ -1,6 +1,10 @@
 let Show = {
-  id: 0,
-  title: ''
+  id: -1,
+  active: false,
+  title: undefined,
+  content: [],
+  preview: undefined,
+  disabled: false
 }
 
 export default Show

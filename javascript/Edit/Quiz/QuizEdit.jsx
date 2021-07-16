@@ -190,6 +190,7 @@ export default function QuizEdit(props) {
       success: (imageUrl) => {
         props.changeBackground(imageUrl)
         setImageUrl(imageUrl)
+        alert('Background Image has been Inserted!')
       },
       error: (req, res) => {
         console.error(res)
@@ -289,9 +290,9 @@ export default function QuizEdit(props) {
     (
       <Row style={{ marginLeft: '10%' }}>
         <Group style={{ width: '60%', marginRight: '1rem' }}>
-          <button key={'add'} className="btn btn-primary btn-block" onClick={() => props.mediaOpen()} ><i className="fas fa-images"></i> Insert an Image</button>
+          <button style={{marginBottom: '1%'}} key={'add'} className="btn btn-primary btn-block" onClick={() => props.mediaOpen()} ><i className="fas fa-images"></i> Insert an Image</button>
           <div className="card">
-            <div className="card-header text-center">Upload</div>
+            <div className="btn btn-primary btn-block"><i className="fas fa-images"></i> Insert background Image</div>
             <Dropzone
               accept="image/jpeg,image/png,image/gif"
               maxFiles={1}

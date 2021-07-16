@@ -368,7 +368,6 @@ export default class Edit extends Component {
   }
 
   saveBackground(newBackground) {
-    console.log(newBackground)
     let c = [...this.state.content]
     c[this.state.currentSlide].background = newBackground
     this.setState({content: c}, () => this.save())

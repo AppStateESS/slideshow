@@ -91,6 +91,25 @@ const EditView = ({
     imgAlign = content.media.align
   }
 
+  let backgroundStyle = {
+    minHeight: 500,
+    minWidth: 300,
+    height: '8rem',
+    overflow: 'auto',
+    backgroundImage: `url(${content.background})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+  }
+  if (content.background.charAt(0) === '#') {
+    backgroundStyle = {
+      minHeight: 500,
+      minWidth: 300,
+      height: '8rem',
+      overflow: 'auto',
+      backgroundColor: content.background,
+    }
+  }
+
   if (!content.isQuiz) {
     return (
       <Editor
@@ -124,6 +143,7 @@ const EditView = ({
           load={load}
           validate={validate}
           insertMedia={insertMedia}
+          changeBackground={saveBackground}
           mediaView={mediaView}
           mediaCancel={mediaCancel}
           mediaOpen={mediaOpen}
@@ -143,15 +163,9 @@ const EditView = ({
           id="editor"
           data-key={currentSlide}
           className="jumbotron"
-          style={{
-            minHeight: 500,
-            minWidth: 300,
-            height: '8rem',
-            backgroundColor: content.background,
-            overflow: 'auto',
-          }}>
+          style={backgroundStyle}>
           <div className="row">
-           {imgAlign === 'left' ? imgC : undefined}
+            {imgAlign === 'left' ? imgC : undefined}
             <div className="col">
               <QuizView
                 quizContent={content.quizContent}

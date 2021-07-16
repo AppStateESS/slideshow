@@ -24,6 +24,7 @@ export default function QuizEdit(props) {
   const [type, setType] = useState('showTypes')
   const [feedback, setFeedback] = useState(['global', 'Correct!', 'Please try again']) // : string[]
   const [id, setId] = useState(-1)
+  const [imageUrl, setImageUrl] = useState('')
 
   const [showModal, setShowModal] = useState(false)
   const [showCustom, setShowCustom] = useState(false)
@@ -83,7 +84,8 @@ export default function QuizEdit(props) {
       'answers': answers,
       'correct': correct,
       'type': type,
-      'feedback': feedback
+      'feedback': feedback,
+      'imageUrl': imageUrl
     }
     const saved = await saveQuiz(id, quizContent)
 
@@ -168,6 +170,34 @@ export default function QuizEdit(props) {
     setFeedback(f)
     setFeedCheck(!fc)
     setShowCustom(!fc)
+  }
+
+  function changeBackground(fileWithMeta) {
+    let formData = new FormData()
+    const showId = Number(window.sessionStorage.getItem('id'))
+    const slideId = Number(window.sessionStorage.getItem('slideId'))
+    let fMeta = fileWithMeta[0]
+    formData.append('backgroundMedia', fMeta.file)
+    formData.append('slideId', slideId)
+    formData.append('id', showId)
+
+    $.ajax({
+      url: './slideshow/Slide/background/' + slideId,
+      type: 'post',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: (imageUrl) => {
+        props.changeBackground(imageUrl)
+        setImageUrl(imageUrl)
+      },
+      error: (req, res) => {
+        console.error(res)
+        alert(
+          'An error has occured with this image. Please try a different image.'
+        )
+      },
+    })
   }
 
   function buildAnswerBlock(type) {
@@ -260,6 +290,24 @@ export default function QuizEdit(props) {
       <Row style={{ marginLeft: '10%' }}>
         <Group style={{ width: '60%', marginRight: '1rem' }}>
           <button key={'add'} className="btn btn-primary btn-block" onClick={() => props.mediaOpen()} ><i className="fas fa-images"></i> Insert an Image</button>
+          <div className="card">
+            <div className="card-header text-center">Upload</div>
+            <Dropzone
+              accept="image/jpeg,image/png,image/gif"
+              maxFiles={1}
+              multiple={false}
+              minSizeBytes={1024}
+              maxSizeBytes={18388608}
+              onChangeStatus={props.validate}
+              onSubmit={changeBackground}
+              submitButtonContent={'Insert'}
+              inputContent={''}
+              classNames={{
+                submitButton: 'btn btn-secondary btn-block drop',
+                dropzone: 'drop',
+              }}
+            />
+          </div>
         </Group>
       </Row>
     )

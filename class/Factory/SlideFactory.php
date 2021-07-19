@@ -68,6 +68,7 @@ class SlideFactory extends Base
     {
         // Array to return of all the slideIds
         $ids = array();
+        $quizIds = array();
 
         // pull showId from $request
         $vars = $request->getRequestVars();
@@ -90,7 +91,13 @@ class SlideFactory extends Base
             $isQuiz = $slide['isQuiz'] == 'true' ? true : false;
             $resource->isQuiz = $isQuiz;
             if ($isQuiz) {
-                $resource->quizId = $slide['quizId'];
+                
+                if (!in_array($slide['quizId'], $quizIds)) {
+                    $resource->quizId = $slide['quizId'];
+                    array_push($quizIds, $slide['quizId']);
+                    
+                }
+                var_dump($resource->quizId);
             } else {
                 if (!empty($slide['saveContent'])) {
                     $resource->content = $slide['saveContent'];
@@ -106,7 +113,9 @@ class SlideFactory extends Base
                 $resource->thumb = json_encode($slide['thumb']);
             }
             $this->saveResource($resource);
-            array_push($ids, $resource->id);
+            if (!in_array($resource->quizId, $quizIds)) {
+                array_push($ids, $resource->id);
+            }
             $slideIndex++;
         }
         return $ids;

@@ -164,24 +164,30 @@ export default class Edit extends Component {
     if (domNode.getAttribute('data-key') == index) {
       domtoimage.toPng(domNode).then((dataUrl) => {
         let img = new Image()
-        img.src = dataUrl
-        img.width = 200
-        img.height = 100
-        let fData = new FormData()
-        fData.append('thumb', img.src)
-        fData.append('slideId', this.state.content[index].slideId)
-        $.post({
-          url: './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
-          type: 'POST',
-          data: fData,
-          processData: false,
-          contentType: false,
-          success: (path) => {
-            let c = [...this.state.content]
-            c[index].thumb = JSON.parse(path)
-            this.setState({content: c})
-          },
-        })
+        if (dataUrl !== 'data:,') {
+          img.src = dataUrl
+          img.width = 200
+          img.height = 100
+          let fData = new FormData()
+          fData.append('thumb', img.src)
+          if (dataUrl.length === 0) {
+            console.log('empty')
+          }
+          fData.append('slideId', this.state.content[index].slideId)
+          $.post({
+            url:
+              './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
+            type: 'POST',
+            data: fData,
+            processData: false,
+            contentType: false,
+            success: (path) => {
+              let c = [...this.state.content]
+              c[index].thumb = JSON.parse(path)
+              this.setState({content: c})
+            },
+          })
+        }
       })
     }
   }

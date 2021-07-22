@@ -14,7 +14,6 @@ namespace slideshow\View;
 
 abstract class BaseView
 {
-
     private function getScript($filename)
     {
         $root_directory = PHPWS_SOURCE_HTTP . 'mod/slideshow/javascript/';
@@ -75,7 +74,7 @@ EOF;
     {
         $rootDirectory = $this->getRootDirectory();
         if (!is_file($rootDirectory . 'assets.json')) {
-            exit('Missing assets.json file. Run npm run prod in stories directory.');
+            exit('Missing assets.json file. Run npm run build in slideshow directory.');
         }
         $jsonRaw = file_get_contents($rootDirectory . 'assets.json');
         $json = json_decode($jsonRaw, true);
@@ -84,5 +83,4 @@ EOF;
         }
         return $json[$scriptName]['js'];
     }
-
 }

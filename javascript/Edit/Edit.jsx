@@ -82,10 +82,9 @@ export default class Edit extends Component {
           )
         })
       },
-      error: (req, err) => {
+      error: (req) => {
         alert('Failed to save show ' + window.sessionStorage.getItem('id'))
         document.write(req.responseJSON.backtrace[0].args[1].xdebug_message)
-        console.error(req, err.toString())
       },
     })
   }
@@ -133,9 +132,8 @@ export default class Edit extends Component {
           this.setState({loaded: true})
         }
       }.bind(this),
-      error: function (req, err) {
+      error: function () {
         alert('Failed to load data.')
-        console.error(req, err.toString())
       }.bind(this),
     })
 
@@ -151,9 +149,6 @@ export default class Edit extends Component {
           animation: data[0].animation,
         })
       },
-      error: (request, response) => {
-        console.error(response)
-      },
     })
   }
 
@@ -167,41 +162,32 @@ export default class Edit extends Component {
       return
     }
     if (domNode.getAttribute('data-key') == index) {
-      domtoimage
-        .toPng(domNode)
-        .then((dataUrl) => {
-          let img = new Image()
-          img.src = dataUrl
-          img.width = 200
-          img.height = 100
-          let fData = new FormData()
-          fData.append('thumb', img.src)
-          fData.append('slideId', this.state.content[index].slideId)
-          $.post({
-            url:
-              './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
-            type: 'POST',
-            data: fData,
-            processData: false,
-            contentType: false,
-            success: (path) => {
-              let c = [...this.state.content]
-              c[index].thumb = JSON.parse(path)
-              this.setState({content: c})
-            },
-            error: (req, res) => {
-              console.error(res)
-            },
-          })
+      domtoimage.toPng(domNode).then((dataUrl) => {
+        let img = new Image()
+        img.src = dataUrl
+        img.width = 200
+        img.height = 100
+        let fData = new FormData()
+        fData.append('thumb', img.src)
+        fData.append('slideId', this.state.content[index].slideId)
+        $.post({
+          url: './slideshow/Slide/thumb/' + window.sessionStorage.getItem('id'),
+          type: 'POST',
+          data: fData,
+          processData: false,
+          contentType: false,
+          success: (path) => {
+            let c = [...this.state.content]
+            c[index].thumb = JSON.parse(path)
+            this.setState({content: c})
+          },
         })
-        .catch(function (error) {
-          console.error(error)
-        })
+      })
     }
   }
 
-  setCurrentSlide(val) {
-    this.setState({currentSlide: val}, () => this.save())
+  setCurrentSlide(val, callback = null) {
+    this.setState({currentSlide: val, callback})
   }
 
   addNewSlide(quizId) {
@@ -219,20 +205,18 @@ export default class Edit extends Component {
     copy.splice(index, 0, newSlide)
     this.setState(
       {
-        //currentSlide: index,
         content: copy,
       },
       () => {
-        this.save()
-        this.setCurrentSlide(index)
+        this.setCurrentSlide(index, this.save)
       }
     )
   }
 
   async addNewQuiz() {
-    const id = await postQuiz()
-    sessionStorage.setItem('quizId', id)
-    this.addNewSlide(id)
+    const quizId = await postQuiz()
+    sessionStorage.setItem('quizId', quizId)
+    this.addNewSlide(quizId)
   }
 
   // addNewSlide to the end
@@ -248,10 +232,11 @@ export default class Edit extends Component {
     copy.push(newSlide)
     this.setState(
       {
-        //currentSlide: index,
         content: copy,
       },
-      () => this.setCurrentSlide(index)
+      () => {
+        this.setCurrentSlide(index, this.save)
+      }
     )
   }
 
@@ -264,9 +249,6 @@ export default class Edit extends Component {
         url: `./slideshow/Quiz/${quizId}`,
         type: 'delete',
         success: () => {},
-        error: (req, res) => {
-          console.error(res)
-        },
       })
     }
     let newIndex = this.state.currentSlide
@@ -289,17 +271,12 @@ export default class Edit extends Component {
         slideId: this.state.content[this.state.currentSlide].slideId,
         type: 'slide',
       },
-      error: (req, res) => {
-        console.error(req, res.toString())
-      },
     })
 
-    this.setState(
-      {
-        content: copy,
-        currentSlide: newIndex,
-      } /*() => this.setCurrentSlide(newIndex)*/
-    )
+    this.setState({
+      content: copy,
+      currentSlide: newIndex,
+    })
   }
 
   moveSlide(fromIndex, toIndex) {
@@ -318,10 +295,6 @@ export default class Edit extends Component {
       dataType: 'json',
       success: function () {
         this.setState({editTitleView: false})
-      }.bind(this),
-      error: function (req, err) {
-        alert('Failed to save data.')
-        console.error(req, err.toString())
       }.bind(this),
     })
   }
@@ -353,9 +326,6 @@ export default class Edit extends Component {
       data: {
         type: 'image',
         slideId: this.state.content[this.state.currentSlide].slideId,
-      },
-      error: (req, res) => {
-        console.log(res.toString())
       },
     })
     let c = [...this.state.content]
@@ -413,7 +383,6 @@ export default class Edit extends Component {
         </div>
       )
     }
-
     return (
       <div>
         <h2>{cardTitle}</h2>

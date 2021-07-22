@@ -32,7 +32,7 @@ export default class QuizView extends Component {
             }
           }
           return (
-            <div key={question}>
+            <div key={`${question}-${i}`}>
               <p key={k}>
                 {check} {question}
               </p>

@@ -43,7 +43,7 @@ export default class QuizView extends Component {
     } else {
       answers = (
         <div>
-          <p>This slide may have been corrupted. We apolgize for the error.</p>
+          <p>This slide may have been corrupted. We apologize for the error.</p>
         </div>
       )
     }

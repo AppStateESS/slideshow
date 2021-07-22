@@ -67,7 +67,6 @@ export default class NavCards extends Component {
   }
 
   handleNewSlide() {
-    this.props.saveDomScreen()
     this.props.addNewSlide()
   }
 
@@ -114,7 +113,11 @@ export default class NavCards extends Component {
     })
 
     return (
-      <div id="container" className="col" style={containerStyle}>
+      <div
+        id="container"
+        className="col"
+        style={containerStyle}
+        onClick={() => this.props.saveDomScreen()}>
         {data}
         <div
           id={this.props.content.length - 1}

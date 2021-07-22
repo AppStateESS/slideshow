@@ -48,7 +48,7 @@ class Admin extends Base
     protected function editJsonCommand(Request $request)
     {
         // TODO: look at editJsonCommand in Show
-        return $this->factory->get($request);
+        return $this->factory->get($request, true);
     }
 
     /**

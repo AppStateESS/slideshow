@@ -152,7 +152,6 @@ export default class Edit extends Component {
         })
       },
       error: (request, response) => {
-        console.log(request)
         console.error(response)
       },
     })
@@ -191,7 +190,6 @@ export default class Edit extends Component {
               this.setState({content: c})
             },
             error: (req, res) => {
-              console.log(req)
               console.error(res)
             },
           })
@@ -265,9 +263,7 @@ export default class Edit extends Component {
       $.ajax({
         url: `./slideshow/Quiz/${quizId}`,
         type: 'delete',
-        success: () => {
-          console.log('quiz deleted!!!')
-        },
+        success: () => {},
         error: (req, res) => {
           console.error(res)
         },

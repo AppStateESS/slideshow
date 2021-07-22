@@ -47,8 +47,7 @@ export default class NavCards extends Component {
 
     document.addEventListener(
       'dragend',
-      (event) => {
-        //event.target.style.display = "initial"
+      () => {
         this.props.moveSlide(this.state.dragItem, this.state.dragLineIndex)
         this.props.setCurrentSlide(this.state.dragLineIndex)
         this.setState({dragLineIndex: -1})
@@ -183,4 +182,6 @@ NavCards.propTypes = {
   setCurrentSlide: PropTypes.func,
   addNewSlide: PropTypes.func,
   moveSlide: PropTypes.func,
+  content: PropTypes.array,
+  saveDomScreen: PropTypes.func,
 }

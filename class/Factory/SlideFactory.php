@@ -245,21 +245,21 @@ class SlideFactory extends Base
         $vars = $request->getRequestVars();
         $showId = intval($vars['Slide']);
 
-        $sql = 'SELECT id, media from ss_slide WHERE showId=:showId;';
         $db = Database::getDB();
-        $pdo = $db->getPDO();
-        $q = $pdo->prepare($sql);
-        $q->execute(array('showId' => $showId));
-        if (!$q)
-            return false;
-        $res = $q->fetchAll();
+        $tbl = $db->addTable('ss_slide');
+        $tbl->addField('id');
+        $tbl->addField('media');
+        $tbl->addFieldConditional('showId', $showId);
+        $res = $db->select();
+
         $flag = false;
         foreach ($res as $r) {
             $media = json_decode($r['media']);
             if ($media != null && !empty($media->imgUrl)) {
                 $flag = $this->removeUpload($r['id'], $media->imgUrl);
-                if (!$flag)
+                if (!$flag) {
                     echo("an error has occured"); // An error occured
+                }
             }
             $this->deleteSlideDir($r['id']);
         }
@@ -286,7 +286,6 @@ class SlideFactory extends Base
      */
     private function getSlides(int $showId, $includeInactive = false)
     {
-        $sql = 'SELECT * FROM ss_slide WHERE showId=:showId ORDER BY ss_slide.slideIndex;';
         $db = Database::getDB();
         $tbl = $db->addTable('ss_slide');
         $tbl->addFieldConditional('showId', $showId);
@@ -295,11 +294,8 @@ class SlideFactory extends Base
             $tbl2->addFieldConditional('active', 1);
             $tbl->addFieldConditional('showId', $tbl2->getField('id'));
         }
-        $pdo = $db->getPDO();
-        $q = $pdo->prepare($sql);
-        $q->execute(array('showId' => $showId));
-        $slides = $q->fetchAll();
-        return $slides;
+        $tbl->addOrderBy('slideIndex');
+        return $db->select();
     }
 
     private function Oldupload($file, $path, $slideId)

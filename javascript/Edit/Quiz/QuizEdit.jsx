@@ -101,30 +101,30 @@ export default function QuizEdit(props) {
     const ids = e.target.id.split('-')
     const type = ids[0]
     const i = Number(ids[1])
-    let a = [...answers]
-    let c = [...correct]
+    let answerCopy = [...answers]
+    let correctCopy = [...correct]
     if (type == 'text') {
-      a[ids[1]] = e.target.value
+      answerCopy[ids[1]] = e.target.value
     } else if (type === 'choice') {
       // This is multiple choice and there is only one correct answer
-      c[0] = i
+      correctCopy[0] = i
     } else if (type === 'select') {
       // handle change
       // if the is is in the array we need to remove it, if the id is not we add it
-      if (c.includes(i) || c.includes(i.toString())) {
+      if (correctCopy.includes(i) || correctCopy.includes(i.toString())) {
         // remove current choice from correct
-        let item = c.findIndex((index) => {
+        let item = correctCopy.findIndex((index) => {
           return index == i
         })
-        c.splice(item, 1)
+        correctCopy.splice(item, 1)
       } else {
         // Add new choice to correct
-        c.push(i)
+        correctCopy.push(i)
       }
     }
 
-    setAnswers(a)
-    setCorrect(c)
+    setAnswers(answerCopy)
+    setCorrect(correctCopy)
   }
 
   function switchView(e) {
@@ -138,31 +138,31 @@ export default function QuizEdit(props) {
   }
 
   function removeAnswer(id) {
-    let a = [...answers]
-    let c = [...correct]
-    let f = [...feedback]
+    let answerCopy = [...answers]
+    let correctCopy = [...correct]
+    let feedbackCopy = [...feedback]
 
-    if (c.includes(id.toString())) {
-      const index = c.indexOf(id.toString())
-      c.splice(index, 1)
+    if (correctCopy.includes(id.toString())) {
+      const index = correctCopy.indexOf(id.toString())
+      correctCopy.splice(index, 1)
     }
-    a.splice(id, 1)
-    f.splice(id + 3, 1)
-    setAnswers(a)
-    setCorrect(c)
-    setFeedback(f)
+    answerCopy.splice(id, 1)
+    feedbackCopy.splice(id + 3, 1)
+    setAnswers(answerCopy)
+    setCorrect(correctCopy)
+    setFeedback(feedbackCopy)
   }
 
   function toggleFeedCheck() {
-    let f = [...feedback]
-    let fc = f[0] === 'local'
+    let feedbackCopy = [...feedback]
+    let fc = feedbackCopy[0] === 'local'
     if (type === 'select') {
       // This shouldn't get triggered since I remove the ui option but I will leave it here in case
       alert('Custom Local Feedback is not supported for multiple select')
       fc = true
     }
-    f[0] = fc ? 'global' : 'local'
-    setFeedback(f)
+    feedbackCopy[0] = fc ? 'global' : 'local'
+    setFeedback(feedbackCopy)
     setFeedCheck(!fc)
     setShowCustom(!fc)
   }
@@ -170,14 +170,13 @@ export default function QuizEdit(props) {
   function buildAnswerBlock(type) {
     if (type !== 'choice' && type != 'select') return undefined
     let i = -1
-    let choices = answers.map((choice) => {
-      i++
-      let checked = correct.includes(i.toString()) || correct.includes(i)
+    let choices = answers.map((choice, key) => {
+      let checked = correct.includes(key.toString()) || correct.includes(key)
       return (
         <AnswerBlock
           type={type}
-          key={i}
-          id={i}
+          key={`answer-${key}`}
+          id={key}
           onChange={handleAnswerChange}
           remove={removeAnswer}
           value={choice}
@@ -191,7 +190,7 @@ export default function QuizEdit(props) {
 
     let bottomBlock = (
       <Row style={{marginLeft: '10%'}}>
-        <Group style={{width: '60%', marginRight: '1rem'}}>
+        <Group key="g1" style={{width: '60%', marginRight: '1rem'}}>
           <button
             key={'add'}
             className="btn btn-primary btn-block"
@@ -199,7 +198,7 @@ export default function QuizEdit(props) {
             <i className="fas fa-plus-circle"></i> Add Another Answer
           </button>
         </Group>
-        <Group>
+        <Group key="g2">
           <Tippy content={<div>Answer Settings</div>} arrow={true}>
             <span
               style={{fontSize: '32px', color: 'dimgray'}}
@@ -209,7 +208,7 @@ export default function QuizEdit(props) {
           </Tippy>
         </Group>
         {type === 'choice' ? (
-          <Group>
+          <Group key="g3">
             <Tippy
               content={
                 <div>
@@ -228,7 +227,7 @@ export default function QuizEdit(props) {
           </Group>
         ) : null}
         {type === 'choice' ? ( // Only support custom feedback on multipleChoice for now
-          <Group className="flexbox-mid">
+          <Group className="flexbox-mid" key="4">
             <Check
               custom
               type="checkbox"

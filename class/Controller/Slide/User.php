@@ -23,6 +23,11 @@ class User extends Base
 {
 
     /**
+     * @var \slideshow\View\SlideView
+     */
+    protected $view;
+
+    /**
      * Renders the view for present
      */
     protected function presentHtmlCommand(Request $request)

@@ -29,7 +29,6 @@ export default class NavBar extends Component {
       alert(
         "A problem has occurred with your browser's session. This is most likely caused by an attempt to present an empty show."
       )
-      //window.location.href = './slideshow/Show/list'
     } else {
       await this.props.saveDB()
       window.sessionStorage.setItem('id', this.props.id)
@@ -94,4 +93,6 @@ NavBar.propTypes = {
   saveBackground: PropTypes.func,
   currentColor: PropTypes.string,
   slideTimer: PropTypes.number,
+  animation: PropTypes.string,
+  setAnimation: PropTypes.func,
 }

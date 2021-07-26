@@ -14,6 +14,7 @@ namespace slideshow\View;
 
 abstract class BaseView
 {
+
     private function getScript($filename)
     {
         $root_directory = PHPWS_SOURCE_HTTP . 'mod/slideshow/javascript/';
@@ -55,7 +56,8 @@ EOF;
             return null;
         }
         foreach ($vars as $key => $value) {
-            $varList[] = "const $key = '$value';";
+            $varList[] = "const $key = " . json_encode($value,
+                            JSON_NUMERIC_CHECK) . ';';
         }
         return '<script type="text/javascript">' . implode('', $varList) . '</script>';
     }
@@ -83,4 +85,5 @@ EOF;
         }
         return $json[$scriptName]['js'];
     }
+
 }

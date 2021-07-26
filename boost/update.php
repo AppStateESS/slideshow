@@ -47,6 +47,8 @@ class slideshowUpdate
                 $this->update('1.4.3');
             case $this->compare('1.4.4');
                 $this->update('1.4.4');
+            case $this->compare('1.4.5');
+                $this->update('1.4.5');
         }
     }
 
@@ -202,6 +204,18 @@ class slideshowUpdate
         $dt->setDefault(null);
         $dt->add();
         $changes[] = 'Allowing unlogged users';
+        $this->addContent('1.4.4', $changes);
+    }
+
+    private function v1_4_5()
+    {
+        $db = Database::getDB();
+        $t = $db->addTable('ss_slide');
+        $columns[] = $tbl->getDataType('slideIndex');
+        $columns[] = $tbl->getDataType('showId');
+        $unique = new \phpws2\Database\Unique($columns);
+        $unique->add();
+        $changes[] = 'Making slide showId and slideIndex a unique index.';
         $this->addContent('1.4.4', $changes);
     }
 

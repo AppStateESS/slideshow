@@ -180,13 +180,6 @@ class ShowFactory extends Base
         return $db->select();
     }
 
-    public function view($id)
-    {
-        $template = new \phpws2\Template();
-        $template->setModuleTemplate('slideshow', 'Show/view.html');
-        return $template->get();
-    }
-
     public function delete($showId)
     {
         $returnFlag = true;

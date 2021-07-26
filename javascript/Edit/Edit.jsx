@@ -61,7 +61,6 @@ export default class Edit extends Component {
   }
 
   async save() {
-    this.saveDomScreen()
     await $.ajax({
       url: './slideshow/Slide/' + window.sessionStorage.getItem('id'),
       data: {
@@ -87,6 +86,7 @@ export default class Edit extends Component {
         document.write(req.responseJSON.backtrace[0].args[1].xdebug_message)
       },
     })
+    this.saveDomScreen()
   }
 
   async load() {
@@ -193,11 +193,11 @@ export default class Edit extends Component {
   }
 
   setCurrentSlide(val, callback = null) {
-    this.setState({currentSlide: val, callback})
+    this.setState({currentSlide: val}, callback)
   }
 
-  addNewSlide(quizId) {
-    if (typeof quizId != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
+  addNewSlide(quizId = -1) {
+    //if (typeof quizId != 'number') quizId = -1 // an event is bindinded on some calls which causes errors
     /* This function adds to the stack of slides held within state.content */
     const index = this.state.currentSlide + 1
     const newSlide = {

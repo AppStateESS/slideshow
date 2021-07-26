@@ -13,7 +13,6 @@ export default class NavCards extends Component {
       addSlideHover: false,
     }
     this.handleSlide = this.handleSlide.bind(this)
-    this.handleNewSlide = this.handleNewSlide.bind(this)
   }
 
   componentDidMount() {
@@ -66,15 +65,8 @@ export default class NavCards extends Component {
     this.props.setCurrentSlide(event.target.value - 1)
   }
 
-  handleNewSlide() {
-    this.props.addNewSlide()
-  }
-
   render() {
     let data = this.props.content.map((slide, i) => {
-      let key =
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15) //#1E90FF
       let highlight =
         this.props.currentSlide == i
           ? {border: 'solid 3px #337ab7', borderRadius: 3, zIndex: -1}
@@ -117,13 +109,17 @@ export default class NavCards extends Component {
         id="container"
         className="col"
         style={containerStyle}
-        onClick={() => this.props.saveDomScreen()}>
+        onClick={() => {
+          this.props.saveDomScreen()
+        }}>
         {data}
         <div
           id={this.props.content.length - 1}
           className="card"
           style={this.state.addSlideHover ? addSlideHover : addSlideStyle}
-          onClick={this.handleNewSlide}
+          onClick={() => {
+            this.props.addNewSlide()
+          }}
           onMouseEnter={() => this.setState({addSlideHover: true})}
           onMouseLeave={() => this.setState({addSlideHover: false})}>
           Add New Slide

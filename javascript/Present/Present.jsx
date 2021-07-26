@@ -17,6 +17,7 @@ import {Progress, Navigation, Finish, SlidesNav} from './Navbar'
 import Skeleton from '../Resources/Components/Skeleton'
 import PropTypes from 'prop-types'
 
+// Actual javascript library name
 import 'animate.css'
 
 export default function Present({isAdmin}) {
@@ -74,7 +75,6 @@ export default function Present({isAdmin}) {
     if (show.length > 0) {
       const content = await fetchSlides(showId)
       const session = await fetchSession(showId)
-
       let current = Number(session.highest)
       if (session.complete) {
         current = 0
@@ -184,7 +184,7 @@ export default function Present({isAdmin}) {
         nextDisable={nextDisable}
         prevDisable={prevDisable}
       />
-      {isAdmin ? (
+      {isAdmin === 1 ? (
         <div className="text-center">
           <a
             className="btn btn-success"
@@ -199,5 +199,5 @@ export default function Present({isAdmin}) {
 }
 
 Present.propTypes = {
-  isAdmin: PropTypes.string,
+  isAdmin: PropTypes.number,
 }

@@ -26,7 +26,7 @@ export default function Present({isAdmin}) {
   const [showAnimation, setShowAnimation] = useState('None')
   const [noShow, setNoShow] = useState(true)
 
-  const [content, setContent] = useState(slidesResource.content)
+  const [content, setContent] = useState([slidesResource.content])
 
   const [currentSlide, setCurrentSlide] = useState(0)
   const [highestSlide, setHighestSlide] = useState(0)
@@ -78,6 +78,10 @@ export default function Present({isAdmin}) {
       let current = Number(session.highest)
       if (session.complete) {
         current = 0
+      }
+      if (session.highest > content.length) {
+        session.highest = content.length - 1
+        current = session.highest
       }
       setNoShow(false)
       setShowTitle(show.showTitle)

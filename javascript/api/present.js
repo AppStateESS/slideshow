@@ -11,9 +11,8 @@ export const fetchSlides = async (showId) => {
       let loaded = data['slides']
       return loaded
     },
-    error: function (req, err) {
+    error: function () {
       alert('Failed to load data.')
-      console.error(req, err.toString())
     },
   })
   return await parseSlides(loaded)
@@ -33,9 +32,6 @@ export const fetchShow = async (showId) => {
         show.animation = data[0].animation
       }
     },
-    error: (req, res) => {
-      console.error(req, res.toString())
-    },
   })
   return result
 }
@@ -47,12 +43,6 @@ export const fetchSession = async (showId) => {
     dataType: 'json',
     success: (data) => {
       return data
-    },
-    error: (req, err) => {
-      console.log(
-        'Failed to load session from db. This could be due to being logged in as an admin'
-      )
-      console.error(req, err.toString())
     },
   })
   return parseSession(loaded)
@@ -68,10 +58,6 @@ export const updateSession = (showId, highestSlide, finished) => {
     success: function () {
       //console.log("session updated successfully")
     }.bind(this),
-    error: function (req, err) {
-      console.log("Failed to updated user's session data:")
-      console.error(req, err.toString())
-    }.bind(this),
   })
 }
 
@@ -81,7 +67,6 @@ function parseBool(flag) {
   } else if (typeof flag === 'number') {
     return flag != 0
   } else {
-    console.log(typeof flag, typeof flag === 'boolean')
     return typeof flag === 'boolean' ? flag : JSON.parse(flag)
   }
 }

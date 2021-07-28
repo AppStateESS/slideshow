@@ -58,14 +58,26 @@ export default class ShowView extends Component {
         }.bind(this)
       )
     }
-
-    return (
-      <div>
-        <h2>Shows:</h2>
-        <div className="jumbotron">
-          <div className="card-deck d-flex justify-content-center">{cards}</div>
+    if (this.state.showData !== null && this.state.showData.length > 0) {
+      return (
+        <div>
+          <h2>Shows:</h2>
+          <div className="jumbotron">
+            <div className="card-deck d-flex justify-content-center">
+              {cards}
+            </div>
+          </div>
         </div>
-      </div>
-    )
+      )
+    } else {
+      return (
+        <div>
+          <h2>Welcome</h2>
+          <p>
+            No slide shows are currently available. Please check back later.
+          </p>
+        </div>
+      )
+    }
   }
 }

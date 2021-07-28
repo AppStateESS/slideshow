@@ -64,7 +64,7 @@ class Admin extends Base
 
     protected function listJsonCommand(Request $request)
     {
-        return array('listing' => $this->get($request));
+        return array('listing' => $this->get((bool) $request->pullGetBoolean('activeOnly', true)));
     }
 
     protected function deleteCommand(Request $request)
@@ -85,9 +85,9 @@ class Admin extends Base
         return true;
     }
 
-    protected function get()
+    protected function get(bool $activeOnly = true)
     {
-        $shows = $this->factory->listing(true);
+        $shows = $this->factory->listing(!$activeOnly);
         foreach ($shows as &$show) {
             if ($show['useThumb'] == 1) {
                 $show['preview'] = $this->factory->getFirstPreview($show['id']);

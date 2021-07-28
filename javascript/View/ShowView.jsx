@@ -26,7 +26,7 @@ export default class ShowView extends Component {
    */
   getData() {
     $.ajax({
-      url: './slideshow/Show',
+      url: './slideshow/Show/?activeOnly=true',
       type: 'GET',
       dataType: 'json',
       success: function (data) {
@@ -41,7 +41,7 @@ export default class ShowView extends Component {
 
   render() {
     let cards = undefined
-    if (this.state.showData !== null) {
+    if (this.state.showData !== null && this.state.showData.length > 0) {
       cards = this.state.showData.map(
         function (show) {
           if (show.active == 1 /*|| this.state.showInactive */) {
@@ -57,8 +57,6 @@ export default class ShowView extends Component {
           }
         }.bind(this)
       )
-    }
-    if (this.state.showData !== null && this.state.showData.length > 0) {
       return (
         <div>
           <h2>Shows:</h2>
